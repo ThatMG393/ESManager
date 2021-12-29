@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="196dp"
+    android:gravity="bottom"
+    android:padding="16dp"
+    android:background="@android:color/holo_red_light">
+
+    <ImageView
+        android:id="@+id/header_modPreview"
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:src="@android:drawable/ic_delete" />
+
+    <TextView
+        android:id="@+id/header_modName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/header_modPreview"
+        android:layout_marginTop="5dp"
+        android:text="Mod Name"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:id="@+id/header_modDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/header_modName"
+        android:text="Mod Description"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@android:color/white"
+        android:textSize="12dp"/>
+
+    <TextView
+        android:id="@+id/header_modAuthor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/header_modDesc"
+        android:layout_marginTop="5dp"
+        android:text="Mod Author"
+        android:textColor="@android:color/white"
+        android:textSize="13sp"/>
+
+    <TextView
+        android:id="@+id/header_modVersion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/header_modAuthor"
+        android:text="Text"
+        android:textColor="@android:color/white"
+        android:textSize="13sp"/>
+
+</RelativeLayout>
+

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Installed Mods"
+		android:textAppearance="?android:attr/textAppearanceLarge"
+		android:layout_centerHorizontal="true"
+		android:layout_centerVertical="false"
+		android:id="@+id/Asampletext"/>
+
+	<ListView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@id/Asampletext"
+		android:id="@+id/modList"
+		android:layout_marginBottom="48dp"/>
+
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Create A Mod"
+		android:layout_alignParentBottom="true"
+		android:layout_alignParentEnd="true"
+		style="@style/Widget.AppCompat.Button.Colored"
+		android:id="@+id/createmodBut"
+		android:layout_above="@id/modList"/>
+
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="View Projects"
+		android:layout_toLeftOf="@id/createmodBut"
+		android:layout_alignParentBottom="true"
+		android:layout_marginEnd="17dp"/>
+
+</RelativeLayout>
+

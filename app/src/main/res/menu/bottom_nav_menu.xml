@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <item
+        android:id="@+id/bottom_nav_modsMenu"
+        android:title="Mods"
+        android:icon="@drawable/ic_menu"/>
+    
+    <item
+        android:id="@+id/bottom_nav_homeMenu"
+        android:title="Home"
+        android:icon="@drawable/ic_home"/>
+    
+    <item
+        android:id="@+id/bottom_nav_settingsMenu"
+        android:title="Settings"
+        android:icon="@drawable/ic_settings"/>
+        
+    
+</menu>

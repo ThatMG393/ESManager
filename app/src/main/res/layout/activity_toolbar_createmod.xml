@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:background="@android:color/holo_red_light">
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:padding="16dp">
+
+		<ImageButton
+			android:id="@+id/createmod_menu_button"
+			android:layout_width="24dp"
+			style="?android:attr/buttonBarButtonStyle"
+			android:layout_height="24dp"
+			android:layout_centerVertical="true"
+			android:src="@drawable/ic_menu"/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/app_name"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:id="@+id/createmod_title"
+			android:layout_toEndOf="@id/createmod_menu_button"
+			android:layout_centerVertical="true"
+			android:layout_marginStart="16dp"/>
+
+	</RelativeLayout>
+
+</RelativeLayout>
+
