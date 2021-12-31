@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,10 +51,10 @@ public class CustomAdapter extends ArrayAdapter<ModProperties>
         Bitmap preview = BitmapFactory.decodeFile(mp.getPreviewImgPath());
         
         
-        txtModName.setText(mp.getName());
-        txtModDesc.setText(mp.getDesc());
-        txtModAuthor.setText(mp.getAuthor());
-        txtModVersion.setText(mp.getVersion());
+        txtModName.setText(Html.fromHtml(mp.getName()));
+        txtModDesc.setText(Html.fromHtml(mp.getDesc()));
+        txtModAuthor.setText(Html.fromHtml(mp.getAuthor()));
+        txtModVersion.setText(Html.fromHtml(mp.getVersion()));
         txtModPreview.setImageBitmap(preview);
         
         return view;
