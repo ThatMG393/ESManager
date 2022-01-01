@@ -3,12 +3,16 @@ package com.thatmg393.esmanager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 public class CreateModActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener
 {
@@ -50,8 +54,28 @@ public class CreateModActivity extends AppCompatActivity implements NavigationVi
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.dropdown_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.nav_project_dropdown_save:
+                Toast.makeText(getApplicationContext(), "Saved.", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem)
     {
+        Fragment fragment = null;
+
         switch (menuItem.getItemId())
         {
             case R.id.nav_project_editor:
@@ -59,11 +83,7 @@ public class CreateModActivity extends AppCompatActivity implements NavigationVi
                 break;
 
             case R.id.nav_project_explorer:
-                getSupportFragmentManager().beginTransaction().replace(R.id.createmod_fragment_container, new ProjectExplorerFragment()).commit();
-                break;
-            case R.id.nav_project_info:
-                getSupportFragmentManager().beginTransaction().replace(R.id.createmod_fragment_container, new ProjectInfoFragment()).commit();
-                break;
+
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;

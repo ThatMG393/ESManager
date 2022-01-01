@@ -1,26 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:showIn="NavigationView">
+    tools:showIn="navigationView">
 
-    <item
-        android:id="@+id/nav_project_editor"
-        android:title="Editor"
-        android:icon="@drawable/ic_info_black_24dp"/>
-    
-    <item
-        android:id="@+id/nav_project_explorer"
-        android:title="Project Files"
-        android:icon="@drawable/ic_folder_black_24dp"/>
+    <item android:title="Project">
+        <menu>
+            <item
+                android:id="@+id/nav_project_editor"
+                android:title="Editor"
+                android:icon="@drawable/ic_edit_black_24dp"/>
 
-    <item
-        android:id="@+id/nav_project_info"
-        android:title="Project Info"
-        android:icon="@drawable/ic_info_black_24dp"/>
+            <item
+                android:id="@+id/nav_project_explorer"
+                android:title="Project Files"
+                android:icon="@drawable/ic_folder_black_24dp"/>
+        </menu>
+    </item>
 
-    <item
-        android:id="@+id/nav_export_mod"
-        android:title="Export Mod"
-        android:icon="@drawable/ic_import_export_black_24dp" />
-    
+    <item android:title="Project Settings">
+        <menu>
+            <item
+                android:id="@+id/nav_project_info"
+                android:title="Project Info"
+                android:icon="@drawable/ic_info_black_24dp"/>
+        </menu>
+    </item>
+
+    <item android:title="Mod">
+        <menu>
+            <item
+                android:id="@+id/nav_project_export_mod"
+                android:title="Export Mod"
+                android:icon="@drawable/ic_import_export_black_24dp" />
+
+            <item
+                android:id="@+id/nav_project_share_mod"
+                android:title="Share Mod"
+                android:icon="@drawable/ic_share_black_24dp" />
+        </menu>
+    </item>
+
+
+
 </menu>

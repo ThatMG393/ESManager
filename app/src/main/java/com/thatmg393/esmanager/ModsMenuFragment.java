@@ -1,5 +1,6 @@
 package com.thatmg393.esmanager;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
@@ -46,17 +47,43 @@ public class ModsMenuFragment extends Fragment
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         
-        Button createMod = getView().findViewById(R.id.createmodBut);
+        final Button createMod = getView().findViewById(R.id.createmodBut);
         createMod.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                Toast.makeText(getActivity(), "Something should appear...", Toast.LENGTH_SHORT).show();
-                
-                //((ViewGroup)getView().getParent()).getId()
-                Intent createModInt = new Intent(getActivity(), CreateModActivity.class);
-                startActivity(createModInt);
+                LayoutInflater layoutInflater = LayoutInflater.from(this);
+                View promptView = layoutInflater.inflate(R.layout.prompt, null);
+
+                final AlertDialog alertD = new AlertDialog.Builder(this).create();
+
+                EditText userInput = (EditText) promptView.findViewById(R.id.userInput);
+
+                Button btnAdd1 = (Button) promptView.findViewById(R.id.btnAdd1);
+
+                Button btnAdd2 = (Button) promptView.findViewById(R.id.btnAdd2);
+
+                btnAdd1.setOnClickListener(new OnClickListener() {
+                    public void onClick(View v) {
+
+                        // btnAdd1 has been clicked
+
+                    }
+                });
+
+                btnAdd2.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+
+                        // btnAdd2 has been clicked
+
+                    }
+                });
+
+                alertD.setView(promptView);
+
+                alertD.show();
+
             }
         });
         

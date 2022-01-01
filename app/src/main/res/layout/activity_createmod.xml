@@ -9,9 +9,9 @@
 	android:fitsSystemWindows="true"
 	tools:openDrawer="start">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+	<android.support.design.widget.AppBarLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content">
 
 		<android.support.v7.widget.Toolbar
 			android:layout_width="match_parent"
@@ -20,20 +20,18 @@
 			android:background="@color/colorPrimary"
 			android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:text="Create Mod Fragment"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+	</android.support.design.widget.AppBarLayout>
 
-    </RelativeLayout>
-
-	<FrameLayout
-		android:id="@+id/createmod_fragment_container"
+	<RelativeLayout
 		android:layout_width="match_parent"
-		android:layout_height="match_parent" />
+		android:layout_height="match_parent">
+
+		<FrameLayout
+			android:id="@+id/createmod_fragment_container"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent" />
+
+	</RelativeLayout>
 
 	<android.support.design.widget.NavigationView
 		android:id="@+id/nav_view"
