@@ -1,6 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp">
 
-</android.support.constraint.ConstraintLayout>
+
+    <EditText
+        android:id="@+id/project_modName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="@string/project_mod_name" />
+
+
+    <EditText
+        android:id="@+id/project_modDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/project_modName"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="@string/project_mod_description" />
+
+    <Button
+        android:id="@+id/project_createButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/project_modDesc"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="39dp"
+        android:text="@string/project_createMod" />
+
+    <Button
+        android:id="@+id/project_cancelButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="130dp"
+        android:layout_toEndOf="@id/project_createButton"
+        android:text="@string/cancel" />
+
+</RelativeLayout>

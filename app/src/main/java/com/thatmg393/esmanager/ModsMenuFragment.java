@@ -1,17 +1,26 @@
 package com.thatmg393.esmanager;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
-import com.thatmg393.esmanager.ModProperties;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
+import org.apache.commons.io.IOUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
@@ -19,126 +28,134 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.io.IOUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
-import android.widget.RelativeLayout;
-import android.widget.FrameLayout;
-import android.content.Intent;
 
-public class ModsMenuFragment extends Fragment
-{
-    
-    String[] modlists = {"More Buttons", "1 Part Piston", "Test1Bruh","Test2Breh"};
+public class ModsMenuFragment extends Fragment {
 
+    public final static String path = Environment.getExternalStorageDirectory().toString() + "/Android/com.evertechsandbox/files/mods/";
+    public String jsonPath = null;
+    public String previewPath = null;
+    String[] modlists = {"More Buttons", "1 Part Piston", "Test1Bruh", "Test2Breh"};
     List<ModProperties> mp;
     ListView lv;
-    
+    JSONObject json;
     private boolean isListLoaded = false;
-    
+
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-    {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_modmenu, container, false);
     }
-    
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        
+
         final Button createMod = getView().findViewById(R.id.createmodBut);
-        createMod.setOnClickListener(new View.OnClickListener()
-        {
+        createMod.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
-                LayoutInflater layoutInflater = LayoutInflater.from(this);
-                View promptView = layoutInflater.inflate(R.layout.prompt, null);
+            public void onClick(View v) {
 
-                final AlertDialog alertD = new AlertDialog.Builder(this).create();
+                /*
+                LayoutInflater layoutInflater = LayoutInflater.from(getContext());
+                View promptView = layoutInflater.inflate(R.layout.dialog_createnewmod, null);
 
-                EditText userInput = (EditText) promptView.findViewById(R.id.userInput);
+                final AlertDialog createModPopup = new AlertDialog.Builder(getContext()).create();
 
-                Button btnAdd1 = (Button) promptView.findViewById(R.id.btnAdd1);
+                //Customizers
+                createModPopup.setTitle("Create new mod");
 
-                Button btnAdd2 = (Button) promptView.findViewById(R.id.btnAdd2);
+                //Field
+                final EditText project_modName_field = (EditText) promptView.findViewById(R.id.project_modName);
+                final EditText project_modDesc_field = (EditText) promptView.findViewById(R.id.project_modDesc);
 
-                btnAdd1.setOnClickListener(new OnClickListener() {
-                    public void onClick(View v) {
+                //Buttons
+                Button project_createMod = (Button) promptView.findViewById(R.id.project_createButton);
+                Button project_cancelCreateMod = (Button) promptView.findViewById(R.id.project_cancelButton);
 
-                        // btnAdd1 has been clicked
+                //Button Events
+                project_createMod.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (project_modName_field.getText().toString().isEmpty() && project_modDesc_field.getText().toString().isEmpty()) {
+                            Toast.makeText(getContext(), "Field cannot be blank.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getContext(), "Created.", Toast.LENGTH_SHORT).show();
 
+                            Intent cmai = new Intent(getContext(), CreateModActivity.class);
+                            CreateModActivity.setProject_modName(project_modName_field.getText().toString());
+                            CreateModActivity.setProject_modName(project_modDesc_field.getText().toString());
+                            TextView nav_header_modName = (TextView) getView().findViewById(R.id.header_modName);
+                            if (nav_header_modName != null) {
+                                nav_header_modName.setText(Html.fromHtml(project_modName_field.getText().toString()));
+                            }
+
+                            TextView nav_header_modDesc = (TextView) getView().findViewById(R.id.header_modDesc);
+                            if (nav_header_modDesc != null) {
+                                nav_header_modName.setText(Html.fromHtml(project_modDesc_field.getText().toString()));
+                            }
+                            createModPopup.dismiss();
+                            startActivity(cmai);
+                        }
                     }
                 });
 
-                btnAdd2.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-
-                        // btnAdd2 has been clicked
-
+                project_cancelCreateMod.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        createModPopup.dismiss();
+                        Toast.makeText(getContext(), "Cancelled.", Toast.LENGTH_SHORT).show();
                     }
                 });
 
-                alertD.setView(promptView);
+                //Finalizer
+                createModPopup.setView(promptView);
+                createModPopup.show();
+                 */
 
-                alertD.show();
-
+                Toast.makeText(getContext(), "Very buggy almost done!", Toast.LENGTH_SHORT).show();
             }
         });
-        
+
         System.out.println("isListLoaded? = " + isListLoaded);
-        if (isListLoaded != true)
-        {
+        if (isListLoaded != true) {
             mp = new ArrayList<>();
             lv = getView().findViewById(R.id.modList);
             findAllMods();
             CustomAdapter ca = new CustomAdapter(getActivity().getApplicationContext(), 0, mp);
 
-            if (lv != null)
-            {
+            if (lv != null) {
                 lv.setAdapter(ca);
                 isListLoaded = true;
                 System.out.println("isListLoaded? = " + isListLoaded);
             }
         }
     }
-    
-    public final static String path = Environment.getExternalStorageDirectory().toString() + "/Android/com.evertechsandbox/files/mods/";
-    public String jsonPath = null;
-    public String previewPath = null;
 
-    JSONObject json;
-
-    public final void findAllMods()
-    {
+    public final void findAllMods() {
         File file = new File(path);
         String[] directories = file.list(new FilenameFilter() {
-                @Override
-                public boolean accept(File current, String name) {
-                    return new File(current, name).isDirectory();
-                }
-            });
+            @Override
+            public boolean accept(File current, String name) {
+                return new File(current, name).isDirectory();
+            }
+        });
 
-        for ( String folders : directories)
-        {
-            try
-            {
+        for (String folders : directories) {
+            try {
                 jsonPath = path + folders + "/info.json";
 
                 File checkdir1 = new File(jsonPath);
 
-                if (checkdir1.exists() == true)
-                {
+                if (checkdir1.exists() == true) {
                     InputStream istr = new FileInputStream(jsonPath);
                     String convertedJson = IOUtils.toString(istr, "UTF-8");
 
                     json = new JSONObject(convertedJson);
-                    
+
                     String preview = json.getString("preview");
-                    
+
                     previewPath = path + folders + "/" + preview;
-                    
+
                     //System.out.println("Image path is: " + previewPath);
                     //Value should be '...Mods/everlogic/textures/preview.png'
 
@@ -147,18 +164,13 @@ public class ModsMenuFragment extends Fragment
                     String author = json.getString("author");
                     String version = json.getString("version");
 
-                    if (name != null && desc != null && author != null && version != null)
-                    {
+                    if (name != null && desc != null && author != null && version != null) {
                         mp.add(new ModProperties(name, desc, author, version, previewPath));
                     }
                 }
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 e.printStackTrace();
-            }
-            catch (JSONException e)
-            {
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         }

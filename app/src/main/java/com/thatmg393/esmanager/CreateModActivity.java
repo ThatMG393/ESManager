@@ -1,28 +1,42 @@
 package com.thatmg393.esmanager;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
-public class CreateModActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener
-{
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+
+import com.google.android.material.navigation.NavigationView;
+
+public class CreateModActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    protected static String project_modName;
+    protected static String project_modDesc;
     private DrawerLayout drawerLayout;
+
+    public static final String setProject_modName(String val) {
+        project_modName = val;
+        return val;
+    }
+
+    public static final String setProject_modDesc(String val) {
+        project_modDesc = val;
+        return val;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_createmod);
-
         Toolbar toolbar = findViewById(R.id.createmod_toolbar);
 
         /* Useless might be useful later
@@ -41,13 +55,15 @@ public class CreateModActivity extends AppCompatActivity implements NavigationVi
         drawerLayout = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.nav_drawer_open, R.string.nav_drawer_close);
 
-        NavigationView navigationView  = findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        Toast.makeText(this, project_modName, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, project_modDesc, Toast.LENGTH_SHORT).show();
 
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-        if (savedInstanceState == null)
-        {
+        if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.createmod_fragment_container, new ProjectEditorFragment()).commit();
             navigationView.setCheckedItem(R.id.nav_project_editor);
         }
@@ -72,12 +88,10 @@ public class CreateModActivity extends AppCompatActivity implements NavigationVi
     }
 
     @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem)
-    {
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         Fragment fragment = null;
 
-        switch (menuItem.getItemId())
-        {
+        switch (menuItem.getItemId()) {
             case R.id.nav_project_editor:
                 getSupportFragmentManager().beginTransaction().replace(R.id.createmod_fragment_container, new ProjectEditorFragment()).commit();
                 break;
@@ -90,14 +104,10 @@ public class CreateModActivity extends AppCompatActivity implements NavigationVi
     }
 
     @Override
-    public void onBackPressed()
-    {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START))
-        {
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
-        }
-        else
-        {
+        } else {
             super.onBackPressed();
         }
     }

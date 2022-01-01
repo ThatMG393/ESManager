@@ -4,5 +4,17 @@
     <string name="nav_drawer_open">Open Navigation Drawer</string>
     <string name="nav_drawer_close">Close Navigation Drawer</string>
     <string name="app_name_bold"><b>ESManager</b></string>
+    <string name="mod_version">Mod Version</string>
+    <string name="mod_author">Mod Author</string>
+    <string name="mod_description">Mod Description</string>
+    <string name="mod_name">Mod Name</string>
+    <string name="version_ex">Version(ex. 1.1.1)</string>
+    <string name="description_ex">Description (ex. \'\'This is a mod)</string>
+    <string name="author_ex">Author(ex. \'ThatMG393\')</string>
+    <string name="mod_name_ex">Mod Name(ex. \'Everlogic\')</string>
+    <string name="project_mod_description">Mod Description</string>
+    <string name="cancel">Cancel</string>
+    <string name="project_createMod">Create Mod</string>
+    <string name="project_mod_name">Mod Name</string>
 
 </resources>

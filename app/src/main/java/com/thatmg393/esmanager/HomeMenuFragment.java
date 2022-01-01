@@ -1,12 +1,11 @@
 package com.thatmg393.esmanager;
 
-import android.support.v4.app.Fragment;
-import android.support.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.annotation.Nullable;
 import android.view.ViewGroup;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.os.Bundle;
-import android.widget.Button;
 
 public class HomeMenuFragment extends Fragment
 {
