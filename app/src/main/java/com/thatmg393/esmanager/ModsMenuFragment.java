@@ -55,7 +55,7 @@ public class ModsMenuFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                /*
+
                 LayoutInflater layoutInflater = LayoutInflater.from(getContext());
                 View promptView = layoutInflater.inflate(R.layout.dialog_createnewmod, null);
 
@@ -82,18 +82,15 @@ public class ModsMenuFragment extends Fragment {
                             Toast.makeText(getContext(), "Created.", Toast.LENGTH_SHORT).show();
 
                             Intent cmai = new Intent(getContext(), CreateModActivity.class);
-                            CreateModActivity.setProject_modName(project_modName_field.getText().toString());
-                            CreateModActivity.setProject_modName(project_modDesc_field.getText().toString());
-                            TextView nav_header_modName = (TextView) getView().findViewById(R.id.header_modName);
-                            if (nav_header_modName != null) {
-                                nav_header_modName.setText(Html.fromHtml(project_modName_field.getText().toString()));
-                            }
 
-                            TextView nav_header_modDesc = (TextView) getView().findViewById(R.id.header_modDesc);
-                            if (nav_header_modDesc != null) {
-                                nav_header_modName.setText(Html.fromHtml(project_modDesc_field.getText().toString()));
-                            }
+                            //Send data to activity
+                            cmai.putExtra("projectModName", project_modName_field.getText().toString());
+                            cmai.putExtra("projectModDesc", project_modDesc_field.getText().toString());
+
+                            //Close dialog
                             createModPopup.dismiss();
+
+                            //Launch!
                             startActivity(cmai);
                         }
                     }
@@ -110,9 +107,9 @@ public class ModsMenuFragment extends Fragment {
                 //Finalizer
                 createModPopup.setView(promptView);
                 createModPopup.show();
-                 */
 
-                Toast.makeText(getContext(), "Very buggy almost done!", Toast.LENGTH_SHORT).show();
+
+                //Toast.makeText(getContext(), "Very buggy almost done!", Toast.LENGTH_SHORT).show();
             }
         });
 

@@ -52,14 +52,28 @@ public class CreateModActivity extends AppCompatActivity implements NavigationVi
         });
          */
 
+        Bundle extras = getIntent().getExtras();
+
+        if (extras != null) {
+            TextView nav_header_modName = (TextView) findViewById(R.id.header_modName);
+            if (nav_header_modName != null) {
+                nav_header_modName.setText(Html.fromHtml(extras.getString("projectModName")));
+            }
+
+            TextView nav_header_modDesc = (TextView) findViewById(R.id.header_modDesc);
+            if (nav_header_modDesc != null) {
+                nav_header_modName.setText(Html.fromHtml(extras.getString("projectModDesc")));
+            }
+        }
+
         drawerLayout = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.nav_drawer_open, R.string.nav_drawer_close);
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        Toast.makeText(this, project_modName, Toast.LENGTH_SHORT).show();
-        Toast.makeText(this, project_modDesc, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, extras.getString("projectModName"), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, extras.getString("projectModDesc"), Toast.LENGTH_SHORT).show();
 
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
