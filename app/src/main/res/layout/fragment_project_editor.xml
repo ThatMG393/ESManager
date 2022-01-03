@@ -4,10 +4,14 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <EditText
-        android:id="@+id/mainCodeEditor"
+    <com.thatmg393.esmanager.widgets.EditorClass
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:typeface="monospace" />
+        android:inputType="textMultiLine"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:id="@+id/code_editor" />
 
 </RelativeLayout>
