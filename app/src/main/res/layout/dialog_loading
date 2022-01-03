@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:padding="16dp">
+
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Loading..."
+		android:textAppearance="?android:attr/textAppearanceLarge"
+		android:id="@+id/dialogloadingTextView1"/>
+
+	<ProgressBar
+		android:layout_width="wrap_content"
+		style="?android:attr/progressBarStyleLarge"
+		android:layout_height="wrap_content"
+		android:layout_below="@id/dialogloadingTextView1"
+		android:layout_marginTop="15dp"
+		android:id="@+id/dialogloadingProgressBar1"/>
+
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Please wait...."
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:layout_toEndOf="@id/dialogloadingProgressBar1"
+		android:layout_alignParentEnd="false"
+		android:layout_below="@id/dialogloadingTextView1"
+		android:layout_marginStart="35dp"
+		android:layout_marginTop="40dp"/>
+
+</RelativeLayout>
