@@ -1,4 +1,4 @@
-package com.thatmg393.esmanager;
+package com.thatmg393.esmanager.fragments;
 
 import androidx.fragment.app.Fragment;
 import androidx.annotation.Nullable;
@@ -6,6 +6,8 @@ import android.view.ViewGroup;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.os.Bundle;
+
+import com.thatmg393.esmanager.R;
 
 public class SettingsMenuFragment extends Fragment
 {

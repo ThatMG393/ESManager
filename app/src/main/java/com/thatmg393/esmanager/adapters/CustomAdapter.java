@@ -1,4 +1,4 @@
-package com.thatmg393.esmanager;
+package com.thatmg393.esmanager.adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -11,6 +11,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.thatmg393.esmanager.R;
+import com.thatmg393.esmanager.data.ModProperties;
+
 import java.util.List;
 
 public class CustomAdapter extends ArrayAdapter<ModProperties>

@@ -29,5 +29,5 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'commons-io:commons-io:2.6'
     implementation 'gr.pantrif:easy-android-splash-screen:0.0.1'
-    implementation 'com.github.tiagohm:CodeView:0.4.0'
+    implementation 'com.github.kbiakov:CodeView-Android:1.3.2'
 }

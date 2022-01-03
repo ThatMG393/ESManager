@@ -1,22 +1,31 @@
-package com.thatmg393.esmanager;
+package com.thatmg393.esmanager.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.thatmg393.esmanager.R;
+
 import java.util.Objects;
 
-import br.tiagohm.codeview.CodeView;
-import br.tiagohm.codeview.Language;
+import io.github.kbiakov.codeview.CodeView;
+import io.github.kbiakov.codeview.adapters.Options;
+import io.github.kbiakov.codeview.highlight.ColorTheme;
 
 public class ProjectEditorFragment extends Fragment {
 
     private CodeView codeView;
+
+    String start_code = "funtion onPlace() \r\n\r\nend" +
+            "\r\n\r\nfuntion start() \r\n\r\nend" +
+            "\r\n\r\nfunction update() \r\n\r\nend" +
+            "\r\n\r\nfunction fixedUpdate() \r\n\r\nend";
 
     @Nullable
     @Override
@@ -31,17 +40,9 @@ public class ProjectEditorFragment extends Fragment {
 
         String[] languageKeywords = {"es.TimeScale", "es.DeltaTime", "es.FixedDeltaTime", "es.SetSoundVolume()", "es.SetSoundLoop()", "es.PlaySound()", "es.Player"};
 
-        codeView = (CodeView) requireView().findViewById(R.id.project_codeEditor);
+        EditText editor_main = getView().findViewById(R.id.mainCodeEditor);
 
-        codeView.setLanguage(Language.LUA)
-                .setShowLineNumber(true)
-                .setStartLineNumber(0)
-                .setCode("funtion onPlace() \r\n\r\nend" +
-                        "\r\n\r\nfuntion start() \r\n\r\nend" +
-                        "\r\n\r\nfunction update() \r\n\r\nend" +
-                        "\r\n\r\nfunction fixedUpdate() \r\n\r\nend")
-                .setZoomEnabled(true)
-                .setWrapLine(true)
-                .apply();
+        editor_main.setBackgroundResource(android.R.color.transparent);
+
     }
 }

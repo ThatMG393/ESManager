@@ -1,4 +1,4 @@
-package com.thatmg393.esmanager;
+package com.thatmg393.esmanager.crashhandler;
 
 import android.app.Activity;
 import android.app.AlertDialog;

@@ -2,8 +2,6 @@ package com.thatmg393.esmanager;
 
 import android.os.Bundle;
 import android.text.Html;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,6 +15,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.navigation.NavigationView;
+import com.thatmg393.esmanager.fragments.ProjectEditorFragment;
 
 public class CreateModActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     protected static String project_modName;
@@ -55,12 +54,12 @@ public class CreateModActivity extends AppCompatActivity implements NavigationVi
         Bundle extras = getIntent().getExtras();
 
         if (extras != null) {
-            TextView nav_header_modName = (TextView) findViewById(R.id.header_modName);
+            TextView nav_header_modName = findViewById(R.id.header_modName);
             if (nav_header_modName != null) {
                 nav_header_modName.setText(Html.fromHtml(extras.getString("projectModName")));
             }
 
-            TextView nav_header_modDesc = (TextView) findViewById(R.id.header_modDesc);
+            TextView nav_header_modDesc = findViewById(R.id.header_modDesc);
             if (nav_header_modDesc != null) {
                 nav_header_modName.setText(Html.fromHtml(extras.getString("projectModDesc")));
             }

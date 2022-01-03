@@ -1,4 +1,4 @@
-package com.thatmg393.esmanager;
+package com.thatmg393.esmanager.classes;
 
 import java.util.regex.Pattern;
 
