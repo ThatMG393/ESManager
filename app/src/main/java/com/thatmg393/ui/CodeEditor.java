@@ -1,4 +1,4 @@
-package com.thatmg393.esmanager.widgets;
+package com.thatmg393.ui;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -15,8 +15,6 @@ import androidx.annotation.NonNull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import android.text.TextWatcher;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.CountedCompleter;
 
 class ColorScheme {
     final Pattern pattern;
@@ -28,7 +26,7 @@ class ColorScheme {
     }
 }
 
-public class EditorClass extends androidx.appcompat.widget.AppCompatEditText {
+public class CodeEditor extends androidx.appcompat.widget.AppCompatEditText {
 
     private Rect rect;
     private Paint paint;
@@ -37,19 +35,19 @@ public class EditorClass extends androidx.appcompat.widget.AppCompatEditText {
     private String keywords_color = "#ffff4444";
 
 
-    public EditorClass(@NonNull Context context) {
+    public CodeEditor(@NonNull Context context) {
         super(context);
         this.context = context;
         initSyntaxHighlight();
     }
 
-    public EditorClass(@NonNull Context context, AttributeSet attrs) {
+    public CodeEditor(@NonNull Context context, AttributeSet attrs) {
         super(context,attrs);
         this.context = context;
         initSyntaxHighlight();
     }
 
-    public EditorClass(@NonNull Context context, AttributeSet attrs, int defStyle)
+    public CodeEditor(@NonNull Context context, AttributeSet attrs, int defStyle)
     {
         super(context, attrs, defStyle);
         this.context = context;
@@ -61,19 +59,24 @@ public class EditorClass extends androidx.appcompat.widget.AppCompatEditText {
 		/*
 		 Source: https://stackoverflow.com/questions/42786493/syntax-highlighting-on-android-edittext-using-span
 		*/
+
         System.out.println("Syntax Highlighting Engine Initializing");
 
         final ColorScheme keywords = new ColorScheme(
-                Pattern.compile("\\b(function|end)\\b"),
-                Color.parseColor(keywords_color));
+                Pattern.compile("\\b(and|end|in|repeat|break|false|local|return|do|for|nil|then|else|function|not|true|elseif|if|or|until|while)\\b"),
+                Color.parseColor("#CC7832"));
 
 
-        final ColorScheme numbers = new ColorScheme(
-                Pattern.compile("(\\b(\\d*[.]?\\d+)\\b)"),
-                Color.BLUE
+        final ColorScheme operators = new ColorScheme(
+                Pattern.compile("\\b(<|>|<=|>=|~=|==)\\b"),
+                Color.parseColor("#A9B7C6")
         );
 
-        final ColorScheme[] schemes = {keywords, numbers};
+        final ColorScheme strings = new ColorScheme(
+            Pattern.compile("'[a-zA-Z]'"),Color.parseColor("#60864C")
+        );
+
+        final ColorScheme[] schemes = {keywords, operators};
 
         this.addTextChangedListener(new TextWatcher()
         {

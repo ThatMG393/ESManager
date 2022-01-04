@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,11 +11,7 @@ import androidx.fragment.app.Fragment;
 
 import com.thatmg393.esmanager.R;
 
-import java.util.Objects;
-
 import io.github.kbiakov.codeview.CodeView;
-import io.github.kbiakov.codeview.adapters.Options;
-import io.github.kbiakov.codeview.highlight.ColorTheme;
 
 public class ProjectEditorFragment extends Fragment {
 
