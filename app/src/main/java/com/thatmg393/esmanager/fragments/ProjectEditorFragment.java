@@ -39,9 +39,5 @@ public class ProjectEditorFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         String[] languageKeywords = {"es.TimeScale", "es.DeltaTime", "es.FixedDeltaTime", "es.SetSoundVolume()", "es.SetSoundLoop()", "es.PlaySound()", "es.Player"};
-
-        EditText editor_main = getView().findViewById(R.id.mainCodeEditor);
-        editor_main.setBackgroundResource(android.R.color.transparent);
-
     }
 }
