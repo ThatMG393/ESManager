@@ -1,4 +1,4 @@
-package com.thatmg393.ui;
+package com.thatmg393.esmanager.ui;
 
 import android.content.Context;
 import android.graphics.Canvas;
