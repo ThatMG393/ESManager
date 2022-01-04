@@ -116,8 +116,15 @@ public class ModsMenuFragment extends Fragment {
             }
         });
 
+        LayoutInflater layoutInflater = LayoutInflater.from(getContext());
+        View promptView = layoutInflater.inflate(R.layout.dialog_loading, null);
+
+        final AlertDialog loading_diag = new AlertDialog.Builder(getContext()).create();
+        loading_diag.setView(promptView);
+
         System.out.println("isListLoaded? = " + isListLoaded);
         if (isListLoaded != true) {
+            loading_diag.show();
             mp = new ArrayList<>();
             lv = getView().findViewById(R.id.modList);
             findAllMods();
@@ -127,6 +134,7 @@ public class ModsMenuFragment extends Fragment {
                 lv.setAdapter(ca);
                 isListLoaded = true;
                 System.out.println("isListLoaded? = " + isListLoaded);
+                loading_diag.dismiss();
             }
         }
     }
