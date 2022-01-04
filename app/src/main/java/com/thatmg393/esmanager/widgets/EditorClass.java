@@ -57,8 +57,10 @@ public class EditorClass extends androidx.appcompat.widget.AppCompatEditText {
     }
 	
 	private final void initSyntaxHighlight()
-	
-                /*https://stackoverflow.com/questions/42786493/syntax-highlighting-on-android-edittext-using-span*/
+	{
+		/*
+		 Source: https://stackoverflow.com/questions/42786493/syntax-highlighting-on-android-edittext-using-span
+		*/
 		System.out.println("Syntax Highlighting Engine Initializing");
 		
 		final ColorScheme keywords = new ColorScheme(
@@ -94,9 +96,12 @@ public class EditorClass extends androidx.appcompat.widget.AppCompatEditText {
 				
 				for (ColorScheme scheme : schemes)
 				{
-					for (Matcher m = scheme.Pattern.matcher())
+					for (Matcher m = scheme.pattern.matcher(s); m.find();)
 					{
-						
+						s.setSpan(new ForegroundColorSpan(scheme.color),
+								  m.start(),
+								  m.end(),
+								  Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 					}
 				}
 			}
