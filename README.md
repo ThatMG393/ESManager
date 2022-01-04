@@ -1,6 +1,9 @@
 # ESManager
 
 An open-source game manager.
+
+With a working Syntax Highlight and Code Editor specifically for LUA!
+
 This app only supports Evertech Sandbox.
 
 Download the app here >> https://play.google.com/store/apps/details?id=com.evertechsandbox
