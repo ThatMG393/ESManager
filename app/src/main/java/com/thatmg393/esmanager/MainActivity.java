@@ -39,14 +39,6 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button launchGame = findViewById(R.id.launch_game);
-        launchGame.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                LaunchGame();
-            }
-        });
-
         //ModLists = Created Mods
         //ModsList = Installed Mods
 
@@ -61,27 +53,6 @@ public class MainActivity extends AppCompatActivity
         BottomNavigationView bottomNav = findViewById(R.id.bottom_nav_view);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
         bottomNav.setSelectedItemId(R.id.bottom_nav_homeMenu);
-    }
-
-    private void LaunchGame()
-    {
-        boolean isGPPresent = false;
-
-        Intent esIntent = getPackageManager().getLaunchIntentForPackage("com.evertechsandbox");
-        if (esIntent != null) {
-            try
-            {
-                startActivity(esIntent);
-            }
-            catch (android.content.ActivityNotFoundException anfe)
-            {
-                try {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-                } catch (android.content.ActivityNotFoundException anfe2) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
-                }
-            }
-        }
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
