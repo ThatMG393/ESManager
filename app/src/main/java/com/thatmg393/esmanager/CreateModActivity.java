@@ -21,8 +21,6 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.navigation.NavigationView;
 import com.thatmg393.esmanager.fragments.ProjectEditorFragment;
 
-import ir.androidexception.filepicker.dialog.SingleFilePickerDialog;
-
 public class CreateModActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawerLayout;
 
@@ -107,10 +105,12 @@ public class CreateModActivity extends AppCompatActivity implements NavigationVi
     }
 
     private void PickFile() {
+        /* Disabled for some reason.
         SingleFilePickerDialog singleFilePickerDialog = new SingleFilePickerDialog(getApplicationContext(),
                 () -> Toast.makeText(getApplicationContext(), "Canceled!!", Toast.LENGTH_SHORT).show(),
                 files -> Toast.makeText(getApplicationContext(), files[0].getPath(), Toast.LENGTH_SHORT).show());
         singleFilePickerDialog.show();
+         */
     }
 
     @Override

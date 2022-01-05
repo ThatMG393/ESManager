@@ -101,6 +101,65 @@ public class DiscordRPC extends AppCompatActivity {
 
     }
 
+    /* Currently Disabled
+    public final void updatePresence()
+    {
+        long current = System.currentTimeMillis();
+
+        ArrayMap<String, Object> presence = new ArrayMap<>();
+
+        ArrayMap<String, Object> activity = new ArrayMap<>();
+
+        if (!editActivityName.getText().toString().isEmpty())
+        {
+
+        }
+        activity.put("name", editActivityName.getText().toString());
+        if (!editActivityState.getText().toString().isEmpty()) {
+            activity.put("state", editActivityState.getText().toString());
+        }
+        if (!editActivityDetails.getText().toString().isEmpty()) {
+            activity.put("details", editActivityDetails.getText().toString());
+        }
+        activity.put("type", 0);
+
+        // activity.put("application_id", "567994086452363286");
+        ArrayMap<String, Object> button = new ArrayMap<>();
+        button.put("label", "Open GitHub");
+        button.put("url", "https://github.com");
+        // activity.put("buttons", new Object[]{button});
+
+        ArrayMap<String, Object> timestamps = new ArrayMap<>();
+        timestamps.put("start", current);
+
+        activity.put("timestamps", timestamps);
+        presence.put("activities", new Object[]{activity});
+
+        presence.put("afk", true);
+        presence.put("since", current);
+        presence.put("status", null);
+
+        ArrayMap<String, Object> arr = new ArrayMap<>();
+        arr.put("op", 3);
+        arr.put("d", presence);
+
+        webSocketClient.send(gson.toJson(arr));
+    }
+     */
+
+    public final void removePresence()
+    {
+        ArrayMap<String, Object> presence = new ArrayMap<>();
+
+        presence.put("activities", new Object[]{});
+
+        ArrayMap<String, Object> arr = new ArrayMap<>();
+        arr.put("op", 3);
+        arr.put("d", presence);
+
+        webSocketClient.send(gson.toJson(arr));
+    }
+
     private final void login(View view)
     {
         if (authToken != null)
