@@ -11,6 +11,10 @@ import com.thatmg393.esmanager.R;
 
 public class HomeMenuFragment extends Fragment
 {
+    
+    private final String appPackageName = "com.evertechsandbox"; // package name of es
+    
+    
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
