@@ -27,8 +27,6 @@ public class MainActivity extends AppCompatActivity
     
     private final int EXTERNAL_STORAGE_PERM_CODE = 28;
 
-    final String appPackageName = "com.evertechsandbox"; // package name of es
-
     private boolean permissionGranted(){
         return ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
                 && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
