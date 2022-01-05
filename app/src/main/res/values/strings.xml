@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">ESManager</string>
-    
+
     <string name="nav_drawer_open">Open Navigation Drawer</string>
     <string name="nav_drawer_close">Close Navigation Drawer</string>
     <string name="app_name_bold"><b>ESManager</b></string>
@@ -8,13 +8,12 @@
     <string name="mod_author">Mod Author</string>
     <string name="mod_description">Mod Description</string>
     <string name="mod_name">Mod Name</string>
-    <string name="version_ex">Version(ex. 1.1.1)</string>
-    <string name="description_ex">Description (ex. \'\'This is a mod)</string>
-    <string name="author_ex">Author(ex. \'ThatMG393\')</string>
-    <string name="mod_name_ex">Mod Name(ex. \'Everlogic\')</string>
     <string name="project_mod_description">Mod Description</string>
     <string name="cancel">Cancel</string>
     <string name="project_createMod">Create Mod</string>
     <string name="project_mod_name">Mod Name</string>
-
+    <string name="discord_rcp_ask_title">Enabled Discord Rich Presence</string>
+    <string name="discord_rcp_ask_message">Are you sure you wanna enable Discord RP? \r\n I will not be responsible if your discord account had been hacked, you\'ve been WARNED! \r\n" "USE THIS AT YOUR OWN RISK!</string>
+    <string name="discord_rcp_ask_accept">I accept the consequences</string>
+    <string name="discord_rcp_ask_cancel">Cancel</string>
 </resources>

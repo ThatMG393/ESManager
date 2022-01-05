@@ -11,11 +11,7 @@ import androidx.fragment.app.Fragment;
 
 import com.thatmg393.esmanager.R;
 
-import io.github.kbiakov.codeview.CodeView;
-
 public class ProjectEditorFragment extends Fragment {
-
-    private CodeView codeView;
 
     String start_code = "funtion onPlace() \r\n\r\nend" +
             "\r\n\r\nfuntion start() \r\n\r\nend" +

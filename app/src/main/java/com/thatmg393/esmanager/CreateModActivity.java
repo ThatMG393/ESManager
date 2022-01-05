@@ -3,6 +3,10 @@ package com.thatmg393.esmanager;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,40 +21,16 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.navigation.NavigationView;
 import com.thatmg393.esmanager.fragments.ProjectEditorFragment;
 
+import ir.androidexception.filepicker.dialog.SingleFilePickerDialog;
+
 public class CreateModActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    protected static String project_modName;
-    protected static String project_modDesc;
     private DrawerLayout drawerLayout;
-
-    public static final String setProject_modName(String val) {
-        project_modName = val;
-        return val;
-    }
-
-    public static final String setProject_modDesc(String val) {
-        project_modDesc = val;
-        return val;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_createmod);
         Toolbar toolbar = findViewById(R.id.createmod_toolbar);
-
-        /* Useless might be useful later
-        final ImageButton menuButton = findViewById(R.id.createmod_menu_button);
-        menuButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                float deg = menuButton.getRotation() + 180F;
-                menuButton.animate().rotation(deg).setInterpolator(new AccelerateDecelerateInterpolator());
-            }
-        });
-         */
-
         Bundle extras = getIntent().getExtras();
 
         if (extras != null) {
@@ -65,21 +45,72 @@ public class CreateModActivity extends AppCompatActivity implements NavigationVi
             }
         }
 
-        drawerLayout = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.nav_drawer_open, R.string.nav_drawer_close);
-
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        Toast.makeText(this, extras.getString("projectModName"), Toast.LENGTH_SHORT).show();
-        Toast.makeText(this, extras.getString("projectModDesc"), Toast.LENGTH_SHORT).show();
-
+        drawerLayout = findViewById(R.id.drawer_layout);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
+
+        String[] dropdownLists = {"New Script", "Import 3D Object", "Save and Play", "Save only", "Settings", "Exit"};
+
+        Spinner dropdown = findViewById(R.id.project_dropdown);
+        ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, dropdownLists);
+        dropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        dropdown.setAdapter(dropdownAdapter);
+        dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
+                switch (pos)
+                {
+                    case 0:
+                        Toast.makeText(getApplicationContext(), "New Script Created", Toast.LENGTH_LONG).show();
+                        break;
+
+                    case 1:
+                        Toast.makeText(getApplicationContext(), "Imported 3D Object Created", Toast.LENGTH_LONG).show();
+                        PickFile();
+                        break;
+
+                    case 2:
+                        Toast.makeText(getApplicationContext(), "Saved and launching", Toast.LENGTH_LONG).show();
+                        break;
+
+                    case 3:
+                        Toast.makeText(getApplicationContext(), "Saved", Toast.LENGTH_LONG).show();
+                        break;
+
+                    case 4:
+                        Toast.makeText(getApplicationContext(), "Settings", Toast.LENGTH_LONG).show();
+                        break;
+
+                    case 5:
+                        Toast.makeText(getApplicationContext(), "Exited", Toast.LENGTH_LONG).show();
+                        CreateModActivity.this.finish();
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.createmod_fragment_container, new ProjectEditorFragment()).commit();
             navigationView.setCheckedItem(R.id.nav_project_editor);
         }
+    }
+
+    private void PickFile() {
+        SingleFilePickerDialog singleFilePickerDialog = new SingleFilePickerDialog(getApplicationContext(),
+                () -> Toast.makeText(getApplicationContext(), "Canceled!!", Toast.LENGTH_SHORT).show(),
+                files -> Toast.makeText(getApplicationContext(), files[0].getPath(), Toast.LENGTH_SHORT).show());
+        singleFilePickerDialog.show();
     }
 
     @Override

@@ -16,9 +16,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.thatmg393.esmanager.CreateModActivity;
+import com.thatmg393.esmanager.R;
 import com.thatmg393.esmanager.adapters.CustomAdapter;
 import com.thatmg393.esmanager.data.ModProperties;
-import com.thatmg393.esmanager.R;
 
 import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
@@ -127,10 +127,19 @@ public class ModsMenuFragment extends Fragment {
             loading_diag.show();
             mp = new ArrayList<>();
             lv = getView().findViewById(R.id.modList);
-            findAllMods();
+
+            try
+            {
+                findAllMods();
+            }
+            catch (NullPointerException e)
+            {
+                Toast.makeText(getContext(), "No mods found", Toast.LENGTH_SHORT).show();
+            }
+
             CustomAdapter ca = new CustomAdapter(getActivity().getApplicationContext(), 0, mp);
 
-            if (lv != null) {
+            if (lv != null && ca != null) {
                 lv.setAdapter(ca);
                 isListLoaded = true;
                 System.out.println("isListLoaded? = " + isListLoaded);
