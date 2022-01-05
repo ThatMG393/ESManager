@@ -16,4 +16,37 @@ public class HomeMenuFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_homemenu, container, false);
     }
+    
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState)
+    {
+        Button launchGame = findViewById(R.id.launch_game);
+        launchGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LaunchGame();
+            }
+        });
+    }
+    
+    private void LaunchGame()
+    {
+        boolean isGPPresent = false; 
+
+        Intent esIntent = getPackageManager().getLaunchIntentForPackage("com.evertechsandbox");
+        if (esIntent != null) {
+            try
+            {
+                startActivity(esIntent);
+            }
+            catch (android.content.ActivityNotFoundException anfe)
+            {
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+                } catch (android.content.ActivityNotFoundException anfe2) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                }
+            }
+        }
+    }
 }
