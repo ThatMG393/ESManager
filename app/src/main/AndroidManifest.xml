@@ -3,17 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.thatmg393.esmanager">
 
-    <!-- Modify or delete SD card contents. -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
-    <!-- read the contents of your USB storage -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
-    <!-- have full network access -->
     <uses-permission android:name="android.permission.INTERNET"/>
-
-    <!-- close other apps -->
-    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES"/>
 
     <application
         android:allowBackup="true"
@@ -43,9 +37,9 @@
             
         <activity android:name=".CreateModActivity" />
 
-        <activity
-            android:name=".crashhandler.DebugActivity"
-            android:screenOrientation="fullSensor"/>
+        <activity android:name=".DiscordRPC" />
+
+        <activity android:name=".crashhandler.DebugActivity" />
 
         <meta-data
             android:name="android.max_aspect"

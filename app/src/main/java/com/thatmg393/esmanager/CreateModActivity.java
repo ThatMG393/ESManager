@@ -24,10 +24,14 @@ import com.thatmg393.esmanager.fragments.ProjectEditorFragment;
 public class CreateModActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawerLayout;
 
+    private final String[] dropdownLists = {"New Script", "Import 3D Object", "Save and Play", "Save only", "Settings", "Exit"};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_createmod);
+
+
         Toolbar toolbar = findViewById(R.id.createmod_toolbar);
         Bundle extras = getIntent().getExtras();
 
@@ -43,18 +47,19 @@ public class CreateModActivity extends AppCompatActivity implements NavigationVi
             }
         }
 
+        drawerLayout = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.nav_drawer_open, R.string.nav_drawer_close);
+
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        drawerLayout = findViewById(R.id.drawer_layout);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        String[] dropdownLists = {"New Script", "Import 3D Object", "Save and Play", "Save only", "Settings", "Exit"};
-
         Spinner dropdown = findViewById(R.id.project_dropdown);
-        ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, dropdownLists);
+
+        ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, dropdownLists);
+
         dropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         dropdown.setAdapter(dropdownAdapter);
@@ -69,7 +74,6 @@ public class CreateModActivity extends AppCompatActivity implements NavigationVi
 
                     case 1:
                         Toast.makeText(getApplicationContext(), "Imported 3D Object Created", Toast.LENGTH_LONG).show();
-                        PickFile();
                         break;
 
                     case 2:

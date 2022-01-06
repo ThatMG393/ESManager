@@ -30,7 +30,9 @@ import java.util.Map;
 
 import javax.net.ssl.SSLParameters;
 
-public class DiscordRPC extends AppCompatActivity {
+public class DiscordRPC extends AppCompatActivity{
+
+    private static DiscordRPC instance;
 
     private SharedPreferences pref;
 
@@ -57,6 +59,7 @@ public class DiscordRPC extends AppCompatActivity {
         webView.getSettings().setAppCacheEnabled(true);
         webView.getSettings().setDatabaseEnabled(true);
         webView.getSettings().setDomStorageEnabled(true);
+        webView.loadUrl("https://discord.com/login");
         webView.setWebViewClient(new WebViewClient()
         {
             @Override
@@ -66,6 +69,7 @@ public class DiscordRPC extends AppCompatActivity {
                 if (url.endsWith("/app"))
                 {
                     setContentView(R.layout.rcp_main);
+                    textViewLog = findViewById(R.id.rcp_log);
                     extractToken();
                     login(view);
                 }
@@ -83,59 +87,49 @@ public class DiscordRPC extends AppCompatActivity {
                 try
                 {
                     appendToLog("Heartbeat wait for " + heartbeat_interval);
-
                     if (heartbeat_interval < 10000) throw new RuntimeException("Invalid Heartbeat Interval");
-
                     Thread.sleep(heartbeat_interval);
-
                     webSocketClient.send(/*encodeString*/("{\"op\":1, \"d\":" + (seq==0?"null":Integer.toString(seq)) + "}"));
-
                     appendToLog("Heartbeat sent");
                 }
                 catch (InterruptedException e)
                 {
-
+                    appendToLog(e.toString());
                 }
             }
         };
 
     }
 
-    /* Currently Disabled
-    public final void updatePresence()
-    {
+    public void sendPresenceUpdate() {
         long current = System.currentTimeMillis();
 
         ArrayMap<String, Object> presence = new ArrayMap<>();
 
         ArrayMap<String, Object> activity = new ArrayMap<>();
+        activity.put("name", "Evertech Sandbox");
 
-        if (!editActivityName.getText().toString().isEmpty())
-        {
+        /////////////////////////////////////////
 
-        }
-        activity.put("name", editActivityName.getText().toString());
-        if (!editActivityState.getText().toString().isEmpty()) {
-            activity.put("state", editActivityState.getText().toString());
-        }
-        if (!editActivityDetails.getText().toString().isEmpty()) {
-            activity.put("details", editActivityDetails.getText().toString());
-        }
+        // activity.put("name", "Evertech Sandbox"); you can also put this here leave empty to unset rich presence
+
+        activity.put("state", ""); //Leaved empty
+        activity.put("details", ""); //Leaved empty
+
         activity.put("type", 0);
 
         // activity.put("application_id", "567994086452363286");
-        ArrayMap<String, Object> button = new ArrayMap<>();
-        button.put("label", "Open GitHub");
-        button.put("url", "https://github.com");
+        // ArrayMap<String, Object> button = new ArrayMap<>();
         // activity.put("buttons", new Object[]{button});
 
         ArrayMap<String, Object> timestamps = new ArrayMap<>();
         timestamps.put("start", current);
 
         activity.put("timestamps", timestamps);
+        //////////////////////////////////////////
         presence.put("activities", new Object[]{activity});
 
-        presence.put("afk", true);
+        presence.put("afk", false);
         presence.put("since", current);
         presence.put("status", null);
 
@@ -145,13 +139,39 @@ public class DiscordRPC extends AppCompatActivity {
 
         webSocketClient.send(gson.toJson(arr));
     }
-     */
 
-    public final void removePresence()
-    {
+    public void removePresenceUpdate() {
+        long current = System.currentTimeMillis();
+
         ArrayMap<String, Object> presence = new ArrayMap<>();
 
-        presence.put("activities", new Object[]{});
+        ArrayMap<String, Object> activity = new ArrayMap<>();
+        activity.put("name", ""); //Leaved empty to unset
+
+        /////////////////////////////////////////
+
+        // activity.put("name", "Evertech Sandbox"); you can also put this here leave empty to unset rich presence
+
+        // activity.put("state", ""); //Leaved empty
+        // activity.put("details", ""); //Leaved empty
+
+        // activity.put("type", 0);
+
+        // activity.put("application_id", "567994086452363286");
+        // ArrayMap<String, Object> button = new ArrayMap<>();
+        // activity.put("buttons", new Object[]{button});
+
+        // ArrayMap<String, Object> timestamps = new ArrayMap<>();
+        // timestamps.put("start", current);
+
+        // activity.put("timestamps", timestamps);
+        //////////////////////////////////////////
+
+        presence.put("activities", new Object[]{activity});
+
+        presence.put("afk", false);
+        presence.put("since", current);
+        presence.put("status", null);
 
         ArrayMap<String, Object> arr = new ArrayMap<>();
         arr.put("op", 3);
@@ -160,41 +180,27 @@ public class DiscordRPC extends AppCompatActivity {
         webSocketClient.send(gson.toJson(arr));
     }
 
-    private final void login(View view)
+    private void login(View view)
     {
         if (authToken != null)
         {
             Toast.makeText(getApplicationContext(), "Logged In", Toast.LENGTH_SHORT).show();
-            if (view == null)
-            {
-                connect();
-            }
-            return;
+            connect();
         }
-
-        webView.setVisibility(View.VISIBLE);
-        webView.loadUrl("https://discord.com/login");
     }
 
-    private final void connect()
+    private void connect()
     {
-        if (!extractToken())
+        wsThr = new Thread(new Runnable()
         {
-            setContentView(R.layout.rcp_webview_main);
-        }
-        else
-        {
-            wsThr = new Thread(new Runnable()
+            @Override
+            public void run()
             {
-                @Override
-                public void run()
-                {
-                    createWebSocketClient();
-                }
-            });
+                createWebSocketClient();
+            }
+        });
 
-            wsThr.start();
-        }
+        wsThr.start();
     }
 
     private void createWebSocketClient()
@@ -340,7 +346,10 @@ public class DiscordRPC extends AppCompatActivity {
             @Override
             public void run()
             {
-                textViewLog.append(message + "\n");
+                if (textViewLog != null)
+                {
+                    textViewLog.append(message + "\n");
+                }
             }
         });
     }

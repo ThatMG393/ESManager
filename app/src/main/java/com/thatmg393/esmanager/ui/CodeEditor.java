@@ -8,13 +8,15 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.text.Editable;
 import android.text.Spanned;
+import android.text.TextWatcher;
 import android.text.style.CharacterStyle;
 import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
+
 import androidx.annotation.NonNull;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import android.text.TextWatcher;
 
 class ColorScheme {
     final Pattern pattern;
@@ -73,7 +75,8 @@ public class CodeEditor extends androidx.appcompat.widget.AppCompatEditText {
         );
 
         final ColorScheme strings = new ColorScheme(
-            Pattern.compile("'[a-zA-Z]'"),Color.parseColor("#60864C")
+                Pattern.compile("\\b([abcefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRTUVWXYZ])\\b"),
+                Color.parseColor("#60864C")
         );
 
         final ColorScheme[] schemes = {keywords, operators};

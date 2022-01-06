@@ -2,6 +2,7 @@ package com.thatmg393.esmanager.fragments;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +20,7 @@ import com.thatmg393.esmanager.R;
 
 public class SettingsMenuFragment extends Fragment
 {
-    boolean acceptedConsequences = false;
+    private boolean acceptedConsequences = false;
 
     @Nullable
     @Override
@@ -33,6 +34,9 @@ public class SettingsMenuFragment extends Fragment
 
         Button firstSettings = getView().findViewById(R.id.settings_rcp);
         Switch fistSettingsSwitch = getView().findViewById(R.id.settings_rcp_switch);
+
+        firstSettings.setVisibility(View.VISIBLE);
+        firstSettings.setBackgroundColor(Color.TRANSPARENT);
 
         firstSettings.setOnClickListener(new View.OnClickListener()
         {
