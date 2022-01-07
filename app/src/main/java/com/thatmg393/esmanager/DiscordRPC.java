@@ -2,10 +2,8 @@ package com.thatmg393.esmanager;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.ArrayMap;
 import android.util.Log;
-import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
@@ -30,7 +28,7 @@ import java.util.Map;
 
 import javax.net.ssl.SSLParameters;
 
-public class DiscordRPC extends AppCompatActivity{
+public class DiscordRPC extends AppCompatActivity {
 
     private static DiscordRPC instance;
 
@@ -39,7 +37,7 @@ public class DiscordRPC extends AppCompatActivity{
     private WebView webView;
     private TextView textViewLog;
     private Runnable heartbeatRunnable;
-    private Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
+    private Gson gson;
 
 
     private Thread heartbeatThr, wsThr;
@@ -49,10 +47,11 @@ public class DiscordRPC extends AppCompatActivity{
     private String authToken;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.rcp_webview_main);
+
+        init();
 
         webView = (WebView) findViewById(R.id.rcp_webview);
         webView.getSettings().setJavaScriptEnabled(true);
@@ -60,75 +59,75 @@ public class DiscordRPC extends AppCompatActivity{
         webView.getSettings().setDatabaseEnabled(true);
         webView.getSettings().setDomStorageEnabled(true);
         webView.loadUrl("https://discord.com/login");
-        webView.setWebViewClient(new WebViewClient()
-        {
+        webView.setWebViewClient(new WebViewClient() {
             @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url)
-            {
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 webView.stopLoading();
-                if (url.endsWith("/app"))
-                {
+                if (url.endsWith("/app")) {
                     setContentView(R.layout.rcp_main);
                     textViewLog = findViewById(R.id.rcp_log);
                     extractToken();
-                    login(view);
+                    login();
                 }
                 return false;
             }
         });
 
-        pref = PreferenceManager.getDefaultSharedPreferences(this);
+    }
 
-        heartbeatRunnable = new Runnable()
-        {
+    private void init() {
+        heartbeatRunnable = new Runnable() {
             @Override
-            public void run()
-            {
-                try
-                {
+            public void run() {
+                try {
                     appendToLog("Heartbeat wait for " + heartbeat_interval);
-                    if (heartbeat_interval < 10000) throw new RuntimeException("Invalid Heartbeat Interval");
+                    if (heartbeat_interval < 10000)
+                        throw new RuntimeException("Invalid Heartbeat Interval");
                     Thread.sleep(heartbeat_interval);
-                    webSocketClient.send(/*encodeString*/("{\"op\":1, \"d\":" + (seq==0?"null":Integer.toString(seq)) + "}"));
+                    webSocketClient.send(/*encodeString*/("{\"op\":1, \"d\":" + (seq == 0 ? "null" : Integer.toString(seq)) + "}"));
                     appendToLog("Heartbeat sent");
-                }
-                catch (InterruptedException e)
-                {
+                } catch (InterruptedException e) {
                     appendToLog(e.toString());
                 }
             }
         };
 
+        gson = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
     }
 
-    public void sendPresenceUpdate() {
+    public void startActivity() {
+        extractToken();
+        init();
+        login();
+        sendPresenceUpdate();
+    }
+
+    public void removeActivity() {
+        extractToken();
+        init();
+        login();
+        removePresenceUpdate();
+    }
+
+    private void sendPresenceUpdate() {
         long current = System.currentTimeMillis();
 
         ArrayMap<String, Object> presence = new ArrayMap<>();
-
         ArrayMap<String, Object> activity = new ArrayMap<>();
+
         activity.put("name", "Evertech Sandbox");
-
-        /////////////////////////////////////////
-
-        // activity.put("name", "Evertech Sandbox"); you can also put this here leave empty to unset rich presence
-
-        activity.put("state", ""); //Leaved empty
-        activity.put("details", ""); //Leaved empty
-
+        /*
+         activity.put("state", ""); //Leaved empty
+         activity.put("details", ""); //Leaved empty
+        */
         activity.put("type", 0);
-
-        // activity.put("application_id", "567994086452363286");
-        // ArrayMap<String, Object> button = new ArrayMap<>();
-        // activity.put("buttons", new Object[]{button});
 
         ArrayMap<String, Object> timestamps = new ArrayMap<>();
         timestamps.put("start", current);
 
         activity.put("timestamps", timestamps);
-        //////////////////////////////////////////
-        presence.put("activities", new Object[]{activity});
 
+        presence.put("activities", new Object[]{activity});
         presence.put("afk", false);
         presence.put("since", current);
         presence.put("status", null);
@@ -140,35 +139,15 @@ public class DiscordRPC extends AppCompatActivity{
         webSocketClient.send(gson.toJson(arr));
     }
 
-    public void removePresenceUpdate() {
+    private void removePresenceUpdate() {
         long current = System.currentTimeMillis();
 
         ArrayMap<String, Object> presence = new ArrayMap<>();
-
         ArrayMap<String, Object> activity = new ArrayMap<>();
+
         activity.put("name", ""); //Leaved empty to unset
 
-        /////////////////////////////////////////
-
-        // activity.put("name", "Evertech Sandbox"); you can also put this here leave empty to unset rich presence
-
-        // activity.put("state", ""); //Leaved empty
-        // activity.put("details", ""); //Leaved empty
-
-        // activity.put("type", 0);
-
-        // activity.put("application_id", "567994086452363286");
-        // ArrayMap<String, Object> button = new ArrayMap<>();
-        // activity.put("buttons", new Object[]{button});
-
-        // ArrayMap<String, Object> timestamps = new ArrayMap<>();
-        // timestamps.put("start", current);
-
-        // activity.put("timestamps", timestamps);
-        //////////////////////////////////////////
-
         presence.put("activities", new Object[]{activity});
-
         presence.put("afk", false);
         presence.put("since", current);
         presence.put("status", null);
@@ -180,22 +159,17 @@ public class DiscordRPC extends AppCompatActivity{
         webSocketClient.send(gson.toJson(arr));
     }
 
-    private void login(View view)
-    {
-        if (authToken != null)
-        {
+    private void login() {
+        if (authToken != null) {
             Toast.makeText(getApplicationContext(), "Logged In", Toast.LENGTH_SHORT).show();
             connect();
         }
     }
 
-    private void connect()
-    {
-        wsThr = new Thread(new Runnable()
-        {
+    private void connect() {
+        wsThr = new Thread(new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 createWebSocketClient();
             }
         });
@@ -203,52 +177,44 @@ public class DiscordRPC extends AppCompatActivity{
         wsThr.start();
     }
 
-    private void createWebSocketClient()
-    {
+    private void createWebSocketClient() {
         appendToLog("Connecting...");
 
         URI uri;
 
-        try
-        {
+        try {
             uri = new URI("wss://gateway.discord.gg/?encoding=json&v=9");
-        }
-        catch (URISyntaxException e)
-        {
+        } catch (URISyntaxException e) {
             e.printStackTrace();
             return;
         }
 
         ArrayMap<String, String> headerMap = new ArrayMap<>();
 
-        webSocketClient = new WebSocketClient(uri, headerMap)
-        {
+        webSocketClient = new WebSocketClient(uri, headerMap) {
 
             @Override
-            public void onOpen(ServerHandshake serverHandshake)
-            {
+            public void onOpen(ServerHandshake serverHandshake) {
                 appendToLog("Connected.");
             }
 
             @Override
-            public void onMessage(String message)
-            {
-                ArrayMap<String, Object> map = gson.fromJson(message, new TypeToken<ArrayMap<String, Object>>() {}.getType());
+            public void onMessage(String message) {
+                ArrayMap<String, Object> map = gson.fromJson(message, new TypeToken<ArrayMap<String, Object>>() {
+                }.getType());
 
                 Object o = map.get("s");
-                if (o != null)
-                {
-                    seq = ((Double)o).intValue();
+                if (o != null) {
+                    seq = ((Double) o).intValue();
                 }
 
-                int opcode = ((Double)map.get("op")).intValue();
+                int opcode = ((Double) map.get("op")).intValue();
 
-                switch (opcode)
-                {
+                switch (opcode) {
                     case 0:
-                        if (((String)map.get("t")).equals("READY")) {
+                        if (((String) map.get("t")).equals("READY")) {
                             appendToLog("Received READY event");
-                            Map data = (Map) ((Map)map.get("d")).get("user");
+                            Map data = (Map) ((Map) map.get("d")).get("user");
                             appendToLog("Connected to " + data.get("username") + "#" + data.get("discriminator"));
                             return;
                         }
@@ -256,7 +222,7 @@ public class DiscordRPC extends AppCompatActivity{
 
                     case 10:
                         Map data = (Map) map.get("d");
-                        heartbeat_interval = ((Double)data.get("heartbeat_interval")).intValue();
+                        heartbeat_interval = ((Double) data.get("heartbeat_interval")).intValue();
 
                         heartbeatThr = new Thread(heartbeatRunnable);
                         heartbeatThr.start();
@@ -269,7 +235,7 @@ public class DiscordRPC extends AppCompatActivity{
                             heartbeatThr.interrupt();
                         }
 
-                        webSocketClient.send(/*encodeString*/("{\"op\":1, \"d\":" + (seq==0?"null":Integer.toString(seq)) + "}"));
+                        webSocketClient.send(/*encodeString*/("{\"op\":1, \"d\":" + (seq == 0 ? "null" : Integer.toString(seq)) + "}"));
                         break;
 
                     case 11:
@@ -284,8 +250,7 @@ public class DiscordRPC extends AppCompatActivity{
             }
 
             @Override
-            public void onClose(int reasonCode, String reason, boolean remote)
-            {
+            public void onClose(int reasonCode, String reason, boolean remote) {
                 appendToLog("Connection closed with exit code " + reasonCode + " additional info: " + reason + "\n");
 
                 if (!heartbeatThr.interrupted()) {
@@ -296,8 +261,7 @@ public class DiscordRPC extends AppCompatActivity{
             }
 
             @Override
-            public void onError(Exception e)
-            {
+            public void onError(Exception e) {
                 if (!e.getMessage().equals("Interrupt")) {
                     appendToLog(Log.getStackTraceString(e));
                 }
@@ -305,12 +269,9 @@ public class DiscordRPC extends AppCompatActivity{
 
             @Override
             protected void onSetSSLParameters(SSLParameters sslParameters) {
-                try
-                {
+                try {
                     super.onSetSSLParameters(sslParameters);
-                }
-                catch (Throwable th)
-                {
+                } catch (Throwable th) {
                     th.printStackTrace();
                 }
             }
@@ -319,8 +280,7 @@ public class DiscordRPC extends AppCompatActivity{
         webSocketClient.connect();
     }
 
-    private void sendMobileIdentity()
-    {
+    private void sendMobileIdentity() {
         ArrayMap<String, Object> prop = new ArrayMap<>();
         prop.put("$os", "linux");
         prop.put("$browser", "Discord Android");
@@ -339,48 +299,37 @@ public class DiscordRPC extends AppCompatActivity{
         webSocketClient.send(gson.toJson(arr));
     }
 
-    private void appendToLog(final String message)
-    {
-        runOnUiThread(new Runnable()
-        {
+    private void appendToLog(final String message) {
+        runOnUiThread(new Runnable() {
             @Override
-            public void run()
-            {
-                if (textViewLog != null)
-                {
+            public void run() {
+                if (textViewLog != null) {
                     textViewLog.append(message + "\n");
                 }
             }
         });
     }
 
-    public final boolean extractToken()
-    {
+    public final boolean extractToken() {
         // ~~extract token in an ugly way :troll:~~
 
-        try
-        {
+        try {
             File f = new File(getFilesDir().getParentFile(), "app_webview/Default/Local Storage/leveldb");
-            File[] fArr = f.listFiles(new FilenameFilter()
-            {
+            File[] fArr = f.listFiles(new FilenameFilter() {
                 @Override
-                public boolean accept(File file, String name)
-                {
+                public boolean accept(File file, String name) {
                     return name.endsWith(".log");
                 }
             });
 
-            if (fArr.length == 0)
-            {
+            if (fArr.length == 0) {
                 return false;
             }
             f = fArr[0];
             BufferedReader br = new BufferedReader(new FileReader(f));
             String line;
-            while ((line = br.readLine()) != null)
-            {
-                if (line.contains("token"))
-                {
+            while ((line = br.readLine()) != null) {
+                if (line.contains("token")) {
                     break;
                 }
             }
@@ -389,9 +338,7 @@ public class DiscordRPC extends AppCompatActivity{
             line = line.substring(line.indexOf("\"") + 1);
             authToken = line.substring(0, line.indexOf("\""));
             return true;
-        }
-        catch (Throwable e)
-        {
+        } catch (Throwable e) {
             return false;
         }
     }

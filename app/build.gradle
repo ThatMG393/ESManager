@@ -30,7 +30,8 @@ dependencies {
     implementation 'commons-io:commons-io:2.6'
     implementation 'gr.pantrif:easy-android-splash-screen:0.0.1'
     implementation 'com.github.salehyarahmadi:FileAndFolderPicker:1.0.4'
-    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'androidx.preference:preference:1.1.1'
     implementation files('libs/Java-WebSocket-1.5.2.jar')
     implementation files('libs/slf4j-android-1.5.8.jar')
 }

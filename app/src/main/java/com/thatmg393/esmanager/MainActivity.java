@@ -9,25 +9,22 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.thatmg393.esmanager.fragments.HomeMenuFragment;
 import com.thatmg393.esmanager.fragments.ModsMenuFragment;
-import com.thatmg393.esmanager.fragments.SettingsMenuFragment;
+import com.thatmg393.esmanager.fragments.SettingsMenuPreferenceFragment;
 
-public class MainActivity extends AppCompatActivity
-{
-    String[] modslists = {"Everlogic", "1x1 Thrusters", "Test1Breh","Test2Bruh"};
-    
+public class MainActivity extends AppCompatActivity {
+
     private final int EXTERNAL_STORAGE_PERM_CODE = 28;
+
     Switch fistSettingsSwitch;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         //ModLists = Created Mods
         //ModsList = Installed Mods
@@ -43,31 +40,25 @@ public class MainActivity extends AppCompatActivity
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
-        new BottomNavigationView.OnNavigationItemSelectedListener() 
-    {
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            Fragment selectedFragment = null;
-            
-            switch (item.getItemId())
-            {
-                case R.id.bottom_nav_homeMenu:
-                    selectedFragment = new HomeMenuFragment();
-                    break;
-                case R.id.bottom_nav_modsMenu:
-                    selectedFragment = new ModsMenuFragment();
-                    break;
-                case R.id.bottom_nav_settingsMenu:
-                    selectedFragment = new SettingsMenuFragment();
-                    break;
-            }
-            
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
-            
-            return true;
-        }
-    };
-    
+            new BottomNavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.bottom_nav_homeMenu:
+                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeMenuFragment()).commit();
+                            break;
+                        case R.id.bottom_nav_modsMenu:
+                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ModsMenuFragment()).commit();
+                            break;
+                        case R.id.bottom_nav_settingsMenu:
+                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsMenuPreferenceFragment()).commit();
+                            break;
+                    }
+
+                    return true;
+                }
+            };
+
     private long firstBackTime;
 
     @Override

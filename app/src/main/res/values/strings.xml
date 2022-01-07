@@ -16,4 +16,7 @@
     <string name="discord_rcp_ask_message">Are you sure you wanna enable Discord RP? \r\n I will not be responsible if your discord account had been hacked, you\'ve been WARNED! \r\n" "USE THIS AT YOUR OWN RISK!</string>
     <string name="discord_rcp_ask_accept">I accept the consequences</string>
     <string name="discord_rcp_ask_cancel">Cancel</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

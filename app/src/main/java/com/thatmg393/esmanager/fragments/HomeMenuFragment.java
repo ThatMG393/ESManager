@@ -53,13 +53,11 @@ public class HomeMenuFragment extends Fragment {
 // ensure it's unique compared to other activity request codes you use
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == MY_REQUEST_CODE)
-        {
-            discordRPC.removePresenceUpdate();
+        if (requestCode == MY_REQUEST_CODE) {
+            discordRPC.removeActivity();
         }
 
     }
@@ -70,7 +68,8 @@ public class HomeMenuFragment extends Fragment {
         if (esIntent != null) {
             try {
                 startActivity(esIntent);
-                discordRPC.sendPresenceUpdate();
+
+                discordRPC.startActivity();
 
             } catch (android.content.ActivityNotFoundException anfe) {
                 try {
