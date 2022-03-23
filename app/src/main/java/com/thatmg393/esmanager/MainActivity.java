@@ -1,6 +1,7 @@
 package com.thatmg393.esmanager;
 
 import android.Manifest;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Switch;
@@ -11,13 +12,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.thatmg393.esmanager.fragments.HomeMenuFragment;
-import com.thatmg393.esmanager.fragments.ModsMenuFragment;
-import com.thatmg393.esmanager.fragments.SettingsMenuPreferenceFragment;
+import com.thatmg393.esmanager.fragments.mainactivityfragments.HomeMenuFragment;
+import com.thatmg393.esmanager.fragments.mainactivityfragments.ModsMenuFragment;
+import com.thatmg393.esmanager.fragments.mainactivityfragments.SettingsMenuPreferenceFragment;
 
 public class MainActivity extends AppCompatActivity {
-
-    private final int EXTERNAL_STORAGE_PERM_CODE = 28;
 
     Switch fistSettingsSwitch;
 
@@ -31,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Ask Premisions
 
+        int EXTERNAL_STORAGE_PERM_CODE = 28;
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, EXTERNAL_STORAGE_PERM_CODE);
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_nav_view);

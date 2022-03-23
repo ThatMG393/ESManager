@@ -4,9 +4,9 @@
     android:layout_width="match_parent">
 
     <androidx.preference.SwitchPreference
-        android:defaultValue="true"
-        android:key="example_switch"
-        android:summary="Turn this option on or off"
-        android:title="Settings option" />
+        android:defaultValue="false"
+        android:key="pref_settings_dcrpc"
+        android:title="Discord RPC"
+        android:summary="Turns on Discord Rich Presence"/>
 
 </androidx.preference.PreferenceScreen>

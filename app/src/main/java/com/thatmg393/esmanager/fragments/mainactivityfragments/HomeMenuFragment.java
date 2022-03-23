@@ -1,4 +1,4 @@
-package com.thatmg393.esmanager.fragments;
+package com.thatmg393.esmanager.fragments.mainactivityfragments;
 
 import android.app.ActivityManager;
 import android.content.Context;
@@ -25,7 +25,7 @@ public class HomeMenuFragment extends Fragment {
 
     private static boolean isESLaunched = false;
 
-    private DiscordRPC discordRPC;
+
 
     @Nullable
     @Override
@@ -37,8 +37,6 @@ public class HomeMenuFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        discordRPC = new DiscordRPC();
-
         Button launchGameButton = getView().findViewById(R.id.launch_game);
         launchGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,17 +47,9 @@ public class HomeMenuFragment extends Fragment {
 
     }
 
-    private static final int MY_REQUEST_CODE = 0xe110; // Or whatever number you want
-// ensure it's unique compared to other activity request codes you use
-
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == MY_REQUEST_CODE) {
-            discordRPC.removeActivity();
-        }
-
+    public void onResume() {
+        super.onResume();
     }
 
     private void LaunchGame() {
@@ -68,9 +58,6 @@ public class HomeMenuFragment extends Fragment {
         if (esIntent != null) {
             try {
                 startActivity(esIntent);
-
-                discordRPC.startActivity();
-
             } catch (android.content.ActivityNotFoundException anfe) {
                 try {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));

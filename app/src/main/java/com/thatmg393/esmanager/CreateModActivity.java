@@ -19,7 +19,9 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.navigation.NavigationView;
-import com.thatmg393.esmanager.fragments.ProjectEditorFragment;
+import com.thatmg393.esmanager.fragments.createmodfragments.ProjectEditorFragment;
+import com.thatmg393.esmanager.fragments.createmodfragments.ProjectExplorerFragment;
+import com.thatmg393.esmanager.fragments.createmodfragments.ProjectInfoFragment;
 
 public class CreateModActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawerLayout;
@@ -119,15 +121,18 @@ public class CreateModActivity extends AppCompatActivity implements NavigationVi
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-        Fragment fragment = null;
-
         switch (menuItem.getItemId()) {
             case R.id.nav_project_editor:
                 getSupportFragmentManager().beginTransaction().replace(R.id.createmod_fragment_container, new ProjectEditorFragment()).commit();
                 break;
 
             case R.id.nav_project_explorer:
+                getSupportFragmentManager().beginTransaction().replace(R.id.createmod_fragment_container, new ProjectExplorerFragment()).commit();
+                break;
 
+            case R.id.nav_project_info:
+                getSupportFragmentManager().beginTransaction().replace(R.id.createmod_fragment_container, new ProjectInfoFragment()).commit();
+                break;
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;

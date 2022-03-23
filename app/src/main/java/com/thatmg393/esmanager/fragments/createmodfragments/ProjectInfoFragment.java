@@ -1,4 +1,4 @@
-package com.thatmg393.esmanager.fragments;
+package com.thatmg393.esmanager.fragments.createmodfragments;
 
 import android.os.Bundle;
 import androidx.annotation.NonNull;

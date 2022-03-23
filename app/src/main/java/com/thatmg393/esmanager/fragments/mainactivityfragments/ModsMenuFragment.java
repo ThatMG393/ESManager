@@ -1,4 +1,4 @@
-package com.thatmg393.esmanager.fragments;
+package com.thatmg393.esmanager.fragments.mainactivityfragments;
 
 import android.app.AlertDialog;
 import android.content.Intent;

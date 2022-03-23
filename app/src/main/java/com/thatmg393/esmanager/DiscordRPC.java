@@ -30,8 +30,6 @@ import javax.net.ssl.SSLParameters;
 
 public class DiscordRPC extends AppCompatActivity {
 
-    private static DiscordRPC instance;
-
     private SharedPreferences pref;
 
     private WebView webView;
@@ -93,20 +91,6 @@ public class DiscordRPC extends AppCompatActivity {
         };
 
         gson = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
-    }
-
-    public void startActivity() {
-        extractToken();
-        init();
-        login();
-        sendPresenceUpdate();
-    }
-
-    public void removeActivity() {
-        extractToken();
-        init();
-        login();
-        removePresenceUpdate();
     }
 
     private void sendPresenceUpdate() {
