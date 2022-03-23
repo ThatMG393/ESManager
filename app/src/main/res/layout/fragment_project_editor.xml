@@ -3,14 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.thatmg393.esmanager.ui.CodeEditor
+    <com.amrdeveloper.codeview.CodeView
+        android:id="@+id/code_editor"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textMultiLine"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
-        android:id="@+id/code_editor" />
+        android:layout_height="match_parent"
+        android:background="#181818"
+        android:dropDownWidth="150dp"
+        android:dropDownHorizontalOffset="0dp"
+        android:dropDownSelector="#353535"
+        android:gravity="top|start" />
 
 </RelativeLayout>

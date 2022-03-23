@@ -9,8 +9,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.amrdeveloper.codeview.CodeView;
 import com.thatmg393.esmanager.R;
+import com.thatmg393.esmanager.classes.LuaSyntaxManager;
 import com.thatmg393.esmanager.ui.CodeEditor;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ProjectEditorFragment extends Fragment {
 
@@ -30,9 +35,18 @@ public class ProjectEditorFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        CodeEditor cde = view.findViewById(R.id.code_editor);
-        cde.append(start_code);
+        CodeView codeView = view.findViewById(R.id.code_editor);
+        codeView.addSyntaxPattern(LuaSyntaxManager.lua_keywords, LuaSyntaxManager.lua_keywords_colors);
+        codeView.addSyntaxPattern(LuaSyntaxManager.lua_operators, LuaSyntaxManager.lua_operators_colors);
+        codeView.addSyntaxPattern(LuaSyntaxManager.lua_chars, LuaSyntaxManager.lua_chars_colors);
 
-        // String[] languageKeywords = {"es.TimeScale", "es.DeltaTime", "es.FixedDeltaTime", "es.SetSoundVolume()", "es.SetSoundLoop()", "es.PlaySound()", "es.Player"};
+        Map<Character, Character> pairMap = new HashMap<>();
+        pairMap.put('{', '}');
+        pairMap.put('[', ']');
+        pairMap.put('(', ')');
+        pairMap.put('<', '>');
+        pairMap.put('"', '"');
+
+        codeView.setPairCompleteMap(pairMap);
     }
 }

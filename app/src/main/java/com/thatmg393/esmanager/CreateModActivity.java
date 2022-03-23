@@ -2,11 +2,8 @@ package com.thatmg393.esmanager;
 
 import android.os.Bundle;
 import android.text.Html;
+import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
 
 import com.google.android.material.navigation.NavigationView;
 import com.thatmg393.esmanager.fragments.createmodfragments.ProjectEditorFragment;
@@ -26,15 +22,16 @@ import com.thatmg393.esmanager.fragments.createmodfragments.ProjectInfoFragment;
 public class CreateModActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawerLayout;
 
-    private final String[] dropdownLists = {"New Script", "Import 3D Object", "Save and Play", "Save only", "Settings", "Exit"};
+    // private final String[] dropdownLists = {"New Script", "Import 3D Object", "Save and Play", "Save only", "Settings", "Exit"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_createmod);
-
-
         Toolbar toolbar = findViewById(R.id.createmod_toolbar);
+        setSupportActionBar(toolbar);
+
+
         Bundle extras = getIntent().getExtras();
 
         if (extras != null) {
@@ -58,52 +55,6 @@ public class CreateModActivity extends AppCompatActivity implements NavigationVi
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        Spinner dropdown = findViewById(R.id.project_dropdown);
-
-        ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, dropdownLists);
-
-        dropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        dropdown.setAdapter(dropdownAdapter);
-        dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
-                switch (pos)
-                {
-                    case 0:
-                        Toast.makeText(getApplicationContext(), "New Script Created", Toast.LENGTH_LONG).show();
-                        break;
-
-                    case 1:
-                        Toast.makeText(getApplicationContext(), "Imported 3D Object Created", Toast.LENGTH_LONG).show();
-                        break;
-
-                    case 2:
-                        Toast.makeText(getApplicationContext(), "Saved and launching", Toast.LENGTH_LONG).show();
-                        break;
-
-                    case 3:
-                        Toast.makeText(getApplicationContext(), "Saved", Toast.LENGTH_LONG).show();
-                        break;
-
-                    case 4:
-                        Toast.makeText(getApplicationContext(), "Settings", Toast.LENGTH_LONG).show();
-                        break;
-
-                    case 5:
-                        Toast.makeText(getApplicationContext(), "Exited", Toast.LENGTH_LONG).show();
-                        CreateModActivity.this.finish();
-                        break;
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.createmod_fragment_container, new ProjectEditorFragment()).commit();
             navigationView.setCheckedItem(R.id.nav_project_editor);
@@ -117,6 +68,43 @@ public class CreateModActivity extends AppCompatActivity implements NavigationVi
                 files -> Toast.makeText(getApplicationContext(), files[0].getPath(), Toast.LENGTH_SHORT).show());
         singleFilePickerDialog.show();
          */
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.dropdown_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.nav_project_dropdown_newscript:
+                Toast.makeText(getApplicationContext(), "New Script Created", Toast.LENGTH_LONG).show();
+                break;
+
+            case R.id.nav_project_dropdown_addNew3DObject:
+                Toast.makeText(getApplicationContext(), "Imported 3D Object Created", Toast.LENGTH_LONG).show();
+                break;
+
+            case R.id.nav_project_dropdown_savenlaunch:
+                Toast.makeText(getApplicationContext(), "Saved and launching", Toast.LENGTH_LONG).show();
+                break;
+
+            case R.id.nav_project_dropdown_save:
+                Toast.makeText(getApplicationContext(), "Saved", Toast.LENGTH_LONG).show();
+                break;
+
+            case R.id.nav_project_dropdown_openst:
+                Toast.makeText(getApplicationContext(), "Settings", Toast.LENGTH_LONG).show();
+                break;
+
+            case R.id.nav_project_dropdown_exit:
+                Toast.makeText(getApplicationContext(), "Exiting", Toast.LENGTH_LONG).show();
+                CreateModActivity.this.finish();
+                break;
+        }
+        return true;
     }
 
     @Override
