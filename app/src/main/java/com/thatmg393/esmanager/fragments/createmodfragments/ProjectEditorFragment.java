@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment;
 import com.amrdeveloper.codeview.CodeView;
 import com.thatmg393.esmanager.R;
 import com.thatmg393.esmanager.classes.LuaSyntaxManager;
-import com.thatmg393.esmanager.ui.CodeEditor;
 
 import java.util.HashMap;
 import java.util.Map;
