@@ -2,6 +2,7 @@ package com.thatmg393.esmanager.fragments.mainactivityfragments;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -11,6 +12,7 @@ import androidx.preference.SwitchPreference;
 
 import com.thatmg393.esmanager.MainActivity;
 import com.thatmg393.esmanager.R;
+import com.thatmg393.esmanager.services.DiscordRPC;
 
 public class SettingsMenuPreferenceFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -48,18 +50,34 @@ public class SettingsMenuPreferenceFragment extends PreferenceFragmentCompat imp
             if (test) {
                 if (!MainActivity.sharedPreferences.getBoolean("agreed_rpc", false))
                 {
-                    AlertDialog.Builder adb = new AlertDialog.Builder(getContext());
+                    AlertDialog adb = new AlertDialog.Builder(getContext()).create();
                     adb.setTitle("Warning!");
                     adb.setMessage("This is a unsafe feature!\r\nIt might make your Discord account vulnerable to hackers!\r\n\r\nAre you sure you want to turn on this feature?");
 
-                    adb.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    adb.setButton(DialogInterface.BUTTON_POSITIVE,"Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             dialogInterface.dismiss();
                             MainActivity.editor.putBoolean("agreed_rpc", true);
                             MainActivity.editor.apply();
+                            Intent intent = new Intent(getContext(), DiscordRPC.class);
+                            getActivity().startService(intent);
                         }
                     });
+
+                    adb.setButton(DialogInterface.BUTTON_NEGATIVE,"No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                            sp.setChecked(false);
+                        }
+                    });
+                    adb.show();
+                }
+                else
+                {
+                    Intent intent = new Intent(getContext(), DiscordRPC.class);
+                    getActivity().startService(intent);
                 }
             }
         }

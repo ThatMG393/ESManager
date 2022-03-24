@@ -35,12 +35,11 @@ import java.util.List;
 public class ModsMenuFragment extends Fragment {
 
     public final static String path = Environment.getExternalStorageDirectory().toString() + "/Android/com.evertechsandbox/files/mods/";
-    public String jsonPath = null;
-    public String previewPath = null;
-    String[] modlists = {"More Buttons", "1 Part Piston", "Test1Bruh", "Test2Breh"};
-    List<ModProperties> mp;
-    ListView lv;
-    JSONObject json;
+    private String jsonPath = null;
+
+    private List<ModProperties> mp;
+    private ListView lv;
+    private JSONObject json;
     private boolean isListLoaded = false;
 
     @Nullable
@@ -122,15 +121,20 @@ public class ModsMenuFragment extends Fragment {
         final AlertDialog loading_diag = new AlertDialog.Builder(getContext()).create();
         loading_diag.setView(promptView);
 
-        System.out.println("isListLoaded? = " + isListLoaded);
-        if (isListLoaded != true) {
+        if (!isListLoaded) {
             loading_diag.show();
             mp = new ArrayList<>();
             lv = getView().findViewById(R.id.modList);
 
             try
             {
-                findAllMods();
+                Thread fam = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        findAllMods();
+                    }
+                });
+                fam.start();
             }
             catch (NullPointerException e)
             {
@@ -141,14 +145,14 @@ public class ModsMenuFragment extends Fragment {
 
             if (lv != null && ca != null) {
                 lv.setAdapter(ca);
+
                 isListLoaded = true;
-                System.out.println("isListLoaded? = " + isListLoaded);
                 loading_diag.dismiss();
             }
         }
     }
 
-    public final void findAllMods() {
+    private void findAllMods() {
         File file = new File(path);
         String[] directories = file.list(new FilenameFilter() {
             @Override
@@ -163,18 +167,12 @@ public class ModsMenuFragment extends Fragment {
 
                 File checkdir1 = new File(jsonPath);
 
-                if (checkdir1.exists() == true) {
-                    InputStream istr = new FileInputStream(jsonPath);
-                    String convertedJson = IOUtils.toString(istr, "UTF-8");
+                if (checkdir1.exists()) {
+                    InputStream is = new FileInputStream(jsonPath);
 
-                    json = new JSONObject(convertedJson);
+                    json = new JSONObject(IOUtils.toString(is, "UTF-8"));
 
-                    String preview = json.getString("preview");
-
-                    previewPath = path + folders + "/" + preview;
-
-                    //System.out.println("Image path is: " + previewPath);
-                    //Value should be '...Mods/everlogic/textures/preview.png'
+                    String preview = path + folders + "/" + json.getString("preview");
 
                     String name = json.getString("name");
                     String desc = json.getString("description");
@@ -182,12 +180,10 @@ public class ModsMenuFragment extends Fragment {
                     String version = json.getString("version");
 
                     if (name != null && desc != null && author != null && version != null) {
-                        mp.add(new ModProperties(name, desc, author, version, previewPath));
+                        mp.add(new ModProperties(name, desc, author, version, preview));
                     }
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
+            } catch (IOException | JSONException e) {
                 e.printStackTrace();
             }
         }

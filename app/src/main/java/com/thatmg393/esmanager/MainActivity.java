@@ -60,6 +60,14 @@ public class MainActivity extends AppCompatActivity {
         } catch (GeneralSecurityException | IOException e) {
             e.printStackTrace();
         }
+
+        /* Starts service if true
+        if ()
+        {
+            Intent intent = new Intent(getContext(), DiscordRPC.class);
+            getActivity().startService(intent);
+        }
+        */
     }
 
 
