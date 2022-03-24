@@ -4,12 +4,17 @@ An open-source game manager.
 
 With a working Syntax Highlight and Code Editor specifically for LUA!
 
-This app only supports Evertech Sandbox.
+# To-do list
+- [ ] Discord RPC
+- [ ] Mod Creator
+- [ ] Mod Creator Syntax Highlighting
+- [ ] Mod Creator Code Autocomplete
+- [ ] Dark Mode
 
-Download the app here >> https://play.google.com/store/apps/details?id=com.evertechsandbox
+Line with a "*" means partially implemented
 
-You can modify it however you want, but you promise you will credit me.
-
-Thats all folks, see ya👋
+# Building Requirments
+- Java Version 8
+- Android SDK 32
 
 
