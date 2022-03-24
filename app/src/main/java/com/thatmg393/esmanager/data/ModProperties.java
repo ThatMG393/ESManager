@@ -29,7 +29,6 @@ public class ModProperties
     
     public String getAuthor()
     {
-        
         return modAuthor;
     }
     
@@ -43,9 +42,8 @@ public class ModProperties
         return modPreviewPath;
     }
     
-    public String setPreviewImgPath(String path)
-    {
-        this.modPreviewPath = path;
-        return modPreviewPath;
-    }
+    // public void setPreviewImgPath(String path)
+    // {
+    //    this.modPreviewPath = path;
+    // }
 }

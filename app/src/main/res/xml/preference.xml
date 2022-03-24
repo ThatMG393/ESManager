@@ -1,12 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="match_parent"
-    android:layout_width="match_parent">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <androidx.preference.SwitchPreference
-        android:defaultValue="false"
-        android:key="pref_settings_dcrpc"
-        android:title="Discord RPC"
-        android:summary="Turns on Discord Rich Presence"/>
+    <PreferenceCategory android:title="INTERFACE" >
 
-</androidx.preference.PreferenceScreen>
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="interface_dm"
+            android:title="Dark Mode"
+            android:summary="Dark Mode Theme"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="MISC" >
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="pref_settings_dcrpc"
+            android:title="Discord RPC"
+            android:summary="Turns on Discord Rich Presence"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="UPDATE SETTINGS" >
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="prefSendReport"
+            android:summary="Helps to fix bugs"
+            android:title="Send crash reports" >
+        </CheckBoxPreference>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
