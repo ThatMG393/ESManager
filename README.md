@@ -2,12 +2,12 @@
 
 An open-source game manager.
 
-With a working Syntax Highlight and Code Editor specifically for LUA!
+With a working Mod Creator!
 
 # To-do list
-- [ ] Discord RPC
-- [ ] Mod Creator
-- [ ] Mod Creator Syntax Highlighting
+- [ ] Discord RPC*
+- [ ] Mod Creator*
+- [ ] Mod Creator Syntax Highlighting*
 - [ ] Mod Creator Code Autocomplete
 - [ ] Dark Mode
 
