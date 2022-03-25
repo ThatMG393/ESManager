@@ -1,6 +1,8 @@
 package com.thatmg393.esmanager.fragments.mainactivityfragments;
 
+import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,9 +18,9 @@ import com.thatmg393.esmanager.services.DiscordRPC;
 
 public class SettingsMenuPreferenceFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-    public SettingsMenuPreferenceFragment() { }
+    public static SwitchPreference sp;
 
-    // private final SharedPreferences.Editor editor = MainActivity.sharedPreferences.edit();
+    public SettingsMenuPreferenceFragment() { }
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -45,11 +47,10 @@ public class SettingsMenuPreferenceFragment extends PreferenceFragmentCompat imp
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
         if (s.equals("pref_settings_dcrpc")) {
-            SwitchPreference sp = (SwitchPreference) findPreference(s);
+            sp = (SwitchPreference) findPreference(s);
             boolean test = sharedPreferences.getBoolean(s, false);
             if (test) {
-                if (!MainActivity.sharedPreferences.getBoolean("agreed_rpc", false))
-                {
+                if (!MainActivity.sharedPreferenceHelper.getBoolean("agreed_rpc")) {
                     AlertDialog adb = new AlertDialog.Builder(getContext()).create();
                     adb.setTitle("Warning!");
                     adb.setMessage("This is a unsafe feature!\r\nIt might make your Discord account vulnerable to hackers!\r\n\r\nAre you sure you want to turn on this feature?");
@@ -57,30 +58,49 @@ public class SettingsMenuPreferenceFragment extends PreferenceFragmentCompat imp
                     adb.setButton(DialogInterface.BUTTON_POSITIVE,"Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
+                            MainActivity.sharedPreferenceHelper.addBoolean("agreed_rpc", true);
+                            if (!isMyServiceRunning(DiscordRPC.class)) {
+                                Intent intent = new Intent(getContext(), DiscordRPC.class);
+                                getActivity().startService(intent);
+                            }
                             dialogInterface.dismiss();
-                            MainActivity.editor.putBoolean("agreed_rpc", true);
-                            MainActivity.editor.apply();
-                            Intent intent = new Intent(getContext(), DiscordRPC.class);
-                            getActivity().startService(intent);
                         }
                     });
 
                     adb.setButton(DialogInterface.BUTTON_NEGATIVE,"No", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
                             sp.setChecked(false);
+                            dialogInterface.dismiss();
                         }
                     });
+
                     adb.show();
+                } else {
+                    if (sp.isChecked() && MainActivity.sharedPreferenceHelper.getBoolean("agreed_rpc")) {
+                        if (!isMyServiceRunning(DiscordRPC.class)) {
+                            Intent intent = new Intent(getContext(), DiscordRPC.class);
+                            getActivity().startService(intent);
+                        }
+                    }
                 }
-                else
-                {
-                    Intent intent = new Intent(getContext(), DiscordRPC.class);
-                    getActivity().startService(intent);
-                }
+                MainActivity.sharedPreferenceHelper.addBoolean("isSPChecked", sp.isChecked());
+
+            }
+            else {
+                MainActivity.sharedPreferenceHelper.addBoolean("isSPChecked", sp.isChecked());
             }
         }
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 

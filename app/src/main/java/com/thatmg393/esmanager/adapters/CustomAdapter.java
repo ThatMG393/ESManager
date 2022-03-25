@@ -3,7 +3,6 @@ package com.thatmg393.esmanager.adapters;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import androidx.annotation.NonNull;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 import com.thatmg393.esmanager.R;
 import com.thatmg393.esmanager.data.ModProperties;
@@ -32,7 +33,12 @@ public class CustomAdapter extends ArrayAdapter<ModProperties>
         this.resource = resource;
         this.data = data;
     }
-    
+
+    public void updateModPList(List<ModProperties> newData) {
+        data.clear();
+        data.addAll(newData);
+        this.notifyDataSetChanged();
+    }
     
     @NonNull
     @Override

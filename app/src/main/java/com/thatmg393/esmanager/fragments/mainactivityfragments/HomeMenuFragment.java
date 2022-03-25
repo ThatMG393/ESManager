@@ -14,7 +14,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.thatmg393.esmanager.MainActivity;
 import com.thatmg393.esmanager.R;
+import com.thatmg393.esmanager.services.DiscordRPC;
 
 import java.util.List;
 
@@ -43,7 +45,6 @@ public class HomeMenuFragment extends Fragment {
                 LaunchGame();
             }
         });
-
     }
 
     @Override
@@ -57,6 +58,13 @@ public class HomeMenuFragment extends Fragment {
         if (esIntent != null) {
             try {
                 startActivity(esIntent);
+                MainActivity.sharedPreferenceHelper.addBoolean("isESRunning", isAppRunning(getContext()));
+
+                if (!MainActivity.sharedPreferenceHelper.getBoolean("isServiceRPCRunning") && MainActivity.sharedPreferenceHelper.getBoolean("isSPChecked") && MainActivity.sharedPreferenceHelper.getBoolean("agreed_rpc"))
+                {
+                    Intent intent = new Intent(getContext(), DiscordRPC.class);
+                    getActivity().startService(intent);
+                }
             } catch (android.content.ActivityNotFoundException anfe) {
                 try {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
@@ -67,12 +75,12 @@ public class HomeMenuFragment extends Fragment {
         }
     }
 
-    public static boolean isAppRunning(final Context context, final String packageName) {
+    private boolean isAppRunning(final Context context) {
         final ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         final List<ActivityManager.RunningAppProcessInfo> procInfos = activityManager.getRunningAppProcesses();
         if (procInfos != null) {
             for (final ActivityManager.RunningAppProcessInfo processInfo : procInfos) {
-                if (processInfo.processName.equals(packageName)) {
+                if (processInfo.processName.equals(appPackageName)) {
                     return true;
                 }
             }

@@ -2,7 +2,9 @@ package com.thatmg393.esmanager;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.SharedPreferences;
+import android.app.ActivityManager;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -10,26 +12,26 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.security.crypto.EncryptedSharedPreferences;
-import androidx.security.crypto.MasterKeys;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.thatmg393.esmanager.classes.SharedPreferenceHelper;
 import com.thatmg393.esmanager.fragments.mainactivityfragments.HomeMenuFragment;
 import com.thatmg393.esmanager.fragments.mainactivityfragments.ModsMenuFragment;
 import com.thatmg393.esmanager.fragments.mainactivityfragments.SettingsMenuPreferenceFragment;
-
-import java.io.IOException;
-import java.security.GeneralSecurityException;
+import com.thatmg393.esmanager.services.DiscordRPC;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static SharedPreferences sharedPreferences;
-    public static SharedPreferences.Editor editor;
+    public static SharedPreferenceHelper sharedPreferenceHelper;
+
+    public static Context ctx;
 
     @SuppressLint("CommitPrefEdits")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ctx = MainActivity.this;
+        sharedPreferenceHelper = new SharedPreferenceHelper("pref_file", MainActivity.this);
         setContentView(R.layout.activity_main);
 
         //Ask Permissions
@@ -44,30 +46,13 @@ public class MainActivity extends AppCompatActivity {
         bottomNav.setOnNavigationItemSelectedListener(navListener);
         bottomNav.setSelectedItemId(R.id.bottom_nav_homeMenu);
 
-        String masterKeyAlias = null;
-        try {
-            masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
 
-            sharedPreferences = EncryptedSharedPreferences.create(
-                    "secret_shared_prefs",
-                    masterKeyAlias,
-                    this,
-                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-            );
-
-            editor = MainActivity.sharedPreferences.edit();
-        } catch (GeneralSecurityException | IOException e) {
-            e.printStackTrace();
-        }
-
-        /* Starts service if true
-        if ()
+        if (sharedPreferenceHelper.getBoolean("isSPChecked") && sharedPreferenceHelper.getBoolean("agreed_rpc") && !isMyServiceRunning(DiscordRPC.class))
         {
-            Intent intent = new Intent(getContext(), DiscordRPC.class);
-            getActivity().startService(intent);
+            Intent intent = new Intent(MainActivity.this, DiscordRPC.class);
+            startService(intent);
         }
-        */
+
     }
 
 
@@ -103,5 +88,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         super.onBackPressed();
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

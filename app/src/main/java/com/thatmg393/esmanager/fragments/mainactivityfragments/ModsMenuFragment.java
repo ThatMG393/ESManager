@@ -41,6 +41,8 @@ public class ModsMenuFragment extends Fragment {
     private ListView lv;
     private JSONObject json;
     private boolean isListLoaded = false;
+    private boolean stilScanningMods = false;
+    private CustomAdapter ca;
 
     @Nullable
     @Override
@@ -122,37 +124,45 @@ public class ModsMenuFragment extends Fragment {
         loading_diag.setView(promptView);
 
         if (!isListLoaded) {
-            loading_diag.show();
-            mp = new ArrayList<>();
-            lv = getView().findViewById(R.id.modList);
+            if (!stilScanningMods) {
+                loading_diag.show();
+                mp = new ArrayList<>();
+                lv = getView().findViewById(R.id.modList);
 
-            try
-            {
-                Thread fam = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        findAllMods();
-                    }
-                });
-                fam.start();
-            }
-            catch (NullPointerException e)
-            {
-                Toast.makeText(getContext(), "No mods found", Toast.LENGTH_SHORT).show();
-            }
+                try
+                {
+                    /*
+                    Thread fam = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            findAllMods();
+                        }
+                    });
+                    fam.start();
+                     */
+                    findAllMods();
+                }
+                catch (NullPointerException e)
+                {
+                    Toast.makeText(getContext(), "No mods found", Toast.LENGTH_SHORT).show();
+                }
 
-            CustomAdapter ca = new CustomAdapter(getActivity().getApplicationContext(), 0, mp);
+                 ca = new CustomAdapter(getActivity().getApplicationContext(), 0, mp);
 
-            if (lv != null && ca != null) {
-                lv.setAdapter(ca);
+                if (lv != null && ca != null) {
+                    lv.setAdapter(ca);
 
-                isListLoaded = true;
-                loading_diag.dismiss();
+                    isListLoaded = true;
+                    loading_diag.dismiss();
+                }
+            } else {
+                Toast.makeText(getContext(), "Still getting mods!", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
     private void findAllMods() {
+        stilScanningMods = true;
         File file = new File(path);
         String[] directories = file.list(new FilenameFilter() {
             @Override
@@ -161,31 +171,37 @@ public class ModsMenuFragment extends Fragment {
             }
         });
 
-        for (String folders : directories) {
-            try {
-                jsonPath = path + folders + "/info.json";
+        if (directories == null || directories.length - 1 == -1)
+        {
+            mp.add(new ModProperties("No mod found!", "Please download some mods!", "ThatMG393", "6.9.4.2", ""));
+        } else {
+            for (String folders : directories) {
+                try {
+                    jsonPath = path + folders + "/info.json";
 
-                File checkdir1 = new File(jsonPath);
+                    File checkdir1 = new File(jsonPath);
 
-                if (checkdir1.exists()) {
-                    InputStream is = new FileInputStream(jsonPath);
+                    if (checkdir1.exists()) {
+                        InputStream is = new FileInputStream(jsonPath);
 
-                    json = new JSONObject(IOUtils.toString(is, "UTF-8"));
+                        json = new JSONObject(IOUtils.toString(is, "UTF-8"));
 
-                    String preview = path + folders + "/" + json.getString("preview");
+                        String preview = path + folders + "/" + json.getString("preview");
 
-                    String name = json.getString("name");
-                    String desc = json.getString("description");
-                    String author = json.getString("author");
-                    String version = json.getString("version");
+                        String name = json.getString("name");
+                        String desc = json.getString("description");
+                        String author = json.getString("author");
+                        String version = json.getString("version");
 
-                    if (name != null && desc != null && author != null && version != null) {
-                        mp.add(new ModProperties(name, desc, author, version, preview));
+                        if (name != null && desc != null && author != null && version != null) {
+                            mp.add(new ModProperties(name, desc, author, version, preview));
+                        }
                     }
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException | JSONException e) {
-                e.printStackTrace();
             }
         }
+        stilScanningMods = false;
     }
 }
