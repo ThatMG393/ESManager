@@ -5,7 +5,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import java.io.InputStream;
+
+import com.thatmg393.esmanager.MainActivity;
 
 public class DebugActivity extends Activity {
 	String[] exceptionType = {
@@ -25,6 +26,13 @@ public class DebugActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        try {
+			stopService(MainActivity.rpcActIntent);
+		} catch (NullPointerException npe) {
+			System.out.println(npe);
+		}
+
 		Intent intent = getIntent();
 		String errMsg = "";
 		String madeErrMsg = "";
@@ -42,7 +50,7 @@ public class DebugActivity extends Activity {
 					}
 				}
 				if(madeErrMsg.isEmpty()) madeErrMsg = errMsg;
-			}catch(Exception e){}
+			} catch(Exception e) { }
 		}
         AlertDialog.Builder bld = new AlertDialog.Builder(this);
 		bld.setTitle("An error occured");

@@ -1,26 +1,56 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        es_sign {
+            storeFile file('C:\\Users\\Zackron Denzo Olarte\\Downloads\\eskeystore.keystore')
+            storePassword 'mybiz2710'
+            keyAlias = 'eskey'
+            keyPassword 'mybiz2710'
+        }
+    }
     compileSdkVersion 32
     defaultConfig {
         applicationId "com.thatmg393.esmanager"
         minSdkVersion 23
         targetSdkVersion 32
         versionCode 1
-        versionName '0.9.3-alpha04'
+        versionName '0.9.5'
     }
     buildTypes {
         release {
+            applicationIdSuffix ".release"
+            versionNameSuffix "-release" + "_build-" + getDate()
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
+        beta {
+            applicationIdSuffix ".beta"
+            versionNameSuffix "-beta" + "_build-" + getDate()
+            minifyEnabled false
+            signingConfig signingConfigs.es_sign
+        }
+
+        alpha {
+            applicationIdSuffix ".alpha"
+            versionNameSuffix "-alpha" + "_build-" + getDate()
+            minifyEnabled false
+            signingConfig signingConfigs.es_sign
+        }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
     buildToolsVersion = '32'
 }
+
+static def getDate() {
+    return new Date().format('yyyyMMddHHmmss')
+}
+
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     //Important

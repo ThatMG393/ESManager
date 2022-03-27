@@ -1,7 +1,6 @@
 package com.thatmg393.esmanager.fragments.mainactivityfragments;
 
-import android.app.ActivityManager;
-import android.content.Context;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,9 +15,8 @@ import androidx.fragment.app.Fragment;
 
 import com.thatmg393.esmanager.MainActivity;
 import com.thatmg393.esmanager.R;
-import com.thatmg393.esmanager.services.DiscordRPC;
-
-import java.util.List;
+import com.thatmg393.esmanager.Utils;
+import com.thatmg393.esmanager.services.RPCService;
 
 public class HomeMenuFragment extends Fragment {
 
@@ -58,33 +56,24 @@ public class HomeMenuFragment extends Fragment {
         if (esIntent != null) {
             try {
                 startActivity(esIntent);
-                MainActivity.sharedPreferenceHelper.addBoolean("isESRunning", isAppRunning(getContext()));
+                MainActivity.sharedPreferencesUtil.addBoolean("isESRunning", Utils.ActivityUtils.checkIfAppIsRunning(getContext(), appPackageName));
 
-                if (!MainActivity.sharedPreferenceHelper.getBoolean("isServiceRPCRunning") && MainActivity.sharedPreferenceHelper.getBoolean("isSPChecked") && MainActivity.sharedPreferenceHelper.getBoolean("agreed_rpc"))
-                {
-                    Intent intent = new Intent(getContext(), DiscordRPC.class);
-                    getActivity().startService(intent);
-                }
-            } catch (android.content.ActivityNotFoundException anfe) {
+                RPCService.sendPresence();
+            } catch (ActivityNotFoundException anfe) {
                 try {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-                } catch (android.content.ActivityNotFoundException anfe2) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
-                }
-            }
-        }
-    }
 
-    private boolean isAppRunning(final Context context) {
-        final ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        final List<ActivityManager.RunningAppProcessInfo> procInfos = activityManager.getRunningAppProcesses();
-        if (procInfos != null) {
-            for (final ActivityManager.RunningAppProcessInfo processInfo : procInfos) {
-                if (processInfo.processName.equals(appPackageName)) {
-                    return true;
+                    return;
+                } catch (ActivityNotFoundException anfe2) {
+                    anfe2.printStackTrace();
+                }
+
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                } catch (ActivityNotFoundException anfe3) {
+                    anfe3.printStackTrace();
                 }
             }
         }
-        return false;
     }
 }
