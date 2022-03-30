@@ -5,7 +5,7 @@ An open-source game manager.
 With a working Mod Creator!
 
 # To-do list
-- [ ] Discord RPC*
+- [x] Discord RPC *currently broken**
 - [ ] Mod Creator*
 - [ ] Mod Creator Syntax Highlighting*
 - [ ] Mod Creator Code Autocomplete
