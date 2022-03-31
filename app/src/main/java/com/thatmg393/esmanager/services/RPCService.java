@@ -1,7 +1,9 @@
 package com.thatmg393.esmanager.services;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.ArrayMap;
 import android.widget.Toast;
@@ -30,6 +32,9 @@ public class RPCService extends Service
 	
 	private static int heartbeat_interval, seq;
 
+	private static Context ctx;
+    private static Handler mainLooper;
+
     @Override
     public IBinder onBind(Intent arg0)
     {
@@ -44,7 +49,11 @@ public class RPCService extends Service
 	
     @Override
     public void onCreate() {
+        ctx = RPCService.this;
+
 		Toast.makeText(this, "onCreate()!", Toast.LENGTH_SHORT).show();
+
+		mainLooper = new Handler(getMainLooper());
 		
 		heartbeatRunnable = new Runnable() {
 			@Override
@@ -53,6 +62,8 @@ public class RPCService extends Service
                     if (heartbeat_interval < 10000) throw new RuntimeException("Invalid Heartbeat Interval!");
                     Thread.sleep(heartbeat_interval);
                     webSocketClient.send(("{\"op\":1, \"d\":" + (seq==0?"null":Integer.toString(seq)) + "}"));
+
+                    showToastM("[ESManager/Thread4] Heartbeat sent! Need to wait for another: " + heartbeat_interval + "ms");
                 } catch (InterruptedException e) { }
 			}
 		};
@@ -92,17 +103,17 @@ public class RPCService extends Service
         webSocketClient = new WebSocketClient(uri, headerMap) {
             @Override
             public void onOpen(ServerHandshake s) {
-                
+                showToastM("[ESManager/Thread3] Connection opened!");
             }
 
             @Override
             public void onMessage(ByteBuffer message) {
-				
+                showToastM("[ESManager/Thread3] ByteBuffer message received!");
             }
 
             @Override
             public void onMessage(String message) {
-
+                showToastM("[ESManager/Thread3] Message received! Contents: " + message);
                 ArrayMap<String, Object> map = gson.fromJson(
                     message, new TypeToken<ArrayMap<String, Object>>() {}.getType()
                 );
@@ -161,6 +172,8 @@ public class RPCService extends Service
         };
 
         webSocketClient.connect();
+
+        showToastM("[ESManager/Thread3] Is websocket connected: " + webSocketClient.isOpen());
     }
 
     public static void sendPresence() {
@@ -170,25 +183,23 @@ public class RPCService extends Service
 
         ArrayMap<String, Object> activity = new ArrayMap<>();
         activity.put("name", "Test Name");
-
         activity.put("state", "Test state");
-
         activity.put("details", "Test Details");
-
         activity.put("type", 0);
-
         activity.put("application_id", "956735773716123659");
+
+        //Buttons
         ArrayMap<String, Object> button = new ArrayMap<>();
         button.put("label", "Test button 1");
         button.put("url", "https://github.com");
-        activity.put("buttons", new Object[]{button});
+        activity.put("buttons", button);
 
         ArrayMap<String, Object> timestamps = new ArrayMap<>();
         timestamps.put("start", current);
 
         activity.put("timestamps", timestamps);
-        presence.put("activities", new Object[]{activity});
 
+        presence.put("activities", activity);
         presence.put("afk", true);
         presence.put("since", current);
         presence.put("status", null);
@@ -198,6 +209,7 @@ public class RPCService extends Service
         arr.put("d", presence);
 
         webSocketClient.send(gson.toJson(arr));
+        showToastM("[ESManager/Thread3-MainThread] Presence sent! JSON Content: " + arr.toString());
     }
 
     private static void sendIdentify() {
@@ -217,5 +229,17 @@ public class RPCService extends Service
         arr.put("d", data);
 
         webSocketClient.send(gson.toJson(arr));
+        showToastM("[ESManager/Thread3] Identify sent! JSON Content: " + arr.toString());
+    }
+
+    private static void showToastM(String message) {
+        Runnable st = new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(ctx, message, Toast.LENGTH_LONG).show();
+            }
+        };
+
+        mainLooper.post(st);
     }
 }

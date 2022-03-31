@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,21 +29,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ModsMenuFragment extends Fragment {
 
     public final static String path = Environment.getExternalStorageDirectory().toString() + "/Android/com.evertechsandbox/files/mods/";
-    private String jsonPath = null;
 
-    private List<ModProperties> mp;
-    private ListView lv;
-    private JSONObject json;
-    private boolean isListLoaded = false;
-    private boolean stilScanningMods = false;
-    private CustomAdapter ca;
+    private AlertDialog createModPopup;
 
     @Nullable
     @Override
@@ -54,6 +52,8 @@ public class ModsMenuFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        createModPopup = new AlertDialog.Builder(getContext()).create();
+
         final Button createMod = getView().findViewById(R.id.createmodBut);
         createMod.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,38 +63,28 @@ public class ModsMenuFragment extends Fragment {
                 LayoutInflater layoutInflater = LayoutInflater.from(getContext());
                 View promptView = layoutInflater.inflate(R.layout.dialog_createnewmod, null);
 
-                final AlertDialog createModPopup = new AlertDialog.Builder(getContext()).create();
-
-                //Customizers
                 createModPopup.setTitle("Create new mod");
 
-                //Field
                 final EditText project_modName_field = (EditText) promptView.findViewById(R.id.project_modName);
                 final EditText project_modDesc_field = (EditText) promptView.findViewById(R.id.project_modDesc);
 
-                //Buttons
                 Button project_createMod = (Button) promptView.findViewById(R.id.project_createButton);
                 Button project_cancelCreateMod = (Button) promptView.findViewById(R.id.project_cancelButton);
 
-                //Button Events
                 project_createMod.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (project_modName_field.getText().toString().isEmpty() && project_modDesc_field.getText().toString().isEmpty()) {
-                            Toast.makeText(getContext(), "Field cannot be blank.", Toast.LENGTH_SHORT).show();
+                        if ((project_modName_field.getText().toString().isEmpty() && project_modDesc_field.getText().toString().isEmpty()) || (project_modName_field.getText().toString().equals("Mod Name") && project_modDesc_field.getText().toString().equals("Mod Description"))) {
+                            Toast.makeText(getContext(), "Field cannot be empty or be the default value.", Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(getContext(), "Created.", Toast.LENGTH_SHORT).show();
 
                             Intent cmai = new Intent(getContext(), CreateModActivity.class);
-
-                            //Send data to activity
                             cmai.putExtra("projectModName", project_modName_field.getText().toString());
                             cmai.putExtra("projectModDesc", project_modDesc_field.getText().toString());
 
-                            //Close dialog
                             createModPopup.dismiss();
 
-                            //Launch!
                             startActivity(cmai);
                         }
                     }
@@ -107,101 +97,68 @@ public class ModsMenuFragment extends Fragment {
                         Toast.makeText(getContext(), "Cancelled.", Toast.LENGTH_SHORT).show();
                     }
                 });
-
-                //Finalizer
                 createModPopup.setView(promptView);
                 createModPopup.show();
-
-
-                //Toast.makeText(getContext(), "Very buggy almost done!", Toast.LENGTH_SHORT).show();
             }
         });
 
-        LayoutInflater layoutInflater = LayoutInflater.from(getContext());
-        View promptView = layoutInflater.inflate(R.layout.dialog_loading, null);
-
-        final AlertDialog loading_diag = new AlertDialog.Builder(getContext()).create();
-        loading_diag.setView(promptView);
-
-        if (!isListLoaded) {
-            if (!stilScanningMods) {
-                loading_diag.show();
-                mp = new ArrayList<>();
-                lv = getView().findViewById(R.id.modList);
-
-                try
-                {
-                    /*
-                    Thread fam = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            findAllMods();
-                        }
-                    });
-                    fam.start();
-                     */
-                    findAllMods();
-                }
-                catch (NullPointerException e)
-                {
-                    Toast.makeText(getContext(), "No mods found", Toast.LENGTH_SHORT).show();
-                }
-
-                 ca = new CustomAdapter(getActivity().getApplicationContext(), 0, mp);
-
-                if (lv != null && ca != null) {
-                    lv.setAdapter(ca);
-
-                    isListLoaded = true;
-                    loading_diag.dismiss();
-                }
-            } else {
-                Toast.makeText(getContext(), "Still getting mods!", Toast.LENGTH_SHORT).show();
-            }
-        }
+        findAllMods(view);
     }
 
-    private void findAllMods() {
-        stilScanningMods = true;
-        File file = new File(path);
-        String[] directories = file.list(new FilenameFilter() {
-            @Override
-            public boolean accept(File current, String name) {
-                return new File(current, name).isDirectory();
-            }
-        });
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
 
-        if (directories == null || directories.length - 1 == -1)
-        {
-            mp.add(new ModProperties("No mod found!", "Please download some mods!", "ThatMG393", "6.9.4.2", ""));
-        } else {
-            for (String folders : directories) {
-                try {
-                    jsonPath = path + folders + "/info.json";
+    private void findAllMods(View view) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(getActivity().getMainLooper());
 
-                    File checkdir1 = new File(jsonPath);
+        List<ModProperties> lmp = new ArrayList<>();
 
-                    if (checkdir1.exists()) {
-                        InputStream is = new FileInputStream(jsonPath);
+        View loading_view = LayoutInflater.from(getActivity().getApplicationContext()).inflate(R.layout.dialog_loading, null);
+        AlertDialog loading_diag = new AlertDialog.Builder(getActivity().getApplicationContext()).create();
 
-                        json = new JSONObject(IOUtils.toString(is, "UTF-8"));
+        loading_diag.setView(loading_view);
+        loading_diag.setCancelable(false);
 
-                        String preview = path + folders + "/" + json.getString("preview");
+        loading_diag.show();
+        executor.execute(() -> {
+            try {
+                File file = new File(path);
+                String[] fldrs = file.list(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File current, String name) {
+                        return new File(current, name).isDirectory();
+                    }
+                });
 
-                        String name = json.getString("name");
-                        String desc = json.getString("description");
-                        String author = json.getString("author");
-                        String version = json.getString("version");
+                if (fldrs == null || fldrs.length < 0) {
+                    lmp.add(new ModProperties("No mod found!", "Please download some mods!", "", "", ""));
+                } else {
+                    for (String folders : fldrs) {
+                        File mdir = new File(path + folders + "/info.json");
 
-                        if (name != null && desc != null && author != null && version != null) {
-                            mp.add(new ModProperties(name, desc, author, version, preview));
+                        if (mdir.exists()) {
+                            JSONObject json = new JSONObject(IOUtils.toString(new FileInputStream(mdir.getAbsolutePath()), StandardCharsets.UTF_8));
+
+                            lmp.add(new ModProperties(json.getString("name"),
+                                    json.getString("description"),
+                                    json.getString("author"),
+                                    json.getString("version"),
+                                    path + folders + "/" + json.getString("preview")));
                         }
                     }
-                } catch (IOException | JSONException e) {
-                    e.printStackTrace();
                 }
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
             }
-        }
-        stilScanningMods = false;
+
+            handler.post(() -> {
+                loading_diag.dismiss();
+                ListView modLv = view.findViewById(R.id.modList);
+                modLv.setAdapter(new CustomAdapter(getContext(), 0, Objects.requireNonNull(lmp)));
+            });
+        });
     }
 }

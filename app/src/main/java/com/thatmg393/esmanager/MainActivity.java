@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
 
         if (System.currentTimeMillis() - firstBackTime > 2000) {
-            Toast.makeText(this, "Press again to exit", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
             firstBackTime = System.currentTimeMillis();
             return;
         }

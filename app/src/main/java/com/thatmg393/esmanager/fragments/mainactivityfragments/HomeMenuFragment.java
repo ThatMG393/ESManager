@@ -37,6 +37,7 @@ public class HomeMenuFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         Button launchGameButton = getView().findViewById(R.id.launch_game);
+
         launchGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -48,6 +49,13 @@ public class HomeMenuFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        MainActivity.sharedPreferencesUtil.addBoolean("isESRunning", Utils.ActivityUtils.checkIfAppIsRunning(getContext(), appPackageName));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        MainActivity.sharedPreferencesUtil.addBoolean("isESRunning", Utils.ActivityUtils.checkIfAppIsRunning(getContext(), appPackageName));
     }
 
     private void LaunchGame() {
@@ -58,7 +66,9 @@ public class HomeMenuFragment extends Fragment {
                 startActivity(esIntent);
                 MainActivity.sharedPreferencesUtil.addBoolean("isESRunning", Utils.ActivityUtils.checkIfAppIsRunning(getContext(), appPackageName));
 
-                RPCService.sendPresence();
+                if (MainActivity.sharedPreferencesUtil.getBoolean("isSPChecked") && !MainActivity.sharedPreferencesUtil.getString("uname").equals("DEFAULT")) {
+                    RPCService.sendPresence();
+                }
             } catch (ActivityNotFoundException anfe) {
                 try {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));

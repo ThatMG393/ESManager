@@ -3,6 +3,7 @@ import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Handler;
 
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKeys;
@@ -73,6 +74,13 @@ public final class Utils {
 				}
 			}
 			return false;
+		}
+	}
+
+	public static class ThreadUtils {
+    	public static void runOnMainThread(final Context context, final Runnable task) {
+			Handler h = new Handler(context.getMainLooper());
+			h.post(task);
 		}
 	}
 }

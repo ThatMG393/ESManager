@@ -18,6 +18,7 @@ import com.thatmg393.esmanager.services.RPCService;
 public class SettingsMenuPreferenceFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private SwitchPreference sp;
+    private AlertDialog adb;
 
     public SettingsMenuPreferenceFragment() { }
 
@@ -25,6 +26,8 @@ public class SettingsMenuPreferenceFragment extends PreferenceFragmentCompat imp
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preference, rootKey);
         sp = (SwitchPreference) findPreference("pref_settings_dcrpc");
+
+        adb = new AlertDialog.Builder(getContext()).create();
     }
 
     @Override
@@ -32,6 +35,12 @@ public class SettingsMenuPreferenceFragment extends PreferenceFragmentCompat imp
         super.onCreate(savedInstanceState);
 
         sp.setChecked(MainActivity.sharedPreferencesUtil.getBoolean("isSPChecked"));
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        adb.dismiss();
     }
 
     @Override
@@ -53,7 +62,6 @@ public class SettingsMenuPreferenceFragment extends PreferenceFragmentCompat imp
             boolean test = sharedPreferences.getBoolean(s, false);
             if (test) {
                 if (!MainActivity.sharedPreferencesUtil.getBoolean("agreed_rpc")) {
-                    AlertDialog adb = new AlertDialog.Builder(getContext()).create();
                     adb.setTitle("Warning!");
                     adb.setMessage("This is a unsafe feature!\r\nIt might make your Discord account vulnerable to hackers!\r\n\r\nAre you sure you want to turn on this feature?");
 
