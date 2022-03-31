@@ -1,14 +1,6 @@
 apply plugin: 'com.android.application'
 
 android {
-    signingConfigs {
-        es_sign {
-            storeFile file('C:\\Users\\Zackron Denzo Olarte\\Downloads\\eskeystore.keystore')
-            storePassword 'mybiz2710'
-            keyAlias = 'eskey'
-            keyPassword 'mybiz2710'
-        }
-    }
     compileSdkVersion 32
     defaultConfig {
         applicationId "com.thatmg393.esmanager"
@@ -29,14 +21,14 @@ android {
             applicationIdSuffix ".beta"
             versionNameSuffix "-beta" + "_build-" + getDate()
             minifyEnabled false
-            signingConfig signingConfigs.es_sign
+            signingConfig signingConfigs.debug
         }
 
         alpha {
             applicationIdSuffix ".alpha"
             versionNameSuffix "-alpha" + "_build-" + getDate()
             minifyEnabled false
-            signingConfig signingConfigs.es_sign
+            signingConfig signingConfigs.debug
         }
     }
 
