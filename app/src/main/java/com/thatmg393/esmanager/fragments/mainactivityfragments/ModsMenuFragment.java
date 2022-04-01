@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,7 @@ import java.util.concurrent.Executors;
 
 public class ModsMenuFragment extends Fragment {
 
-    public final static String path = Environment.getExternalStorageDirectory().toString() + "/Android/com.evertechsandbox/files/mods/";
+    public final static String path = Environment.getExternalStorageDirectory().toString() + "/Android/data/com.evertechsandbox/files/mods/";
 
     private AlertDialog createModPopup;
 
@@ -58,8 +59,6 @@ public class ModsMenuFragment extends Fragment {
         createMod.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
                 LayoutInflater layoutInflater = LayoutInflater.from(getContext());
                 View promptView = layoutInflater.inflate(R.layout.dialog_createnewmod, null);
 
@@ -117,7 +116,7 @@ public class ModsMenuFragment extends Fragment {
         List<ModProperties> lmp = new ArrayList<>();
 
         View loading_view = LayoutInflater.from(getActivity().getApplicationContext()).inflate(R.layout.dialog_loading, null);
-        AlertDialog loading_diag = new AlertDialog.Builder(getActivity().getApplicationContext()).create();
+        AlertDialog loading_diag = new AlertDialog.Builder(ModsMenuFragment.this.getContext()).create();
 
         loading_diag.setView(loading_view);
         loading_diag.setCancelable(false);
@@ -133,14 +132,13 @@ public class ModsMenuFragment extends Fragment {
                     }
                 });
 
-                if (fldrs == null || fldrs.length < 0) {
-                    lmp.add(new ModProperties("No mod found!", "Please download some mods!", "", "", ""));
+                if (fldrs == null || fldrs.length < 1) {
+                    lmp.add(new ModProperties("No mod/s found!", "Please download some mods!", "", "", ""));
                 } else {
                     for (String folders : fldrs) {
-                        File mdir = new File(path + folders + "/info.json");
-
-                        if (mdir.exists()) {
-                            JSONObject json = new JSONObject(IOUtils.toString(new FileInputStream(mdir.getAbsolutePath()), StandardCharsets.UTF_8));
+                        if (new File(path + folders + "/info.json").exists()) {
+                            final InputStream modjs = new FileInputStream(path + folders + "/info.json");
+                            JSONObject json = new JSONObject(IOUtils.toString(modjs, StandardCharsets.UTF_8));
 
                             lmp.add(new ModProperties(json.getString("name"),
                                     json.getString("description"),
@@ -152,12 +150,15 @@ public class ModsMenuFragment extends Fragment {
                 }
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
+                loading_diag.dismiss();
+                return;
             }
 
             handler.post(() -> {
                 loading_diag.dismiss();
                 ListView modLv = view.findViewById(R.id.modList);
-                modLv.setAdapter(new CustomAdapter(getContext(), 0, Objects.requireNonNull(lmp)));
+                final CustomAdapter camp = new CustomAdapter(getContext(), 0, Objects.requireNonNull(lmp));
+                modLv.setAdapter(camp);
             });
         });
     }
