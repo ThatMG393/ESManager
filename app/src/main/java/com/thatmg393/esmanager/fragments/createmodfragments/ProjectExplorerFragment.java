@@ -1,8 +1,5 @@
 package com.thatmg393.esmanager.fragments.createmodfragments;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.ContextMenu;
@@ -13,12 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.thatmg393.esmanager.CreateModActivity;
+import com.thatmg393.esmanager.MainActivity;
 import com.thatmg393.esmanager.R;
 import com.thatmg393.esmanager.Utils;
 import com.thatmg393.esmanager.adapters.TextAdapter;
@@ -30,12 +29,20 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class ProjectExplorerFragment extends Fragment {
-    private final String rootPath = CreateModActivity.pp;
+
+    private static final int[] ctxMenuItems = {Menu.FIRST, Menu.FIRST + 1, Menu.FIRST + 2, Menu.FIRST + 3};
+    // private static final Vector<Button> buttons = new Vector<>();
+
+    private static final String rootPath = CreateModActivity.pp;
 
     private TextAdapter textAdapter;
     private File[] modPathFilesnFolder;
+
     private List<String> pathLists;
     private ListView explorer;
+
+    private boolean isOneItemSelected = false;
+    private boolean isMultipleItemSelected = false;
 
     @Nullable
     @Override
@@ -46,6 +53,14 @@ public class ProjectExplorerFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        explorer = requireView().findViewById(R.id.project_explorer);
+        textAdapter = new TextAdapter();
+        textAdapter.setData(pathLists);
+
+        if (MainActivity.sharedPreferencesUtil.getBoolean("shouldUseCM")) {
+            registerForContextMenu(explorer);
+        }
 
         try {
             if (Utils.ActivityUtils.arePermissionsDenied(getActivity().getApplicationContext(), Utils.app_perms)) {
@@ -63,37 +78,47 @@ public class ProjectExplorerFragment extends Fragment {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        menu.setHeaderTitle(textAdapter.getItem(info.position).substring(textAdapter.getItem(info.position).lastIndexOf('/') + 1));
+        String header = textAdapter.getItem(info.position).substring(textAdapter.getItem(info.position).lastIndexOf('/') + 1).substring(0, 1).toUpperCase();
 
-        menu.add(1, Menu.FIRST, Menu.FIRST, "Delete");
+        menu.setHeaderTitle(header);
+
+        menu.add(1, ctxMenuItems[0], ctxMenuItems[0], "Delete");
+        menu.add(1, ctxMenuItems[1], ctxMenuItems[1], "Copy");
+        menu.add(1, ctxMenuItems[2], ctxMenuItems[2], "Move");
+
+        if (isOneItemSelected && !isMultipleItemSelected) {
+            menu.add(1, ctxMenuItems[3], ctxMenuItems[3], "Rename");
+        } else {
+            menu.removeItem(ctxMenuItems[3]);
+        }
     }
+
+    // AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case 1:
-                AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-                newDialog(getContext(), "Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        deleteFolderOrFile(modPathFilesnFolder[info.position]);
-                    }
-                }, "No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                }, "Warning!", "Are you sure you want to delete this file?\r\nThis cannot be undone!");
+                Toast.makeText(getContext(), "Delete", Toast.LENGTH_SHORT).show();
                 return true;
-            default:
-                return super.onContextItemSelected(item);
+
+            case 2:
+                Toast.makeText(getContext(), "Copy", Toast.LENGTH_SHORT).show();
+                return true;
+
+            case 3:
+                Toast.makeText(getContext(), "Move", Toast.LENGTH_SHORT).show();
+                return true;
+
+            case 4:
+                Toast.makeText(getContext(), "Rename", Toast.LENGTH_SHORT).show();
+                return true;
+
         }
+        return false;
     }
 
     private void explorerInit() {
-        explorer = requireView().findViewById(R.id.project_explorer);
-        registerForContextMenu(explorer);
-
         Executor executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(getActivity().getMainLooper());
 
@@ -104,14 +129,11 @@ public class ProjectExplorerFragment extends Fragment {
 
             pathLists = new ArrayList<>();
 
-            for (int f = 0; f < modPathFilesnFolder.length; f++) {
-                pathLists.add(modPathFilesnFolder[f].getAbsolutePath());
+            for (File file : modPathFilesnFolder) {
+                pathLists.add(file.getAbsolutePath());
             }
 
             handler.post(() -> {
-                textAdapter = new TextAdapter();
-                textAdapter.setData(pathLists);
-
                 explorer.setAdapter(textAdapter);
 
                 boolean[] selection = new boolean[pathLists.size()];
@@ -122,38 +144,40 @@ public class ProjectExplorerFragment extends Fragment {
                         selection[position] = !selection[position];
                         textAdapter.setSelection(selection);
 
-                        boolean isOneItemSelected = false;
-                        boolean isMultipleItemSelected = false;
+                        if (!MainActivity.sharedPreferencesUtil.getBoolean("shouldUseCM")) {
+                            isOneItemSelected = false;
+                            isMultipleItemSelected = false;
 
-                        for (boolean aSelection : selection) {
-                            if (aSelection) {
-                                isOneItemSelected = true;
-                                break;
-                            }
-                        }
-
-                        //Check for MultiItem selection
-                        int s = 0;
-                        for (boolean aSelection : selection) {
-                            if (aSelection) {
-                                s++;
-                                if (s > 2) {
-                                    isMultipleItemSelected = true;
+                            for (boolean aSelection : selection) {
+                                if (aSelection) {
+                                    isOneItemSelected = true;
                                     break;
                                 }
                             }
-                        }
 
-                        if (isOneItemSelected && !isMultipleItemSelected) {
-                            requireView().findViewById(R.id.explorer_bottomBar_singleItem).setVisibility(View.VISIBLE);
-                        } else {
-                            requireView().findViewById(R.id.explorer_bottomBar_singleItem).setVisibility(View.GONE);
-                        }
+                            //Check for MultiItem selection
+                            int s = 0;
+                            for (boolean aSelection : selection) {
+                                if (aSelection) {
+                                    s++;
+                                    if (s > 1) {
+                                        isMultipleItemSelected = true;
+                                        break;
+                                    }
+                                }
+                            }
 
-                        if (isMultipleItemSelected && isOneItemSelected) {
-                            requireView().findViewById(R.id.explorer_bottomBar_multiItem).setVisibility(View.VISIBLE);
-                        } else {
-                            requireView().findViewById(R.id.explorer_bottomBar_multiItem).setVisibility(View.GONE);
+                            if (isOneItemSelected && !isMultipleItemSelected) {
+                                requireView().findViewById(R.id.explorer_bottomBar_singleItem).setVisibility(View.VISIBLE);
+                            } else {
+                                requireView().findViewById(R.id.explorer_bottomBar_singleItem).setVisibility(View.GONE);
+                            }
+
+                            if (isMultipleItemSelected && isOneItemSelected) {
+                                requireView().findViewById(R.id.explorer_bottomBar_multiItem).setVisibility(View.VISIBLE);
+                            } else {
+                                requireView().findViewById(R.id.explorer_bottomBar_multiItem).setVisibility(View.GONE);
+                            }
                         }
 
                         return false;
@@ -164,8 +188,7 @@ public class ProjectExplorerFragment extends Fragment {
     }
 
     private void deleteFolderOrFile(File fileToDelete) {
-        if (fileToDelete.isDirectory())
-        {
+        if (fileToDelete.isDirectory()) {
             try {
                 String[] children = fileToDelete.list();
                 for (String child : children) {
@@ -180,24 +203,6 @@ public class ProjectExplorerFragment extends Fragment {
         }
     }
 
-    private void newDialog(@NonNull Context context,
-                           @NonNull CharSequence positiveButText,
-                           @NonNull DialogInterface.OnClickListener positiveButListener,
-                           @NonNull CharSequence negativeButText,
-                           @NonNull DialogInterface.OnClickListener negativeButListener,
-                           @Nullable CharSequence title,
-                           @Nullable CharSequence message) {
-        AlertDialog adb = new AlertDialog.Builder(context).create();
-
-        adb.setTitle(title);
-        adb.setMessage(message);
-
-        adb.setButton(DialogInterface.BUTTON_POSITIVE, positiveButText, positiveButListener);
-        adb.setButton(DialogInterface.BUTTON_NEGATIVE, negativeButText, negativeButListener);
-
-        adb.show();
-    }
-
     private void PickFile() {
         /* Disabled for some reason.
         SingleFilePickerDialog singleFilePickerDialog = new SingleFilePickerDialog(getApplicationContext(),
@@ -206,5 +211,19 @@ public class ProjectExplorerFragment extends Fragment {
         singleFilePickerDialog.show();
          */
     }
+
+    /*
+                newDialog(getContext(), "Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        deleteFolderOrFile(modPathFilesnFolder[info.position]);
+                    }
+                }, "No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                }, "Warning!", "Are you sure you want to delete this file?\r\nThis cannot be undone!");
+                 */
 
 }

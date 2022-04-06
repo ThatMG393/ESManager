@@ -18,6 +18,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.thatmg393.esmanager.fragments.createmodfragments.ProjectEditorFragment;
 import com.thatmg393.esmanager.fragments.createmodfragments.ProjectExplorerFragment;
 import com.thatmg393.esmanager.fragments.createmodfragments.ProjectInfoFragment;
+import com.thatmg393.esmanager.fragments.mainactivityfragments.SettingsMenuPreferenceFragment;
 
 import java.io.File;
 import java.io.IOException;
@@ -117,6 +118,7 @@ public class CreateModActivity extends AppCompatActivity implements NavigationVi
 
             case R.id.nav_project_dropdown_openst:
                 Toast.makeText(getApplicationContext(), "Settings", Toast.LENGTH_LONG).show();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsMenuPreferenceFragment()).commit();
                 break;
 
             case R.id.nav_project_dropdown_exit:

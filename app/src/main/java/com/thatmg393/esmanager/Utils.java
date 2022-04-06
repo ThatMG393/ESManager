@@ -2,12 +2,15 @@ package com.thatmg393.esmanager;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Handler;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKeys;
 
@@ -92,6 +95,24 @@ public final class Utils {
 				p++;
 			}
 			return false;
+		}
+
+		public static void newDialog(@NonNull Context context,
+									 @NonNull CharSequence positiveButText,
+									 @NonNull DialogInterface.OnClickListener positiveButListener,
+									 @NonNull CharSequence negativeButText,
+									 @NonNull DialogInterface.OnClickListener negativeButListener,
+									 @Nullable CharSequence title,
+									 @Nullable CharSequence message) {
+			AlertDialog adb = new AlertDialog.Builder(context).create();
+
+			adb.setTitle(title);
+			adb.setMessage(message);
+
+			adb.setButton(DialogInterface.BUTTON_POSITIVE, positiveButText, positiveButListener);
+			adb.setButton(DialogInterface.BUTTON_NEGATIVE, negativeButText, negativeButListener);
+
+			adb.show();
 		}
 	}
 

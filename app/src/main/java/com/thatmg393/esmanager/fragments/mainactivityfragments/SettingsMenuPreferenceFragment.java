@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceFragmentCompat;
@@ -25,7 +24,7 @@ public class SettingsMenuPreferenceFragment extends PreferenceFragmentCompat imp
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preference, rootKey);
-        sp = (SwitchPreference) findPreference("pref_settings_dcrpc");
+        sp = findPreference("pref_settings_dcrpc");
 
         adb = new AlertDialog.Builder(getContext()).create();
     }
@@ -56,49 +55,44 @@ public class SettingsMenuPreferenceFragment extends PreferenceFragmentCompat imp
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-        if (s.equals("pref_settings_dcrpc")) {
-            Toast.makeText(getContext(), s, Toast.LENGTH_SHORT).show();
-            boolean test = sharedPreferences.getBoolean(s, false);
-            if (test) {
-                if (!MainActivity.sharedPreferencesUtil.getBoolean("agreed_rpc")) {
-                    adb.setTitle("Warning!");
-                    adb.setMessage("This is a unsafe feature!\r\nIt might make your Discord account vulnerable to hackers!\r\n\r\nAre you sure you want to turn on this feature?");
-
-                    adb.setButton(DialogInterface.BUTTON_POSITIVE,"Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            MainActivity.sharedPreferencesUtil.addBoolean("agreed_rpc", true);
-                            if (!Utils.ServiceUtils.checkIfServiceIsRunning(getContext(), RPCService.class)) {
-                                requireActivity().startActivity(MainActivity.rpcActIntent);
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        switch (key) {
+            case "misc_dcrpc":
+                if (sharedPreferences.getBoolean(key, false)) {
+                    if (!MainActivity.sharedPreferencesUtil.getBoolean("agreed_rpc")) {
+                        Utils.ActivityUtils.newDialog(getContext(), getString(R.string.discord_rcp_ask_accept), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                MainActivity.sharedPreferencesUtil.addBoolean("agreed_rpc", true);
+                                if (!Utils.ServiceUtils.checkIfServiceIsRunning(getContext(), RPCService.class)) {
+                                    requireActivity().startActivity(MainActivity.rpcActIntent);
+                                }
+                                dialogInterface.dismiss();
                             }
-                            dialogInterface.dismiss();
-                        }
-                    });
+                        }, getString(R.string.discord_rcp_ask_cancel), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                sp.setChecked(false);
+                                MainActivity.sharedPreferencesUtil.addBoolean("isSPChecked", sp.isChecked());
+                                dialogInterface.dismiss();
+                            }
+                        }, getString(R.string.discord_rcp_ask_title), getString(R.string.discord_rcp_ask_message));
 
-                    adb.setButton(DialogInterface.BUTTON_NEGATIVE,"No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            sp.setChecked(false);
-                            MainActivity.sharedPreferencesUtil.addBoolean("isSPChecked", sp.isChecked());
-                            dialogInterface.dismiss();
+                    } else {
+                        if (!Utils.ServiceUtils.checkIfServiceIsRunning(getContext(), RPCService.class)) {
+                            requireActivity().startActivity(MainActivity.rpcActIntent);
                         }
-                    });
-
-                    adb.show();
+                        MainActivity.sharedPreferencesUtil.addBoolean("isRPCRunning", Utils.ServiceUtils.checkIfServiceIsRunning(getContext(), RPCService.class));
+                    }
+                    MainActivity.sharedPreferencesUtil.addBoolean("isSPChecked", sp.isChecked());
                 } else {
-                    if (sp.isChecked() && MainActivity.sharedPreferencesUtil.getBoolean("agreed_rpc") && !Utils.ServiceUtils.checkIfServiceIsRunning(getContext(), RPCService.class)) {
-                        requireActivity().startActivity(MainActivity.rpcActIntent);
-                        MainActivity.sharedPreferencesUtil.addBoolean("isRPCRunning", Utils.ServiceUtils.checkIfServiceIsRunning(getContext(), RPCService.class));
-                    }
-                    else if (!sp.isChecked() && Utils.ServiceUtils.checkIfServiceIsRunning(getContext(), RPCService.class)) {
-                        MainActivity.sharedPreferencesUtil.addBoolean("isRPCRunning", Utils.ServiceUtils.checkIfServiceIsRunning(getContext(), RPCService.class));
-                    }
+                    MainActivity.sharedPreferencesUtil.addBoolean("isSPChecked", sp.isChecked());
                 }
-                MainActivity.sharedPreferencesUtil.addBoolean("isSPChecked", sp.isChecked());
-            } else {
-                MainActivity.sharedPreferencesUtil.addBoolean("isSPChecked", sp.isChecked());
-            }
+                break;
+
+            case "editor_cm":
+                MainActivity.sharedPreferencesUtil.addBoolean("shouldUseCM", sharedPreferences.getBoolean(key, false));
+                break;
         }
     }
 }
