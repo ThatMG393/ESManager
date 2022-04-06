@@ -24,7 +24,7 @@ public class SettingsMenuPreferenceFragment extends PreferenceFragmentCompat imp
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preference, rootKey);
-        sp = findPreference("pref_settings_dcrpc");
+        sp = findPreference("misc_dcrpc");
 
         adb = new AlertDialog.Builder(getContext()).create();
     }
