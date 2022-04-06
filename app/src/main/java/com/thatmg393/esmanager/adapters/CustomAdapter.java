@@ -16,33 +16,35 @@ import androidx.annotation.NonNull;
 import com.thatmg393.esmanager.R;
 import com.thatmg393.esmanager.data.ModProperties;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public class CustomAdapter extends ArrayAdapter<ModProperties>
 {
     
-    Context mContext;
-    int resource;
-    List<ModProperties> data;
+    private Context mContext;
+    private List<ModProperties> data;
     
     public CustomAdapter(Context mContext, int resource, List<ModProperties> data)
     {
         super(mContext, resource, data);
         
         this.mContext = mContext;
-        this.resource = resource;
         this.data = data;
     }
 
-    public void updateModPList(List<ModProperties> newData) {
-        data.clear();
-        data.addAll(newData);
-        this.notifyDataSetChanged();
+    public void updateData(List<ModProperties> data) {
+        if (data != null && data.size() > 0) {
+            this.data.clear();
+            this.data.addAll(data);
+            notifyDataSetChanged();
+        }
     }
     
     @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NotNull ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
         
         View view = inflater.inflate(R.layout.listview_main, null);

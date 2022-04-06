@@ -19,10 +19,15 @@ import com.thatmg393.esmanager.fragments.createmodfragments.ProjectEditorFragmen
 import com.thatmg393.esmanager.fragments.createmodfragments.ProjectExplorerFragment;
 import com.thatmg393.esmanager.fragments.createmodfragments.ProjectInfoFragment;
 
+import java.io.File;
+import java.io.IOException;
+
 public class CreateModActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawerLayout;
 
     // private final String[] dropdownLists = {"New Script", "Import 3D Object", "Save and Play", "Save only", "Settings", "Exit"};
+
+    public static String pp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +35,6 @@ public class CreateModActivity extends AppCompatActivity implements NavigationVi
         setContentView(R.layout.activity_createmod);
         Toolbar toolbar = findViewById(R.id.createmod_toolbar);
         setSupportActionBar(toolbar);
-
 
         Bundle extras = getIntent().getExtras();
 
@@ -43,6 +47,31 @@ public class CreateModActivity extends AppCompatActivity implements NavigationVi
             TextView nav_header_modDesc = findViewById(R.id.header_modDesc);
             if (nav_header_modDesc != null) {
                 nav_header_modName.setText(Html.fromHtml(extras.getString("projectModDesc")));
+            }
+
+            pp = extras.getString("projectModPath");
+
+            File meshesFolder = new File(pp + "/meshes");
+            File texturesFolder = new File(pp + "/textures");
+            File scriptsFolder = new File(pp + "/scripts");
+            File infoJson = new File(pp + "/info.json");
+
+            try {
+                if (Utils.ActivityUtils.arePermissionsDenied(getApplicationContext(), Utils.app_perms)) {
+                    requestPermissions(Utils.app_perms, 69419);
+
+                    texturesFolder.mkdir();
+                    meshesFolder.mkdir();
+                    scriptsFolder.mkdir();
+                    infoJson.createNewFile();
+                } else {
+                    texturesFolder.mkdir();
+                    meshesFolder.mkdir();
+                    scriptsFolder.mkdir();
+                    infoJson.createNewFile();
+                }
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
             }
         }
 
@@ -59,15 +88,6 @@ public class CreateModActivity extends AppCompatActivity implements NavigationVi
             getSupportFragmentManager().beginTransaction().replace(R.id.createmod_fragment_container, new ProjectEditorFragment()).commit();
             navigationView.setCheckedItem(R.id.nav_project_editor);
         }
-    }
-
-    private void PickFile() {
-        /* Disabled for some reason.
-        SingleFilePickerDialog singleFilePickerDialog = new SingleFilePickerDialog(getApplicationContext(),
-                () -> Toast.makeText(getApplicationContext(), "Canceled!!", Toast.LENGTH_SHORT).show(),
-                files -> Toast.makeText(getApplicationContext(), files[0].getPath(), Toast.LENGTH_SHORT).show());
-        singleFilePickerDialog.show();
-         */
     }
 
     @Override

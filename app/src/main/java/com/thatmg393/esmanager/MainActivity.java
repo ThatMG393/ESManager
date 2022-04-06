@@ -1,6 +1,5 @@
 package com.thatmg393.esmanager;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,7 +8,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.thatmg393.esmanager.fragments.mainactivityfragments.HomeMenuFragment;
@@ -31,17 +29,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Ask Permissions
-        int WRITE_EXTERNAL_STORAGE_PERM_CODE = 28;
-        int READ_EXTERNAL_STORAGE_PERM_CODE = 29;
-        int INTERNET_PERM_CODE = 30;
-        int SYSTEM_ALERT_WINDOW_PERM_CODE = 31;
-
-        // android.permission.SYSTEM_ALERT_WINDOW
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_PERM_CODE);
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, READ_EXTERNAL_STORAGE_PERM_CODE);
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, INTERNET_PERM_CODE);
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW}, SYSTEM_ALERT_WINDOW_PERM_CODE);
+        requestPermissions(Utils.app_perms, 69420);
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_nav_view);
         bottomNav.setOnNavigationItemSelectedListener(navListener);

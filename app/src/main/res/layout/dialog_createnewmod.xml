@@ -7,7 +7,7 @@
 
     <EditText
         android:id="@+id/project_modName"
-        android:layout_width="wrap_content"
+        android:layout_width="166dp"
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
@@ -16,12 +16,20 @@
 
     <EditText
         android:id="@+id/project_modDesc"
-        android:layout_width="wrap_content"
+        android:layout_width="166dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/project_modName"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="@string/project_mod_description" />
+
+    <EditText
+        android:id="@+id/project_modPath"
+        android:layout_width="166dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/project_modName"
+        android:layout_toEndOf="@id/project_modName"
+        android:inputType="textPersonName" />
 
     <Button
         android:id="@+id/project_createButton"

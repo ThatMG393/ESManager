@@ -1,10 +1,13 @@
 package com.thatmg393.esmanager;
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Handler;
 
+import androidx.annotation.NonNull;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKeys;
 
@@ -13,6 +16,10 @@ import java.security.GeneralSecurityException;
 import java.util.List;
 
 public final class Utils {
+
+	public static final String[] app_perms = {Manifest.permission.READ_EXTERNAL_STORAGE,
+			Manifest.permission.MANAGE_EXTERNAL_STORAGE,
+			Manifest.permission.WRITE_EXTERNAL_STORAGE};
     
     public static class SharedPreferenceUtil {
 		
@@ -51,7 +58,7 @@ public final class Utils {
 	}
 	
 	public static class ServiceUtils {
-		public static boolean checkIfServiceIsRunning(Context ctx, Class<?> serviceClass) {
+		public static boolean checkIfServiceIsRunning(@NonNull final Context ctx, @NonNull final Class<?> serviceClass) {
 			ActivityManager manager = (ActivityManager) ctx.getSystemService(Context.ACTIVITY_SERVICE);
 			for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
 				if (serviceClass.getName().equals(service.service.getClassName())) {
@@ -63,7 +70,7 @@ public final class Utils {
 	}
 
 	public static class ActivityUtils {
-		public static boolean checkIfAppIsRunning(final Context context, String appPackageName) {
+		public static boolean checkIfAppIsRunning(@NonNull final Context context, @NonNull final String appPackageName) {
 			final ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
 			final List<ActivityManager.RunningAppProcessInfo> procInfos = activityManager.getRunningAppProcesses();
 			if (procInfos != null) {
@@ -75,10 +82,21 @@ public final class Utils {
 			}
 			return false;
 		}
+
+		public static boolean arePermissionsDenied(@NonNull final Context context, @NonNull final String[] permissions) {
+			int p = 0;
+			while (p < permissions.length) {
+				if (context.checkSelfPermission(permissions[p]) != PackageManager.PERMISSION_GRANTED) {
+					return true;
+				}
+				p++;
+			}
+			return false;
+		}
 	}
 
 	public static class ThreadUtils {
-    	public static void runOnMainThread(final Context context, final Runnable task) {
+    	public static void runOnMainThread(@NonNull final Context context, @NonNull final Runnable task) {
 			Handler h = new Handler(context.getMainLooper());
 			h.post(task);
 		}

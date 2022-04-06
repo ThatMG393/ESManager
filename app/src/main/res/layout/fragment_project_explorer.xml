@@ -1,10 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <ListView
         android:id="@+id/project_explorer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
 
-</RelativeLayout>
+    <LinearLayout
+        android:id="@+id/explorer_bottomBar_singleItem"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/explorer_delete_single"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete"/>
+
+        <Button
+            android:id="@+id/explorer_copy_single"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Copy"/>
+
+        <Button
+            android:id="@+id/explorer_move_single"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Move"/>
+
+        <Button
+            android:id="@+id/explorer_rename_single"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rename"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/explorer_bottomBar_multiItem"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/explorer_delete_multi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete"/>
+
+        <Button
+            android:id="@+id/explorer_copy_multi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Copy"/>
+
+        <Button
+            android:id="@+id/explorer_move_multi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Move"/>
+
+    </LinearLayout>
+
+</LinearLayout>

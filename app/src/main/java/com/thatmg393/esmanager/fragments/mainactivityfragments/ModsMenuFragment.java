@@ -1,10 +1,13 @@
 package com.thatmg393.esmanager.fragments.mainactivityfragments;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +21,7 @@ import androidx.fragment.app.Fragment;
 
 import com.thatmg393.esmanager.CreateModActivity;
 import com.thatmg393.esmanager.R;
+import com.thatmg393.esmanager.Utils;
 import com.thatmg393.esmanager.adapters.CustomAdapter;
 import com.thatmg393.esmanager.data.ModProperties;
 
@@ -27,13 +31,13 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -42,6 +46,7 @@ public class ModsMenuFragment extends Fragment {
     public final static String path = Environment.getExternalStorageDirectory().toString() + "/Android/data/com.evertechsandbox/files/mods/";
 
     private AlertDialog createModPopup;
+    private List<ModProperties> lmp;
 
     @Nullable
     @Override
@@ -66,9 +71,28 @@ public class ModsMenuFragment extends Fragment {
 
                 final EditText project_modName_field = (EditText) promptView.findViewById(R.id.project_modName);
                 final EditText project_modDesc_field = (EditText) promptView.findViewById(R.id.project_modDesc);
+                final EditText project_modPath_field = (EditText) promptView.findViewById(R.id.project_modPath);
+                project_modPath_field.setText(Environment.getExternalStorageDirectory().toString() + "/ESManager/Projects/" + project_modName_field.getText().toString());
 
                 Button project_createMod = (Button) promptView.findViewById(R.id.project_createButton);
                 Button project_cancelCreateMod = (Button) promptView.findViewById(R.id.project_cancelButton);
+
+                project_modName_field.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                        project_modPath_field.setText(Environment.getExternalStorageDirectory().toString() + "/ESManager/Projects/" + project_modName_field.getText().toString());
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+
+                    }
+                });
 
                 project_createMod.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -78,13 +102,34 @@ public class ModsMenuFragment extends Fragment {
                         } else {
                             Toast.makeText(getContext(), "Created.", Toast.LENGTH_SHORT).show();
 
+                            File modPath = new File(project_modPath_field.getText().toString());
+
                             Intent cmai = new Intent(getContext(), CreateModActivity.class);
                             cmai.putExtra("projectModName", project_modName_field.getText().toString());
                             cmai.putExtra("projectModDesc", project_modDesc_field.getText().toString());
+                            cmai.putExtra("projectModPath", project_modPath_field.getText().toString());
 
                             createModPopup.dismiss();
 
-                            startActivity(cmai);
+                            /*
+                                if (e.toString().contains("denied") || e.toString().contains("Denied")) {
+                                    Toast.makeText(getContext(), "Access denied. Asking for external storage access.", Toast.LENGTH_SHORT).show();
+                                    getActivity().requestPermissions(new String[]{Manifest.permission.MANAGE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 69);
+                                    if (modPath.mkdir()) {
+                                        startActivity(cmai);
+                                    }
+                                }
+                             */
+
+                            try {
+                                if (Utils.ActivityUtils.arePermissionsDenied(getActivity().getApplicationContext(), Utils.app_perms)) {
+                                    getActivity().requestPermissions(Utils.app_perms, 69418);
+                                }
+                                modPath.mkdirs();
+                                startActivity(cmai);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 });
@@ -100,26 +145,42 @@ public class ModsMenuFragment extends Fragment {
                 createModPopup.show();
             }
         });
+         try {
+             if (Utils.ActivityUtils.arePermissionsDenied(getActivity().getApplicationContext(), Utils.app_perms)) {
+                 getActivity().requestPermissions(Utils.app_perms, 69418);
+                 findAllMods(view);
+             } else {
+                 findAllMods(view);
+             }
 
-        findAllMods(view);
+         } catch (Exception e) {
+             e.printStackTrace();
+         }
     }
 
+    /*
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    public void onResume() {
+        super.onResume();
+        lmp.clear();
+
+
+        findAllMods(requireView());
     }
+
+     */
 
     private void findAllMods(View view) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(getActivity().getMainLooper());
 
-        List<ModProperties> lmp = new ArrayList<>();
+        lmp = new ArrayList<>();
 
         View loading_view = LayoutInflater.from(getActivity().getApplicationContext()).inflate(R.layout.dialog_loading, null);
         AlertDialog loading_diag = new AlertDialog.Builder(ModsMenuFragment.this.getContext()).create();
 
         loading_diag.setView(loading_view);
-        loading_diag.setCancelable(false);
+        // loading_diag.setCancelable(false);
 
         loading_diag.show();
         executor.execute(() -> {
@@ -136,28 +197,45 @@ public class ModsMenuFragment extends Fragment {
                     lmp.add(new ModProperties("No mod/s found!", "Please download some mods!", "", "", ""));
                 } else {
                     for (String folders : fldrs) {
-                        if (new File(path + folders + "/info.json").exists()) {
-                            final InputStream modjs = new FileInputStream(path + folders + "/info.json");
-                            JSONObject json = new JSONObject(IOUtils.toString(modjs, StandardCharsets.UTF_8));
+                        String jsonPath = path + folders + "/info.json";
 
-                            lmp.add(new ModProperties(json.getString("name"),
-                                    json.getString("description"),
-                                    json.getString("author"),
-                                    json.getString("version"),
-                                    path + folders + "/" + json.getString("preview")));
+                        try {
+                            if (new File(jsonPath).exists()) {
+                                InputStream modjs = new FileInputStream(jsonPath);
+                                JSONObject json = new JSONObject(IOUtils.toString(modjs, StandardCharsets.UTF_8));
+
+                                String name = json.getString("name");
+                                String description = json.getString("description");
+                                String author = json.getString("author");
+                                String version = json.getString("version");
+                                String preview = path + folders + "/" + json.getString("preview");
+
+                                lmp.add(new ModProperties(name, description, author, version, preview));
+                            }
+                        } catch (JSONException jse) {
+                            jse.printStackTrace();
+                        } catch (FileNotFoundException fnfe) {
+                            if (fnfe.toString().contains("denied") || fnfe.toString().contains("Denied")) {
+                                loading_diag.dismiss();
+                                handler.post(() -> {
+                                    Toast.makeText(getContext(), "Access denied. Asking for external storage access.", Toast.LENGTH_SHORT).show();
+                                    getActivity().requestPermissions(new String[]{Manifest.permission.MANAGE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 69);
+                                });
+                            }
                         }
                     }
                 }
-            } catch (IOException | JSONException e) {
-                e.printStackTrace();
-                loading_diag.dismiss();
+            } catch (IOException fnfe) {
+                handler.post(() -> {
+                    Toast.makeText(getContext(), "Internal error occurred.", Toast.LENGTH_SHORT).show();
+                });
                 return;
             }
 
             handler.post(() -> {
                 loading_diag.dismiss();
                 ListView modLv = view.findViewById(R.id.modList);
-                final CustomAdapter camp = new CustomAdapter(getContext(), 0, Objects.requireNonNull(lmp));
+                final CustomAdapter camp = new CustomAdapter(getContext(), 0, lmp);
                 modLv.setAdapter(camp);
             });
         });

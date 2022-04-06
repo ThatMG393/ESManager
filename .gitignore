@@ -1,4 +1,6 @@
 /build
+local.properties
+ESManager.iml
 
 # Project exclude paths
 /app/build/
