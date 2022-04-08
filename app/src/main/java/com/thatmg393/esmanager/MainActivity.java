@@ -16,7 +16,7 @@ import com.thatmg393.esmanager.fragments.mainactivityfragments.SettingsMenuPrefe
 import com.thatmg393.esmanager.services.RPCActivity;
 import com.thatmg393.esmanager.services.RPCService;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     public static Utils.SharedPreferenceUtil sharedPreferencesUtil;
 
@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         requestPermissions(Utils.app_perms, 69420);
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_nav_view);
-        bottomNav.setOnNavigationItemSelectedListener(navListener);
+        bottomNav.setOnNavigationItemSelectedListener(this);
         bottomNav.setSelectedItemId(R.id.bottom_nav_homeMenu);
     }
 
@@ -44,33 +44,31 @@ public class MainActivity extends AppCompatActivity {
         rpcActIntent = new Intent(getApplicationContext(), RPCActivity.class);
         sharedPreferencesUtil = new Utils.SharedPreferenceUtil("sharedPrefs", MainActivity.this);
 
-        if (sharedPreferencesUtil.getBoolean("isSPChecked") && !Utils.ServiceUtils.checkIfServiceIsRunning(getApplicationContext(), RPCService.class))
-        {
+        // Important checks.
+        if (sharedPreferencesUtil.getBoolean("isSPChecked") && !Utils.ServiceUtils.checkIfServiceIsRunning(getApplicationContext(), RPCService.class)) {
             startActivity(rpcActIntent);
-        } else {
-            System.out.println(sharedPreferencesUtil);
+        }
+
+        if (MainActivity.sharedPreferencesUtil.getString("shouldUseCM").equals("DEFAULT")) {
+            MainActivity.sharedPreferencesUtil.addString("shouldUseCM", String.valueOf(false));
         }
     }
 
-    private BottomNavigationView.OnNavigationItemSelectedListener navListener =
-            new BottomNavigationView.OnNavigationItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                    switch (item.getItemId()) {
-                        case R.id.bottom_nav_homeMenu:
-                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeMenuFragment()).commit();
-                            break;
-                        case R.id.bottom_nav_modsMenu:
-                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ModsMenuFragment()).commit();
-                            break;
-                        case R.id.bottom_nav_settingsMenu:
-                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsMenuPreferenceFragment()).commit();
-                            break;
-                    }
-
-                    return true;
-                }
-            };
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.bottom_nav_homeMenu:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeMenuFragment()).commit();
+                break;
+            case R.id.bottom_nav_modsMenu:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ModsMenuFragment()).commit();
+                break;
+            case R.id.bottom_nav_settingsMenu:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsMenuPreferenceFragment()).commit();
+                break;
+        }
+        return true;
+    }
 
     private long firstBackTime;
 

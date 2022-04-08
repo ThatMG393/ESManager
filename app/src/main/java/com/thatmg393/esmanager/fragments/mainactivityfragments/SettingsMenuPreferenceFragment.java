@@ -91,7 +91,7 @@ public class SettingsMenuPreferenceFragment extends PreferenceFragmentCompat imp
                 break;
 
             case "editor_cm":
-                MainActivity.sharedPreferencesUtil.addBoolean("shouldUseCM", sharedPreferences.getBoolean(key, false));
+                MainActivity.sharedPreferencesUtil.addString("shouldUseCM", String.valueOf(sharedPreferences.getBoolean(key, false)));
                 break;
         }
     }

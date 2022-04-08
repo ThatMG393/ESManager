@@ -2,6 +2,7 @@ package com.thatmg393.esmanager.fragments.createmodfragments;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,6 +22,8 @@ import com.thatmg393.esmanager.MainActivity;
 import com.thatmg393.esmanager.R;
 import com.thatmg393.esmanager.Utils;
 import com.thatmg393.esmanager.adapters.TextAdapter;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -58,13 +61,23 @@ public class ProjectExplorerFragment extends Fragment {
         textAdapter = new TextAdapter();
         textAdapter.setData(pathLists);
 
-        if (MainActivity.sharedPreferencesUtil.getBoolean("shouldUseCM")) {
+        if (MainActivity.sharedPreferencesUtil.getString("shouldUseCM").equals("DEFAULT")) {
+            Utils.LoggerUtils.logWarn("\"shouldUseCM\" returned \"DEFAULT\" which should not happen in normal circumstances.");
+        } else if (Boolean.parseBoolean(MainActivity.sharedPreferencesUtil.getString("shouldUseCM"))) {
             registerForContextMenu(explorer);
         }
 
         try {
             if (Utils.ActivityUtils.arePermissionsDenied(getActivity().getApplicationContext(), Utils.app_perms)) {
-                getActivity().requestPermissions(Utils.app_perms, 69418);
+                /* Test code
+                new FragmentPermissionHelper().requestMultiPermission(getActivity(), new FragmentPermissionMultipleInterface() {
+                    @Override
+                    public void isGrantedMultiple(Map<String, Boolean> isGranted) {
+                        explorerInit();
+                    }
+                }, Utils.app_perms);
+                 */
+
                 explorerInit();
             } else {
                 explorerInit();
@@ -75,10 +88,11 @@ public class ProjectExplorerFragment extends Fragment {
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+    public void onCreateContextMenu(@NotNull ContextMenu menu, @NotNull View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        String header = textAdapter.getItem(info.position).substring(textAdapter.getItem(info.position).lastIndexOf('/') + 1).substring(0, 1).toUpperCase();
+        String header = textAdapter.getItem(info.position).substring(textAdapter.getItem(info.position).lastIndexOf('/') + 1);
+        header = header.substring(0, 1).toUpperCase();
 
         menu.setHeaderTitle(header);
 
@@ -120,7 +134,7 @@ public class ProjectExplorerFragment extends Fragment {
 
     private void explorerInit() {
         Executor executor = Executors.newSingleThreadExecutor();
-        Handler handler = new Handler(getActivity().getMainLooper());
+        Handler handler = new Handler(Looper.getMainLooper());
 
         executor.execute(() -> {
             File modRootDir = new File(rootPath);

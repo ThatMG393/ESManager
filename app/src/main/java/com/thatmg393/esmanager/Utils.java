@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Handler;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,12 +26,12 @@ public final class Utils {
 			Manifest.permission.WRITE_EXTERNAL_STORAGE};
     
     public static class SharedPreferenceUtil {
-		
+
 		private SharedPreferences sharedPreference;
 		private SharedPreferences.Editor spe;
 		
 		@SuppressLint("CommitPrefEdits")
-		public SharedPreferenceUtil(String name, Context ctx) {
+		SharedPreferenceUtil(String name, Context ctx) {
 			try {
 				String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
 				sharedPreference = EncryptedSharedPreferences.create(name, masterKeyAlias, ctx, EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV, EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM);
@@ -42,8 +43,7 @@ public final class Utils {
 		}
 		
 		public void addBoolean(String key, boolean value) {
-			spe.putBoolean(key, value);
-			spe.apply();
+			spe.putBoolean(key, value).commit();
 		}
 		
 		public boolean getBoolean(String key) {
@@ -51,8 +51,7 @@ public final class Utils {
 		}
 		
 		public void addString(String key, String value) {
-			spe.putString(key, value);
-			spe.apply();
+			spe.putString(key, value).commit();
 		}
 
 		public String getString(String key) {
@@ -120,6 +119,26 @@ public final class Utils {
     	public static void runOnMainThread(@NonNull final Context context, @NonNull final Runnable task) {
 			Handler h = new Handler(context.getMainLooper());
 			h.post(task);
+		}
+	}
+
+	public static class LoggerUtils {
+		private static final String logTag = "ESManager";
+
+		public static void logInfo(String message) {
+			Log.e(logTag, message);
+		}
+
+		public static void logWarn(String message) {
+			Log.e(logTag, message);
+		}
+
+		public static void logErr(String message) {
+			Log.e(logTag, message);
+		}
+
+		public static void logWTF(String message) {
+			Log.wtf(logTag, message);
 		}
 	}
 }
