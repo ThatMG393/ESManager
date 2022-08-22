@@ -84,10 +84,10 @@ public class SwitchPlusClickPreference extends SwitchPreference {
         }
         return null;
     }
-
+    
     //Get a handle on the 2 parts of the switch preference and assign handlers to them
     @Override
-    protected void onBindView (View view){
+    protected void onBindView(View view) {
         super.onBindView(view);
 
         final Switch switchView = findSwitchWidget(view);

@@ -7,26 +7,26 @@ android {
         minSdkVersion 23
         targetSdkVersion 32
         versionCode 1
-        versionName '0.9.6'
+        versionName '0.9.7'
     }
     buildTypes {
         release {
             applicationIdSuffix ".release"
-            versionNameSuffix "-release" + "_build-" + getDate()
+            versionNameSuffix "-release_build-" + getDate()
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
         beta {
             applicationIdSuffix ".beta"
-            versionNameSuffix "-beta" + "_build-" + getDate()
+            versionNameSuffix "-beta_build-" + getDate()
             minifyEnabled false
             signingConfig signingConfigs.debug
         }
 
         alpha {
             applicationIdSuffix ".alpha"
-            versionNameSuffix "-alpha" + "_build-" + getDate()
+            versionNameSuffix "-alpha_build-" + getDate()
             minifyEnabled false
             signingConfig signingConfigs.debug
         }
@@ -36,7 +36,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    buildToolsVersion = '32'
+    buildToolsVersion = '33.0.0'
 }
 
 static def getDate() {
@@ -44,22 +44,28 @@ static def getDate() {
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    //Important
-    implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
-    implementation 'com.google.android.material:material:1.5.0'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'commons-io:commons-io:2.11.0'
-    implementation 'gr.pantrif:easy-android-splash-screen:0.0.1'
+    
+    // Defaults
+    implementation 'androidx.appcompat:appcompat:1.5.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'com.google.android.material:material:1.6.1'
+    
+    // Extras
     implementation 'com.google.code.gson:gson:2.9.0'
-    implementation 'androidx.preference:preference:1.2.0'
+    implementation 'org.java-websocket:Java-WebSocket:1.5.3'
+    implementation 'org.jetbrains:annotations:23.0.0'
     implementation 'io.github.amrdeveloper:codeview:1.3.4'
-    implementation "androidx.security:security-crypto:1.0.0"
+    implementation 'gr.pantrif:easy-android-splash-screen:0.0.1'
+    implementation 'androidx.preference:preference:1.2.0'
+    implementation 'androidx.security:security-crypto:1.1.0-alpha03'
+    implementation 'commons-io:commons-io:2.11.0'
+    
+    // Duplication Fix
+    def lifecycle_version = "2.5.1"
+    implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
+	implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
 
-    // implementation 'com.github.salehyarahmadi:FileAndFolderPicker:1.0.4'
-
+    
     //libs folder
-    implementation files('libs/Java-WebSocket-1.5.2.jar')
-    implementation files('libs/slf4j-android-1.5.8.jar')
+    //implementation fileTree(include: ['*.jar'], dir: 'libs')
 }

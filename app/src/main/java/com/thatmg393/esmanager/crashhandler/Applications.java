@@ -10,10 +10,13 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 
+import com.itsaky.androidide.logsender.LogSender;
+
 public class Applications extends Application {
 	private Thread.UncaughtExceptionHandler uncaughtExceptionHandler;
 	@Override
 	public void onCreate() {
+        LogSender.startLogging(this);
 		this.uncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 			@Override
@@ -31,7 +34,7 @@ public class Applications extends Application {
 		});
 		super.onCreate();
 	}
-	private String getStackTrace(Throwable th){
+	private String getStackTrace(Throwable th) {
 		final Writer result = new StringWriter();
 		final PrintWriter printWriter = new PrintWriter(result);
 		Throwable cause = th;

@@ -36,7 +36,7 @@ public class HomeMenuFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Button launchGameButton = getView().findViewById(R.id.launch_game);
+        Button launchGameButton = requireView().findViewById(R.id.launch_game);
 
         launchGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,29 +59,24 @@ public class HomeMenuFragment extends Fragment {
     }
 
     private void LaunchGame() {
-
         Intent esIntent = getActivity().getPackageManager().getLaunchIntentForPackage("com.evertechsandbox");
         if (esIntent != null) {
             try {
                 startActivity(esIntent);
                 MainActivity.sharedPreferencesUtil.addBoolean("isESRunning", Utils.ActivityUtils.checkIfAppIsRunning(getContext(), appPackageName));
 
-                if (MainActivity.sharedPreferencesUtil.getBoolean("isSPChecked") && !MainActivity.sharedPreferencesUtil.getString("uname").equals("DEFAULT")) {
+                if (MainActivity.sharedPreferencesUtil.getBoolean("isSPChecked") && MainActivity.sharedPreferencesUtil.getBoolean("agreed_rpc")) {
                     RPCService.sendPresence();
                 }
             } catch (ActivityNotFoundException anfe) {
                 try {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-
-                    return;
                 } catch (ActivityNotFoundException anfe2) {
-                    anfe2.printStackTrace();
-                }
-
-                try {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
-                } catch (ActivityNotFoundException anfe3) {
-                    anfe3.printStackTrace();
+                    try {
+                    	startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                	} catch (ActivityNotFoundException anfe3) {
+                    	anfe3.printStackTrace();
+                	}
                 }
             }
         }

@@ -1,19 +1,23 @@
 package com.thatmg393.esmanager;
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInstaller;
 import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.security.crypto.EncryptedSharedPreferences;
-import androidx.security.crypto.MasterKeys;
+import androidx.security.crypto.MasterKey;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -28,22 +32,18 @@ public final class Utils {
     public static class SharedPreferenceUtil {
 
 		private SharedPreferences sharedPreference;
-		private SharedPreferences.Editor spe;
 		
-		@SuppressLint("CommitPrefEdits")
 		SharedPreferenceUtil(String name, Context ctx) {
 			try {
-				String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
-				sharedPreference = EncryptedSharedPreferences.create(name, masterKeyAlias, ctx, EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV, EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM);
+				MasterKey masterKey = new MasterKey.Builder(ctx, MasterKey.DEFAULT_MASTER_KEY_ALIAS).setKeyScheme(MasterKey.KeyScheme.AES256_GCM).build();
+				sharedPreference = EncryptedSharedPreferences.create(ctx, name, masterKey, EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV, EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM);
 			} catch (GeneralSecurityException | IOException e) {
 				e.printStackTrace();
 			}
-
-			spe = sharedPreference.edit();
 		}
 		
 		public void addBoolean(String key, boolean value) {
-			spe.putBoolean(key, value).commit();
+			sharedPreference.edit().putBoolean(key, value).commit();
 		}
 		
 		public boolean getBoolean(String key) {
@@ -51,16 +51,18 @@ public final class Utils {
 		}
 		
 		public void addString(String key, String value) {
-			spe.putString(key, value).commit();
+			sharedPreference.edit().putString(key, value).commit();
 		}
 
 		public String getString(String key) {
-			return sharedPreference.getString(key, "DEFAULT");
+			return sharedPreference.getString(key, null);
 		}
 	}
 	
 	public static class ServiceUtils {
-		public static boolean checkIfServiceIsRunning(@NonNull final Context ctx, @NonNull final Class<?> serviceClass) {
+        
+        @SuppressWarnings("deprecation")
+		public static boolean isServiceRunning(@NonNull final Context ctx, @NonNull final Class<?> serviceClass) {
 			ActivityManager manager = (ActivityManager) ctx.getSystemService(Context.ACTIVITY_SERVICE);
 			for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
 				if (serviceClass.getName().equals(service.service.getClassName())) {
@@ -85,34 +87,13 @@ public final class Utils {
 			return false;
 		}
 
-		public static boolean arePermissionsDenied(@NonNull final Context context, @NonNull final String[] permissions) {
-			int p = 0;
-			while (p < permissions.length) {
-				if (context.checkSelfPermission(permissions[p]) != PackageManager.PERMISSION_GRANTED) {
-					return true;
-				}
-				p++;
-			}
-			return false;
+		public static boolean isPermissionDenied(@NonNull final Context context, @NonNull final String permission) {
+			return (context.checkCallingPermission(permission) == PackageManager.PERMISSION_GRANTED) ? true : false ;
 		}
-
-		public static void newDialog(@NonNull Context context,
-									 @NonNull CharSequence positiveButText,
-									 @NonNull DialogInterface.OnClickListener positiveButListener,
-									 @NonNull CharSequence negativeButText,
-									 @NonNull DialogInterface.OnClickListener negativeButListener,
-									 @Nullable CharSequence title,
-									 @Nullable CharSequence message) {
-			AlertDialog adb = new AlertDialog.Builder(context).create();
-
-			adb.setTitle(title);
-			adb.setMessage(message);
-
-			adb.setButton(DialogInterface.BUTTON_POSITIVE, positiveButText, positiveButListener);
-			adb.setButton(DialogInterface.BUTTON_NEGATIVE, negativeButText, negativeButListener);
-
-			adb.show();
-		}
+        
+        public static void askForPermission(@NonNull final Activity activity, @NonNull final String permission, @NonNull int resultCode) {
+            ActivityCompat.requestPermissions(activity, new String[]{permission}, resultCode);
+        }
 	}
 
 	public static class ThreadUtils {
@@ -126,11 +107,11 @@ public final class Utils {
 		private static final String logTag = "ESManager";
 
 		public static void logInfo(String message) {
-			Log.e(logTag, message);
+			Log.i(logTag, message);
 		}
 
 		public static void logWarn(String message) {
-			Log.e(logTag, message);
+			Log.w(logTag, message);
 		}
 
 		public static void logErr(String message) {

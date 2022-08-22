@@ -35,7 +35,7 @@ public class DebugActivity extends Activity {
 
 		Intent intent = getIntent();
 		String errMsg = "";
-		String madeErrMsg = "";
+		StringBuilder madeErrMsg = new StringBuilder();
 		if(intent != null){
 			errMsg = intent.getStringExtra("error");
 			String[] spilt = errMsg.split("\n");
@@ -43,13 +43,13 @@ public class DebugActivity extends Activity {
 			try {
 				for (int j = 0; j < exceptionType.length; j++) {
 					if (spilt[0].contains(exceptionType[j])) {
-						madeErrMsg = errMessage[j];
+						madeErrMsg.append(errMessage[j]);
 						int addIndex = spilt[0].indexOf(exceptionType[j]) + exceptionType[j].length();
-						madeErrMsg += spilt[0].substring(addIndex, spilt[0].length());
+						madeErrMsg.append(spilt[0].substring(addIndex, spilt[0].length()));
 						break;
 					}
 				}
-				if(madeErrMsg.isEmpty()) madeErrMsg = errMsg;
+				if(madeErrMsg.toString().isEmpty()) madeErrMsg.append(errMsg);
 			} catch(Exception e) { }
 		}
         AlertDialog.Builder bld = new AlertDialog.Builder(this);

@@ -1,5 +1,6 @@
 package com.thatmg393.esmanager;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.Menu;
@@ -8,13 +9,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
+import com.thatmg393.esmanager.Utils;
 import com.thatmg393.esmanager.fragments.createmodfragments.ProjectEditorFragment;
 import com.thatmg393.esmanager.fragments.createmodfragments.ProjectExplorerFragment;
 import com.thatmg393.esmanager.fragments.createmodfragments.ProjectInfoFragment;
@@ -28,7 +30,7 @@ public class CreateModActivity extends AppCompatActivity implements NavigationVi
 
     // private final String[] dropdownLists = {"New Script", "Import 3D Object", "Save and Play", "Save only", "Settings", "Exit"};
 
-    public static String pp;
+    public static String projectPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,31 +52,10 @@ public class CreateModActivity extends AppCompatActivity implements NavigationVi
                 nav_header_modName.setText(Html.fromHtml(extras.getString("projectModDesc")));
             }
 
-            pp = extras.getString("projectModPath");
-
-            File meshesFolder = new File(pp + "/meshes");
-            File texturesFolder = new File(pp + "/textures");
-            File scriptsFolder = new File(pp + "/scripts");
-            File infoJson = new File(pp + "/info.json");
-
-            try {
-                if (Utils.ActivityUtils.arePermissionsDenied(getApplicationContext(), Utils.app_perms)) {
-                    requestPermissions(Utils.app_perms, 69419);
-
-                    texturesFolder.mkdir();
-                    meshesFolder.mkdir();
-                    scriptsFolder.mkdir();
-                    infoJson.createNewFile();
-                } else {
-                    texturesFolder.mkdir();
-                    meshesFolder.mkdir();
-                    scriptsFolder.mkdir();
-                    infoJson.createNewFile();
-                }
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-            }
+            projectPath = extras.getString("projectModPath");
         }
+        
+        askForPerm();
 
         drawerLayout = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.nav_drawer_open, R.string.nav_drawer_close);
@@ -123,7 +104,7 @@ public class CreateModActivity extends AppCompatActivity implements NavigationVi
 
             case R.id.nav_project_dropdown_exit:
                 Toast.makeText(getApplicationContext(), "Exiting", Toast.LENGTH_LONG).show();
-                CreateModActivity.this.finish();
+                finish();
                 break;
         }
         return true;
@@ -155,5 +136,32 @@ public class CreateModActivity extends AppCompatActivity implements NavigationVi
         } else {
             super.onBackPressed();
         }
+    }
+    
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+            	if (grantResults.length <= 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(CreateModActivity.this, "Please grant storage permission to continue.", Toast.LENGTH_LONG).show();
+                    // finish();
+                    askForPerm();
+                } else {
+                	createPFiles();
+                }
+            	return;
+        }
+    }
+    
+    private void askForPerm() {
+        if (Utils.ActivityUtils.isPermissionDenied(getApplicationContext(), Utils.app_perms[0])) {
+            Utils.ActivityUtils.askForPermission(this, Utils.app_perms[0], 1);
+        } else {
+        	createPFiles();
+        }
+    }
+    
+    private void createPFiles() {
+        
     }
 }

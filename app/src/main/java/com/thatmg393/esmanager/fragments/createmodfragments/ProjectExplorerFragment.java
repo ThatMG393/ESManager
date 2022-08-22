@@ -1,51 +1,45 @@
 package com.thatmg393.esmanager.fragments.createmodfragments;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.thatmg393.esmanager.CreateModActivity;
-import com.thatmg393.esmanager.MainActivity;
 import com.thatmg393.esmanager.R;
-import com.thatmg393.esmanager.Utils;
-import com.thatmg393.esmanager.adapters.TextAdapter;
-
-import org.jetbrains.annotations.NotNull;
+import com.thatmg393.esmanager.data.FilePojo;
+import com.thatmg393.esmanager.adapters.FolderAdapter;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class ProjectExplorerFragment extends Fragment {
-
-    private static final int[] ctxMenuItems = {Menu.FIRST, Menu.FIRST + 1, Menu.FIRST + 2, Menu.FIRST + 3};
-    // private static final Vector<Button> buttons = new Vector<>();
-
-    private static final String rootPath = CreateModActivity.pp;
-
-    private TextAdapter textAdapter;
-    private File[] modPathFilesnFolder;
-
-    private List<String> pathLists;
+    
+    private static final String rootPath = CreateModActivity.projectPath;
+    private String curPath = rootPath;
+    
+    private ArrayList<FilePojo> dirList;
+    private ArrayList<FilePojo> foldersList;
+    private ArrayList<FilePojo> filesList;
+    private Comparator<FilePojo> compAscending = new Comparator<FilePojo>() {
+		@Override
+		public int compare(FilePojo f1, FilePojo f2) {
+			return f1.getName().compareTo(f2.getName());
+		}
+	};
+    
+    private Activity mFAct;
     private ListView explorer;
-
-    private boolean isOneItemSelected = false;
-    private boolean isMultipleItemSelected = false;
+    private FolderAdapter fAdapter;
 
     @Nullable
     @Override
@@ -56,188 +50,74 @@ public class ProjectExplorerFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        
+        mFAct = getActivity();
+		
         explorer = requireView().findViewById(R.id.project_explorer);
-        textAdapter = new TextAdapter();
-        textAdapter.setData(pathLists);
+        initExplorer();
+        loadExplorer(curPath);
+        explorer.setAdapter(fAdapter);
+    }
 
-        if (MainActivity.sharedPreferencesUtil.getString("shouldUseCM").equals("DEFAULT")) {
-            Utils.LoggerUtils.logWarn("\"shouldUseCM\" returned \"DEFAULT\" which should not happen in normal circumstances.");
-        } else if (Boolean.parseBoolean(MainActivity.sharedPreferencesUtil.getString("shouldUseCM"))) {
-            registerForContextMenu(explorer);
-        }
-
-        try {
-            if (Utils.ActivityUtils.arePermissionsDenied(getActivity().getApplicationContext(), Utils.app_perms)) {
-                /* Test code
-                new FragmentPermissionHelper().requestMultiPermission(getActivity(), new FragmentPermissionMultipleInterface() {
-                    @Override
-                    public void isGrantedMultiple(Map<String, Boolean> isGranted) {
-                        explorerInit();
-                    }
-                }, Utils.app_perms);
-                 */
-
-                explorerInit();
+    private void loadExplorer(String path) {
+        File[] files = new File(path).listFiles();
+        
+        if (files == null) return;
+        if (foldersList.size() > 0) foldersList.clear();
+        if (filesList.size() > 0) filesList.clear();
+        if (dirList.size() > 0) dirList.clear();
+        
+        for (File file : files) {
+            if (file.isDirectory()) {
+                foldersList.add(new FilePojo(file.getName(), true));
             } else {
-                explorerInit();
+            	filesList.add(new FilePojo(file.getName(), false));
             }
-        } catch (NullPointerException npe) {
-            npe.printStackTrace();
         }
+        
+        Collections.sort(foldersList, compAscending);
+        Collections.sort(filesList, compAscending);
+        dirList.addAll(foldersList);
+        dirList.addAll(filesList);
+        
+        fAdapter = new FolderAdapter(mFAct, dirList);
     }
-
-    @Override
-    public void onCreateContextMenu(@NotNull ContextMenu menu, @NotNull View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        String header = textAdapter.getItem(info.position).substring(textAdapter.getItem(info.position).lastIndexOf('/') + 1);
-        header = header.substring(0, 1).toUpperCase();
-
-        menu.setHeaderTitle(header);
-
-        menu.add(1, ctxMenuItems[0], ctxMenuItems[0], "Delete");
-        menu.add(1, ctxMenuItems[1], ctxMenuItems[1], "Copy");
-        menu.add(1, ctxMenuItems[2], ctxMenuItems[2], "Move");
-
-        if (isOneItemSelected && !isMultipleItemSelected) {
-            menu.add(1, ctxMenuItems[3], ctxMenuItems[3], "Rename");
+    
+    private void onListItemClick(int position) {
+        if (!fAdapter.getItem(position).isFolder()) {
+            // TODO: Open file on editor.
         } else {
-            menu.removeItem(ctxMenuItems[3]);
+        	curPath = curPath + "/" + fAdapter.getItem(position).getName();
+            loadExplorer(curPath);
         }
     }
-
-    // AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case 1:
-                Toast.makeText(getContext(), "Delete", Toast.LENGTH_SHORT).show();
-                return true;
-
-            case 2:
-                Toast.makeText(getContext(), "Copy", Toast.LENGTH_SHORT).show();
-                return true;
-
-            case 3:
-                Toast.makeText(getContext(), "Move", Toast.LENGTH_SHORT).show();
-                return true;
-
-            case 4:
-                Toast.makeText(getContext(), "Rename", Toast.LENGTH_SHORT).show();
-                return true;
-
+    
+    private void onListItemHold(int position) {
+        if (!fAdapter.getItem(position).isFolder()) {
+            // TODO: Show bottom buttons.
+        } else {
+        	// TODO: Show bottom buttons.
         }
-        return false;
     }
-
-    private void explorerInit() {
-        Executor executor = Executors.newSingleThreadExecutor();
-        Handler handler = new Handler(Looper.getMainLooper());
-
-        executor.execute(() -> {
-            File modRootDir = new File(rootPath);
-
-            modPathFilesnFolder = modRootDir.listFiles();
-
-            pathLists = new ArrayList<>();
-
-            for (File file : modPathFilesnFolder) {
-                pathLists.add(file.getAbsolutePath());
+    
+    private void initExplorer() {
+        foldersList = new ArrayList<>();
+		filesList = new ArrayList<>();
+        dirList = new ArrayList<>();
+        
+        explorer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View lv, int position, long id) {
+                onListItemClick(position);
             }
-
-            handler.post(() -> {
-                explorer.setAdapter(textAdapter);
-
-                boolean[] selection = new boolean[pathLists.size()];
-
-                explorer.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-                    @Override
-                    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                        selection[position] = !selection[position];
-                        textAdapter.setSelection(selection);
-
-                        if (!MainActivity.sharedPreferencesUtil.getBoolean("shouldUseCM")) {
-                            isOneItemSelected = false;
-                            isMultipleItemSelected = false;
-
-                            for (boolean aSelection : selection) {
-                                if (aSelection) {
-                                    isOneItemSelected = true;
-                                    break;
-                                }
-                            }
-
-                            //Check for MultiItem selection
-                            int s = 0;
-                            for (boolean aSelection : selection) {
-                                if (aSelection) {
-                                    s++;
-                                    if (s > 1) {
-                                        isMultipleItemSelected = true;
-                                        break;
-                                    }
-                                }
-                            }
-
-                            if (isOneItemSelected && !isMultipleItemSelected) {
-                                requireView().findViewById(R.id.explorer_bottomBar_singleItem).setVisibility(View.VISIBLE);
-                            } else {
-                                requireView().findViewById(R.id.explorer_bottomBar_singleItem).setVisibility(View.GONE);
-                            }
-
-                            if (isMultipleItemSelected && isOneItemSelected) {
-                                requireView().findViewById(R.id.explorer_bottomBar_multiItem).setVisibility(View.VISIBLE);
-                            } else {
-                                requireView().findViewById(R.id.explorer_bottomBar_multiItem).setVisibility(View.GONE);
-                            }
-                        }
-
-                        return false;
-                    }
-                }); // onItemLongClickListener
-            }); // handler.post()
-        }); // executor.execute()
-    }
-
-    private void deleteFolderOrFile(File fileToDelete) {
-        if (fileToDelete.isDirectory()) {
-            try {
-                String[] children = fileToDelete.list();
-                for (String child : children) {
-                    new File(fileToDelete, child).delete();
-                }
-            } catch (NullPointerException npe) {
-                npe.printStackTrace();
-                fileToDelete.delete();
+        });
+        
+        explorer.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View lv, int position, long id) {
+                onListItemHold(position);
+                return true;
             }
-        } else if (fileToDelete.isFile()) {
-            fileToDelete.delete();
-        }
+        });
     }
-
-    private void PickFile() {
-        /* Disabled for some reason.
-        SingleFilePickerDialog singleFilePickerDialog = new SingleFilePickerDialog(getApplicationContext(),
-                () -> Toast.makeText(getApplicationContext(), "Canceled!!", Toast.LENGTH_SHORT).show(),
-                files -> Toast.makeText(getApplicationContext(), files[0].getPath(), Toast.LENGTH_SHORT).show());
-        singleFilePickerDialog.show();
-         */
-    }
-
-    /*
-                newDialog(getContext(), "Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        deleteFolderOrFile(modPathFilesnFolder[info.position]);
-                    }
-                }, "No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                }, "Warning!", "Are you sure you want to delete this file?\r\nThis cannot be undone!");
-                 */
-
 }

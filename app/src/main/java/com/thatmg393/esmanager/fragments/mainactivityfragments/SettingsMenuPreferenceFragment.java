@@ -25,8 +25,6 @@ public class SettingsMenuPreferenceFragment extends PreferenceFragmentCompat imp
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preference, rootKey);
         sp = findPreference("misc_dcrpc");
-
-        adb = new AlertDialog.Builder(getContext()).create();
     }
 
     @Override
@@ -34,6 +32,7 @@ public class SettingsMenuPreferenceFragment extends PreferenceFragmentCompat imp
         super.onCreate(savedInstanceState);
 
         sp.setChecked(MainActivity.sharedPreferencesUtil.getBoolean("isSPChecked"));
+        adb = new AlertDialog.Builder(getContext()).create();
     }
 
     @Override
@@ -60,40 +59,49 @@ public class SettingsMenuPreferenceFragment extends PreferenceFragmentCompat imp
             case "misc_dcrpc":
                 if (sharedPreferences.getBoolean(key, false)) {
                     if (!MainActivity.sharedPreferencesUtil.getBoolean("agreed_rpc")) {
-                        Utils.ActivityUtils.newDialog(getContext(), getString(R.string.discord_rcp_ask_accept), new DialogInterface.OnClickListener() {
+                        adb.setTitle(getString(R.string.discord_rpc_ask_title));
+                        adb.setMessage(getString(R.string.discord_rpc_ask_message));
+                        adb.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.discord_rpc_ask_accept), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 MainActivity.sharedPreferencesUtil.addBoolean("agreed_rpc", true);
-                                if (!Utils.ServiceUtils.checkIfServiceIsRunning(getContext(), RPCService.class)) {
+                                if (!Utils.ServiceUtils.isServiceRunning(getContext(), RPCService.class)) {
                                     requireActivity().startActivity(MainActivity.rpcActIntent);
                                 }
                                 dialogInterface.dismiss();
                             }
-                        }, getString(R.string.discord_rcp_ask_cancel), new DialogInterface.OnClickListener() {
+                        });
+                        adb.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.discord_rpc_ask_cancel), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 sp.setChecked(false);
-                                MainActivity.sharedPreferencesUtil.addBoolean("isSPChecked", sp.isChecked());
+                                refreshPref();
                                 dialogInterface.dismiss();
                             }
-                        }, getString(R.string.discord_rcp_ask_title), getString(R.string.discord_rcp_ask_message));
-
+                        });
+                        adb.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                            @Override
+                        	public void onCancel(DialogInterface dialog) {
+                            	sp.setChecked(false);
+                                refreshPref();
+                        	}
+                        });
+                        adb.show();
                     } else {
-                        if (!Utils.ServiceUtils.checkIfServiceIsRunning(getContext(), RPCService.class)) {
+                        if (MainActivity.sharedPreferencesUtil.getBoolean("agreed_rpc") && !Utils.ServiceUtils.isServiceRunning(getContext(), RPCService.class)) {
                             requireActivity().startActivity(MainActivity.rpcActIntent);
                         }
-                        MainActivity.sharedPreferencesUtil.addBoolean("isRPCRunning", Utils.ServiceUtils.checkIfServiceIsRunning(getContext(), RPCService.class));
                     }
-                    MainActivity.sharedPreferencesUtil.addBoolean("isSPChecked", sp.isChecked());
+                    refreshPref();
                 } else {
-                    MainActivity.sharedPreferencesUtil.addBoolean("isSPChecked", sp.isChecked());
+                    refreshPref();
                 }
                 break;
-
-            case "editor_cm":
-                MainActivity.sharedPreferencesUtil.addString("shouldUseCM", String.valueOf(sharedPreferences.getBoolean(key, false)));
-                break;
         }
+    }
+    
+    private void refreshPref() {
+        MainActivity.sharedPreferencesUtil.addBoolean("isSPChecked", sp.isChecked());
     }
 }
 

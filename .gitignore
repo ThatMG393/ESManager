@@ -1,7 +1,6 @@
-/build
-local.properties
-ESManager.iml
-
 # Project exclude paths
 /app/build/
 /app/build/intermediates/javac/debug/classes/
+/app/src/main/res/.nomedia
+local.properties
+ESManager.iml

@@ -34,7 +34,7 @@ public class ProjectEditorFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        CodeView codeView = view.findViewById(R.id.code_editor);
+        CodeView codeView = requireView().findViewById(R.id.code_editor);
         codeView.addSyntaxPattern(LuaSyntaxManager.lua_keywords, LuaSyntaxManager.lua_keywords_colors);
         codeView.addSyntaxPattern(LuaSyntaxManager.lua_operators, LuaSyntaxManager.lua_operators_colors);
         codeView.addSyntaxPattern(LuaSyntaxManager.lua_chars, LuaSyntaxManager.lua_chars_colors);

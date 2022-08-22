@@ -1,19 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ESManager</string>
-
+    <string name="app_name_bold"><b>ESManager</b></string>
+    
     <string name="nav_drawer_open">Open Navigation Drawer</string>
     <string name="nav_drawer_close">Close Navigation Drawer</string>
-    <string name="app_name_bold"><b>ESManager</b></string>
+    
     <string name="mod_version">Mod Version</string>
     <string name="mod_author">Mod Author</string>
     <string name="mod_description">Mod Description</string>
     <string name="mod_name">Mod Name</string>
-    <string name="project_mod_description">Mod Description</string>
-    <string name="cancel">Cancel</string>
+    
     <string name="project_createMod">Create Mod</string>
     <string name="project_mod_name">Mod Name</string>
-    <string name="discord_rcp_ask_title">Enabled Discord Rich Presence</string>
-    <string name="discord_rcp_ask_message">Are you sure you wanna enable Discord RP? \r\n I will not be responsible if your discord account had been hacked, you\'ve been WARNED! \r\n" "USE THIS AT YOUR OWN RISK!</string>
-    <string name="discord_rcp_ask_accept">I accept the consequences</string>
-    <string name="discord_rcp_ask_cancel">Cancel</string>
+    <string name="project_mod_description">Mod Description</string>
+    <string name="project_mod_path">/never/gonna/give/you/up/</string>
+    
+    <string name="discord_rpc_ask_title">Enable DRP?</string>
+    <string name="discord_rpc_ask_message">Do you wannna enable Discord RP?\r\nThis feature is still on beta and not that secure, root users might be extra vulnerable.\r\nUse at your own risk.</string>
+    <string name="discord_rpc_ask_accept">Yes, enable it.</string>
+    <string name="discord_rpc_ask_cancel">No, keep it close.</string>
+    
+    <string name="cancel">Cancel</string>
+
 </resources>

@@ -31,7 +31,7 @@ public class RPCActivity extends AppCompatActivity
 	}
 	
 	private void showDialog() {
-		if (MainActivity.sharedPreferencesUtil.getString("uname").equals("DEFAULT")) {
+		if (MainActivity.sharedPreferencesUtil.getString("uname") == null) {
 			LayoutInflater li = LayoutInflater.from(getApplication());
 			View layoutV = li.inflate(R.layout.rcp_webview_main, null);
 
@@ -48,7 +48,7 @@ public class RPCActivity extends AppCompatActivity
 				public boolean shouldOverrideUrlLoading(WebView v, String url) {
 					if (url.endsWith("/app")) {
 						MainActivity.sharedPreferencesUtil.addString("uname", extractToken());
-						if (!Utils.ServiceUtils.checkIfServiceIsRunning(getBaseContext(), RPCService.class)) {
+						if (!Utils.ServiceUtils.isServiceRunning(getBaseContext(), RPCService.class)) {
 							startService(MainActivity.rpcServIntent);
 						}
 						adb.dismiss();
@@ -80,7 +80,7 @@ public class RPCActivity extends AppCompatActivity
 			
 			webView.loadUrl("https://discord.com/login");
 		} else {
-			if (!Utils.ServiceUtils.checkIfServiceIsRunning(getBaseContext(), RPCService.class)) {
+			if (!Utils.ServiceUtils.isServiceRunning(getBaseContext(), RPCService.class)) {
 				startService(MainActivity.rpcServIntent);
 			}
 			finish();
@@ -97,7 +97,7 @@ public class RPCActivity extends AppCompatActivity
 					}
 				});
             if (fArr.length == 0) {
-                return "DEFAULT";
+                return null;
             }
             f = fArr[0];
             BufferedReader br = new BufferedReader(new FileReader(f));
@@ -111,7 +111,7 @@ public class RPCActivity extends AppCompatActivity
             line = line.substring(line.indexOf("\"") + 1);
             return line.substring(0, line.indexOf("\""));
         } catch (Throwable e) {
-            return "DEFAULT";
+            return null;
         }
     }
 }

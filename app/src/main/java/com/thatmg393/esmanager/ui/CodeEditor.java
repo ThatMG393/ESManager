@@ -36,7 +36,6 @@ public class CodeEditor extends androidx.appcompat.widget.AppCompatEditText {
 
     private String keywords_color = "#ffff4444";
 
-
     public CodeEditor(@NonNull Context context) {
         super(context);
         this.context = context;
@@ -44,76 +43,67 @@ public class CodeEditor extends androidx.appcompat.widget.AppCompatEditText {
     }
 
     public CodeEditor(@NonNull Context context, AttributeSet attrs) {
-        super(context,attrs);
+        super(context, attrs);
         this.context = context;
         initSyntaxHighlight();
     }
 
-    public CodeEditor(@NonNull Context context, AttributeSet attrs, int defStyle)
-    {
+    public CodeEditor(@NonNull Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.context = context;
         initSyntaxHighlight();
     }
 
-    private final void initSyntaxHighlight()
-    {
-		/*
-		 Source: https://stackoverflow.com/questions/42786493/syntax-highlighting-on-android-edittext-using-span
-		*/
+    private final void initSyntaxHighlight() {
+        /*
+         Source: https://stackoverflow.com/questions/42786493/syntax-highlighting-on-android-edittext-using-span
+        */
 
         System.out.println("Syntax Highlighting Engine Initializing");
 
-        final ColorScheme keywords = new ColorScheme(
-                Pattern.compile("\\b(and|end|in|repeat|break|false|local|return|do|for|nil|then|else|function|not|true|elseif|if|or|until|while)\\b"),
-                Color.parseColor("#CC7832"));
+        final ColorScheme keywords =
+                new ColorScheme(
+                        Pattern.compile(
+                                "\\b(and|end|in|repeat|break|false|local|return|do|for|nil|then|else|function|not|true|elseif|if|or|until|while)\\b"),
+                        Color.parseColor("#CC7832"));
 
+        final ColorScheme operators =
+                new ColorScheme(
+                        Pattern.compile("\\b(<|>|<=|>=|~=|==)\\b"), Color.parseColor("#A9B7C6"));
 
-        final ColorScheme operators = new ColorScheme(
-                Pattern.compile("\\b(<|>|<=|>=|~=|==)\\b"),
-                Color.parseColor("#A9B7C6")
-        );
-
-        final ColorScheme strings = new ColorScheme(
-                Pattern.compile("\\b([abcefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRTUVWXYZ])\\b"),
-                Color.parseColor("#60864C")
-        );
+        final ColorScheme strings =
+                new ColorScheme(
+                        Pattern.compile(
+                                "\\b([abcefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRTUVWXYZ])\\b"),
+                        Color.parseColor("#60864C"));
 
         final ColorScheme[] schemes = {keywords, operators};
 
-        this.addTextChangedListener(new TextWatcher()
-        {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after)
-            {
+        this.addTextChangedListener(
+                new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-            }
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count)
-            {
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        removeSpans(s, ForegroundColorSpan.class);
 
-            }
-
-            @Override
-            public void afterTextChanged(Editable s)
-            {
-                removeSpans(s, ForegroundColorSpan.class);
-
-                for (ColorScheme scheme : schemes)
-                {
-                    for (Matcher m = scheme.pattern.matcher(s); m.find();)
-                    {
-                        s.setSpan(new ForegroundColorSpan(scheme.color),
-                                m.start(),
-                                m.end(),
-                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        for (ColorScheme scheme : schemes) {
+                            for (Matcher m = scheme.pattern.matcher(s); m.find(); ) {
+                                s.setSpan(
+                                        new ForegroundColorSpan(scheme.color),
+                                        m.start(),
+                                        m.end(),
+                                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            }
+                        }
                     }
-                }
-            }
-        });
+                });
 
-        //Init Complete!
+        // Init Complete!
         System.out.println("Syntax Highlighting Engine Initialized");
         init();
     }
@@ -129,17 +119,17 @@ public class CodeEditor extends androidx.appcompat.widget.AppCompatEditText {
 
         System.out.println("Main Initializing");
 
-        //useless?
+        // useless?
         rect = new Rect();
 
-        //The line number background
+        // The line number background
         paint = new Paint(paint.ANTI_ALIAS_FLAG);
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.BLACK);
         paint.setTextSize(20);
         paint.setTypeface(Typeface.MONOSPACE);
 
-        //Removes underline
+        // Removes underline
         this.setBackgroundColor(Color.TRANSPARENT);
 
         System.out.println("Main Initialized");
@@ -152,40 +142,25 @@ public class CodeEditor extends androidx.appcompat.widget.AppCompatEditText {
         int lineCount = getLineCount();
         int lineNumber = 1;
 
-        for (int i = 0; i < lineCount; ++i)
-        {
+        for (int i = 0; i < lineCount; ++i) {
             baseline = getLineBounds(i, null);
 
-            if (i == 0)
-            {
+            if (i == 0) {
                 canvas.drawText("" + lineNumber, rect.left, baseline, paint);
                 ++lineNumber;
-            }
-
-            else if (getText().charAt(getLayout().getLineStart(i) - 1) == '\n')
-            {
+            } else if (getText().charAt(getLayout().getLineStart(i) - 1) == '\n') {
                 canvas.drawText("" + lineNumber, rect.left, baseline, paint);
                 ++lineNumber;
             }
         }
 
-        if(lineCount < 100)
-        {
+        if (lineCount < 100) {
             setPadding(45, getPaddingTop(), getPaddingRight(), getPaddingBottom());
-        }
-
-        else if(lineCount > 99 && lineCount < 1000)
-        {
+        } else if (lineCount > 99 && lineCount < 1000) {
             setPadding(63, getPaddingTop(), getPaddingRight(), getPaddingBottom());
-        }
-
-        else if(lineCount > 999 && lineCount < 10000)
-        {
+        } else if (lineCount > 999 && lineCount < 10000) {
             setPadding(73, getPaddingTop(), getPaddingRight(), getPaddingBottom());
-        }
-
-        else if(lineCount > 9999 && lineCount < 100000)
-        {
+        } else if (lineCount > 9999 && lineCount < 100000) {
             setPadding(83, getPaddingTop(), getPaddingRight(), getPaddingBottom());
         }
 

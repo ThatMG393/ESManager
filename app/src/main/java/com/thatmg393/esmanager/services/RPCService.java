@@ -43,14 +43,14 @@ public class RPCService extends Service
 
 	@Override
 	public void onDestroy() {
-		Toast.makeText(this, "onDestroy()!", Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, "RPCService has been destroyed!", Toast.LENGTH_SHORT).show();
 	}
 	
     @Override
     public void onCreate() {
         ctx = RPCService.this;
 
-		Toast.makeText(this, "onCreate()!", Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, "RPCService has been cr!", Toast.LENGTH_SHORT).show();
 
 		mainLooper = new Handler(getMainLooper());
 		
@@ -153,6 +153,7 @@ public class RPCService extends Service
                         heartbeatThr.start();
                         break;
                 }
+                showToastM("[ESManager/Thread3] Is websocket connected: " + webSocketClient.isOpen());
             }
 
             @Override
@@ -160,18 +161,16 @@ public class RPCService extends Service
                 if (!heartbeatThr.interrupted()) {
                     heartbeatThr.interrupt();
                 }
-                
                 throw new RuntimeException("Interrupt");
             }
 
             @Override
             public void onError(Exception e) {
-                
+                // Let's do something with this in the future!
             }
         };
-
         webSocketClient.connect();
-
+        
         showToastM("[ESManager/Thread3] Is websocket connected: " + webSocketClient.isOpen());
     }
 
@@ -232,13 +231,11 @@ public class RPCService extends Service
     }
 
     private static void showToastM(String message) {
-        Runnable st = new Runnable() {
+        mainLooper.post(new Runnable() {
             @Override
             public void run() {
                 Toast.makeText(ctx, message, Toast.LENGTH_LONG).show();
             }
-        };
-
-        mainLooper.post(st);
+        });
     }
 }

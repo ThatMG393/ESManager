@@ -1,37 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <PreferenceCategory android:title="INTERFACE">
+    <PreferenceCategory android:title="INTERFACE" >
 
         <SwitchPreference
             android:defaultValue="false"
-            android:key="interface_dm"
-            android:title="Dark Mode"
-            android:summary="Dark Mode Theme"/>
-
+            android:key="interface_darkMode"
+            android:summary="Dark Mode Theme"
+            android:title="Dark Mode" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="MISC">
+    <PreferenceCategory android:title="MISC" >
 
         <SwitchPreference
             android:defaultValue="false"
             android:key="misc_dcrpc"
-            android:title="Discord RPC"
-            android:summary="Turns on Discord Rich Presence"/>
-
+            android:summary="Turns on Discord Rich Presence"
+            android:title="Discord RPC" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="EDITOR">
-
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="editor_cm"
-            android:summary="Use context menu when selecting a file in the explorer"
-            android:title="Should use context menu" />
-
-    </PreferenceCategory>
-
-    <PreferenceCategory android:title="APP">
+    <PreferenceCategory android:title="APP" >
 
         <CheckBoxPreference
             android:defaultValue="false"
@@ -39,7 +27,7 @@
             android:summary="Helps to fix bugs"
             android:title="Send crash reports" >
         </CheckBoxPreference>
-
+        
     </PreferenceCategory>
 
 </PreferenceScreen>
