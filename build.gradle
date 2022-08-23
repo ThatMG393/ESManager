@@ -10,7 +10,7 @@ task clean(type: Delete) {
 
 
 /* You can uncomment this if you use any IDE except AndroidIDE
- * Make sure to comment the above to use this!
+ * Make sure to comment the above execpt task clean to use this!
 buildscript {
     repositories {
     	// If you want to edit this go to settings.gradle

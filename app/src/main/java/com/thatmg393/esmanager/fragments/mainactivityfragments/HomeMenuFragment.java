@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -20,11 +21,7 @@ import com.thatmg393.esmanager.services.RPCService;
 
 public class HomeMenuFragment extends Fragment {
 
-    private static final String appPackageName = "com.evertechsandbox";
-
-    private static boolean isESLaunched = false;
-
-
+    private final String appPackageName = "com.evertechsandbox";
 
     @Nullable
     @Override
@@ -65,19 +62,23 @@ public class HomeMenuFragment extends Fragment {
                 startActivity(esIntent);
                 MainActivity.sharedPreferencesUtil.addBoolean("isESRunning", Utils.ActivityUtils.checkIfAppIsRunning(getContext(), appPackageName));
 
-                if (MainActivity.sharedPreferencesUtil.getBoolean("isSPChecked") && MainActivity.sharedPreferencesUtil.getBoolean("agreed_rpc")) {
-                    RPCService.sendPresence();
+                if (MainActivity.sharedPreferencesUtil.getBoolean("isSPChecked") && MainActivity.sharedPreferencesUtil.getBoolean("agreed_rpc") && Utils.ServiceUtils.isServiceRunning(getContext(), RPCService.class)) {
+                    RPCService.getInstance().sendPresence();
                 }
             } catch (ActivityNotFoundException anfe) {
-                try {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-                } catch (ActivityNotFoundException anfe2) {
-                    try {
-                    	startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
-                	} catch (ActivityNotFoundException anfe3) {
-                    	anfe3.printStackTrace();
-                	}
-                }
+                openAppPage();
+            }
+        } else { openAppPage(); }
+    }
+    
+    private void openAppPage() {
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+        } catch (ActivityNotFoundException x) {
+        	try {
+            	startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+            } catch (ActivityNotFoundException y) {
+            	Toast.makeText(getContext(), "Are you using a Nokia 3310? I cannot seem to open Google Play or your Browser.", Toast.LENGTH_LONG).show();
             }
         }
     }

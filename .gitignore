@@ -1,4 +1,6 @@
 # Project exclude paths
+.git
+.gradle
 /app/build/
 /app/build/intermediates/javac/debug/classes/
 /app/src/main/res/.nomedia

@@ -10,13 +10,14 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import com.itsaky.androidide.logsender.LogSender;
+import com.itsaky.utils.logsender.LogSender;
+import com.thatmg393.esmanager.BuildConfig;
 
 public class Applications extends Application {
 	private Thread.UncaughtExceptionHandler uncaughtExceptionHandler;
 	@Override
 	public void onCreate() {
-        LogSender.startLogging(this);
+        if (BuildConfig.DEBUG) LogSender.startLogging(this);
 		this.uncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 			@Override
