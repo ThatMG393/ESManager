@@ -84,6 +84,8 @@ public class MainActivity extends AppCompatActivity {
                 	Toast.makeText(MainActivity.this, "This area requires storage permission to read your mods.", Toast.LENGTH_LONG).show();
                 }
             	return;
+            default:
+            	super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 

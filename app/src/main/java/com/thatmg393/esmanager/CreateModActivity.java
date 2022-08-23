@@ -150,6 +150,8 @@ public class CreateModActivity extends AppCompatActivity implements NavigationVi
                 	createPFiles();
                 }
             	return;
+            default:
+            	super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
     
