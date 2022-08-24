@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: Build apk
+    name: Build APK's
     runs-on: ubuntu-latest
     steps:
       - name: Cancel previous runs
@@ -26,7 +26,7 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build Apk-Debug
+      - name: Build apk-debug
         uses: eskatos/gradle-command-action@v2
         with:
           arguments: assembleDebug
@@ -34,7 +34,7 @@ jobs:
           dependencies-cache-enabled: true
           configuration-cache-enabled: true
 
-      - name: Build Apk-Alpha
+      - name: Build apk-alpha
         uses: eskatos/gradle-command-action@v2
         with:
           arguments: assembleAlpha
@@ -42,7 +42,7 @@ jobs:
           dependencies-cache-enabled: true
           configuration-cache-enabled: true
 
-      - name: Build Apk-Beta
+      - name: Build apk-beta
         uses: eskatos/gradle-command-action@v2
         with:
           arguments: assembleBeta
@@ -56,6 +56,13 @@ jobs:
         with:
           name: apk-debug
           path: app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Upload apk-alpha
+        uses: actions/upload-artifact@v3
+        if: ${{ !github.head_ref }}
+        with:
+          name: apk-alpha
+          path: app/build/outputs/apk/alpha/app-alpha.apk
 
       - name: Upload apk-beta
         uses: actions/upload-artifact@v3
