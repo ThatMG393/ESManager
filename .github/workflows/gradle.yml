@@ -69,5 +69,5 @@ jobs:
         if: ${{ !github.head_ref }}
         with:
           name: apk-beta
-          path: app/build/outputs/apk/alpha/app-beta.apk
+          path: app/build/outputs/apk/beta/app-beta.apk
 
