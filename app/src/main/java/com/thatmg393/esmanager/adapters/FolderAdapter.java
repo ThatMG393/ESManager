@@ -39,9 +39,9 @@ public class FolderAdapter extends ArrayAdapter<FilePojo> {
 		TextView name = (TextView) convertView.findViewById(R.id.exp_lv_name);
 
 		if (dataList.get(position).isFolder()) {
-			imageView.setImageResource(R.drawable.ic_folder_black_24dp);
+			imageView.setImageResource(R.drawable.ic_folder_black);
 		} else {
-			imageView.setImageResource(R.drawable.ic_info_black_24dp);
+			imageView.setImageResource(R.drawable.ic_info_black);
 		}
 		
 		name.setText(dataList.get(position).getName() );

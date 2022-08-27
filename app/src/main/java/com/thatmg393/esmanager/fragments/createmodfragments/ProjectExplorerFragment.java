@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 
 import com.thatmg393.esmanager.CreateModActivity;
 import com.thatmg393.esmanager.R;
+import com.thatmg393.esmanager.Utils;
 import com.thatmg393.esmanager.data.FilePojo;
 import com.thatmg393.esmanager.adapters.FolderAdapter;
 
@@ -44,7 +45,7 @@ public class ProjectExplorerFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_project_explorer, container, false);
+        return Utils.ActivityUtils.setFragmentTheme(getContext(), R.layout.fragment_project_explorer, container);
     }
 
     @Override

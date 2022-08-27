@@ -60,14 +60,13 @@ public class ModListAdapter extends ArrayAdapter<ModProperties> {
     @Override
     public View getView(int position, View convertView, @NotNull ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
+        convertView = inflater.inflate(R.layout.listview_main, parent, false);
 
-        View view = inflater.inflate(R.layout.listview_main, null);
-
-        TextView txtModName = view.findViewById(R.id.modName);
-        TextView txtModDesc = view.findViewById(R.id.modDesc);
-        TextView txtModAuthor = view.findViewById(R.id.modAuthor);
-        TextView txtModVersion = view.findViewById(R.id.modVersion);
-        ImageView ivModPreview = view.findViewById(R.id.modPreview);
+        TextView txtModName = convertView.findViewById(R.id.modName);
+        TextView txtModDesc = convertView.findViewById(R.id.modDesc);
+        TextView txtModAuthor = convertView.findViewById(R.id.modAuthor);
+        TextView txtModVersion = convertView.findViewById(R.id.modVersion);
+        ImageView ivModPreview = convertView.findViewById(R.id.modPreview);
 
         ModProperties mp = data.get(position);
 
@@ -85,7 +84,7 @@ public class ModListAdapter extends ArrayAdapter<ModProperties> {
             ivModPreview.setImageBitmap(preview);
         }
 
-        return view;
+        return convertView;
     }
 }
 

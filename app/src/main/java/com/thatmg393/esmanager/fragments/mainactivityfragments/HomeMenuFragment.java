@@ -62,7 +62,7 @@ public class HomeMenuFragment extends Fragment {
                 startActivity(esIntent);
                 MainActivity.sharedPreferencesUtil.addBoolean("isESRunning", Utils.ActivityUtils.checkIfAppIsRunning(getContext(), appPackageName));
 
-                if (MainActivity.sharedPreferencesUtil.getBoolean("isSPChecked") && MainActivity.sharedPreferencesUtil.getBoolean("agreed_rpc") && Utils.ServiceUtils.isServiceRunning(getContext(), RPCService.class)) {
+                if (MainActivity.sharedPreferencesUtil.getBoolean("discordrpc") && MainActivity.sharedPreferencesUtil.getBoolean("agreed_rpc") && Utils.ServiceUtils.isServiceRunning(getContext(), RPCService.class)) {
                     RPCService.getInstance().sendPresence();
                 }
             } catch (ActivityNotFoundException anfe) {

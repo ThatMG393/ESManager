@@ -1,61 +1,47 @@
-<?xml version='1.0' encoding='utf-8'?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.thatmg393.esmanager">
+    package="com.thatmg393.esmanager" >
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-
-    <uses-permission android:name="android.permission.INTERNET"/>
-
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        android:largeHeap="true"
         android:name=".crashhandler.Applications"
-        android:resizeableActivity="false">
-
+        android:allowBackup="true"
+        android:hardwareAccelerated="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:resizeableActivity="false"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:theme="@style/App.Light" >
         <activity
-            android:name=".SplashScreenActivity"
+            android:name=".MainActivity"
+            android:exported="true"
             android:label="@string/app_name"
-            android:exported="true">
-
+            android:theme="@style/Activity.SplashScreen" >
             <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-                <action android:name="android.intent.action.MAIN"/>
-
-                <category android:name="android.intent.category.LAUNCHER"/>
-
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
-
-        <activity android:name=".MainActivity"/>
-            
         <activity android:name=".CreateModActivity" />
+        <activity
+            android:name=".crashhandler.CrashLogActivity"
+            android:theme="@style/Activity.Transparent" />
+        <activity
+            android:name=".services.RPCActivity"
+            android:theme="@style/Activity.Transparent" />
 
-        <activity android:name=".crashhandler.DebugActivity" />
-
-
-        <activity android:name=".services.RPCActivity"
-            android:screenOrientation="portrait"
-            tools:ignore="LockedOrientationActivity" />
+        <service android:name=".services.RPCService" />
 
         <meta-data
             android:name="android.max_aspect"
-            android:value="4.0"/>
-
-        <service android:name=".services.RPCService"
-            android:screenOrientation="portrait"
-            tools:ignore="LockedOrientationActivity" />
-
+            android:value="4.0" />
     </application>
 
 </manifest>

@@ -30,6 +30,7 @@ public class RPCActivity extends AppCompatActivity
 		showDialog();
 	}
 	
+    @SuppressWarnings("deprecation")
 	private void showDialog() {
 		if (MainActivity.sharedPreferencesUtil.getString("uname") == null) {
 			LayoutInflater li = LayoutInflater.from(getApplication());
@@ -39,7 +40,6 @@ public class RPCActivity extends AppCompatActivity
 
 			WebView webView = layoutV.findViewById(R.id.rcp_webview);
 			webView.getSettings().setJavaScriptEnabled(true);
-			webView.getSettings().setAppCacheEnabled(true);
 			webView.getSettings().setDatabaseEnabled(true);
 			webView.getSettings().setDomStorageEnabled(true);
 			
@@ -62,7 +62,6 @@ public class RPCActivity extends AppCompatActivity
 					@Override
 					public void onClick(DialogInterface di, int idk) {
 						di.dismiss();
-						setResult(RESULT_CANCELED, new Intent().putExtra("d_r", "User cancelled."));
 						finish();
 					}
 				});
@@ -70,7 +69,6 @@ public class RPCActivity extends AppCompatActivity
 			adb.setOnCancelListener(new DialogInterface.OnCancelListener() {
 					@Override
 					public void onCancel(DialogInterface dialog) {
-						setResult(RESULT_CANCELED, new Intent().putExtra("d_r", "User cancelled."));
 						finish();
 					}
 				});

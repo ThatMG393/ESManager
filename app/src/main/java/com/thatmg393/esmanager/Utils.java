@@ -1,27 +1,40 @@
 package com.thatmg393.esmanager;
+
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.AlertDialog;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInstaller;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Handler;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.ContextThemeWrapper;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
+import androidx.annotation.AttrRes;
+import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public final class Utils {
 
@@ -74,6 +87,7 @@ public final class Utils {
 	}
 
 	public static class ActivityUtils {
+        
 		public static boolean checkIfAppIsRunning(@NonNull final Context context, @NonNull final String appPackageName) {
 			final ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
 			final List<ActivityManager.RunningAppProcessInfo> procInfos = activityManager.getRunningAppProcesses();
@@ -94,6 +108,51 @@ public final class Utils {
         public static void askForPermission(@NonNull final Activity activity, @NonNull final String permission, @NonNull int resultCode) {
             ActivityCompat.requestPermissions(activity, new String[]{permission}, resultCode);
         }
+        
+        public static View setFragmentTheme(@NonNull final Context context, @LayoutRes final int layoutRes, @NonNull final ViewGroup fragContainer) {
+            LayoutInflater themedInflater = null;
+            if (MainActivity.sharedPreferencesUtil.getBoolean("darkmode")) {
+                themedInflater = LayoutInflater.from(new ContextThemeWrapper(context, R.style.App_Dark));
+            } else {
+            	themedInflater = LayoutInflater.from(new ContextThemeWrapper(context, R.style.App_Light));
+            }
+            View themedView = themedInflater.inflate(layoutRes, fragContainer, false);
+            themedView.setBackgroundColor(Color.parseColor(ResourceUtils.getCurrentThemeColorToHex(context, android.R.attr.windowBackground)));
+            return themedView;
+            // return LayoutInflater.from(context).inflate(layoutRes, fragContainer, false);
+        }
+        
+        public static void setThemeAuto(@NonNull Context context) {
+            if (MainActivity.sharedPreferencesUtil.getBoolean("darkmode")) {
+                context.setTheme(R.style.App_Dark);
+            } else {
+            	context.setTheme(R.style.App_Light);
+            }
+        }
+        
+        public static void restartApp(@NonNull Context context) {
+            Intent mIntent = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
+            mIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            mIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            PendingIntent mPIntent = PendingIntent.getActivity(context, 69420, mIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+            ((AlarmManager)context.getSystemService(Context.ALARM_SERVICE)).set(AlarmManager.RTC_WAKEUP, 600, mPIntent);
+            if (context instanceof Activity) ((Activity) context).finishAffinity();
+            android.os.Process.killProcess(android.os.Process.myPid());
+            Runtime.getRuntime().exit(0); 
+        }
+        
+        public static class ResourceUtils {
+            public static String getCurrentThemeColorToHex(@NonNull final Context context, @AttrRes final int attribute) {
+    			TypedValue outValue = new TypedValue();
+    			context.getTheme().resolveAttribute(attribute, outValue, true);
+    			return String.format("#%06X", (0xFFFFFF & outValue.data));
+			}
+            public static int getCurrentThemeColorToInt(@NonNull final Context context, @AttrRes final int attribute) {
+    			TypedValue outValue = new TypedValue();
+    			context.getTheme().resolveAttribute(attribute, outValue, true);
+    			return outValue.data;
+			}
+        }
 	}
 
 	public static class ThreadUtils {
@@ -106,20 +165,108 @@ public final class Utils {
 	public static class LoggerUtils {
 		private static final String logTag = "ESManager";
 
-		public static void logInfo(String message) {
-			Log.i(logTag, message);
+		public static void logInfo(String tag, CharSequence message) {
+			if (!tag.equals(null)) {
+                Log.i(tag, (String)message);
+            } else {
+            	Log.i(logTag, (String)message);
+            }
 		}
 
-		public static void logWarn(String message) {
-			Log.w(logTag, message);
+		public static void logWarn(String tag, CharSequence message) {
+			if (!tag.equals(null)) {
+                Log.w(tag, (String)message);
+            } else {
+            	Log.w(logTag, (String)message);
+            }
 		}
 
-		public static void logErr(String message) {
-			Log.e(logTag, message);
+		public static void logErr(String tag, CharSequence message) {
+			if (!tag.equals(null)) {
+                Log.e(tag, (String)message);
+            } else {
+            	Log.e(logTag, (String)message);
+            }
 		}
 
-		public static void logWTF(String message) {
-			Log.wtf(logTag, message);
+		public static void logWTF(String tag, CharSequence message) {
+			if (!tag.equals(null)) {
+                Log.wtf(tag, (String)message);
+            } else {
+            	Log.wtf(logTag, (String)message);
+            }
 		}
 	}
+    
+    public static class ZipUtils {
+  	  private static final int BUFFER_SIZE = 1024 * 10;
+   	 private static final String TAG = "ESManager/ZipUtils";
+
+   	 public static void unzipFromAssets(Context context, String zipFile, String destination) {
+      	  try {
+          	  if (destination == null || destination.length() == 0)
+              	  destination = context.getFilesDir().getAbsolutePath();
+          	  InputStream stream = context.getAssets().open(zipFile);
+         	   unzip(stream, destination);
+    	    } catch (IOException e) {
+       	     e.printStackTrace();
+      	  }
+   	 }
+
+ 	   public static void unzip(String zipFile, String location) {
+      	  try {
+          	  FileInputStream fin = new FileInputStream(zipFile);
+         	   unzip(fin, location);
+     	   } catch (FileNotFoundException e) {
+          	  e.printStackTrace();
+      	  }
+  	  }
+
+   	 public static void unzip(InputStream stream, String destination) {
+       	 dirChecker(destination, "");
+     	   byte[] buffer = new byte[BUFFER_SIZE];
+      	  try {
+          	  ZipInputStream zin = new ZipInputStream(stream);
+         	   ZipEntry ze = null;
+
+           	 while ((ze = zin.getNextEntry()) != null) {
+              	  LoggerUtils.logWarn(TAG, "Unzipping " + ze.getName());
+					
+               	 if (ze.isDirectory()) {
+                   	 dirChecker(destination, ze.getName());
+             	   } else {
+                  	  File f = new File(destination, ze.getName());
+                   	 if (!f.exists()) {
+                       	 boolean success = f.createNewFile();
+                       	 if (!success) {
+                          	  LoggerUtils.logWarn(TAG, "Failed to create file: " + f.getName());
+                          	  continue;
+                       	 }
+                        	FileOutputStream fout = new FileOutputStream(f);
+                        	int count;
+                        	while ((count = zin.read(buffer)) != -1) {
+                        	    fout.write(buffer, 0, count);
+                       	 }
+                      	  zin.closeEntry();
+                     	   fout.close();
+                    	}
+                	}
+           	 }
+            	zin.close();
+        	} catch (Exception e) {
+            	LoggerUtils.logErr(TAG, "Unzip failure:\t" + e);
+        	}
+    	}
+
+   	 private static void dirChecker(String destination, String dir) {
+       	 File f = new File(destination, dir);
+
+        	if (!f.isDirectory()) {
+            	boolean success = f.mkdirs();
+           	 if (!success) {
+          	      LoggerUtils.logWarn(TAG, "Failed to create folder: " + f.getName());
+         	   }
+        	}
+        }
+    }
 }

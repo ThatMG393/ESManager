@@ -9,12 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.thatmg393.esmanager.R;
+import com.thatmg393.esmanager.Utils;
 
 public class ProjectInfoFragment extends Fragment
 {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_project_info, container, false);
+        return Utils.ActivityUtils.setFragmentTheme(getContext(), R.layout.fragment_project_info, container);
     }
 }

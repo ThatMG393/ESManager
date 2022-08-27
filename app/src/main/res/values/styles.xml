@@ -1,11 +1,49 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@android:color/holo_blue_dark</item>
-        <item name="colorPrimaryDark">@android:color/holo_blue_dark</item>
-        <item name="colorAccent">@android:color/holo_red_dark</item>
+    <style name="App.Dark" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="colorPrimary">@color/darkColorPrimary</item>
+        <item name="colorPrimaryDark">@color/darkColorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="alertDialogTheme">@style/DarkDateAlertDialog</item>
+        <item name="android:windowBackground">@color/darkWindowBackgroundColor</item>
+        <item name="android:datePickerDialogTheme">@style/DarkDateAlertDialog</item>
     </style>
 
+    <!-- Light theme -->
+    <style name="App.Light" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/lightColorPrimary</item>
+        <item name="colorPrimaryDark">@color/lightColorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="alertDialogTheme">@style/LightDateAlertDialog</item>
+        <item name="android:windowBackground">@color/lightWindowBackgroundColor</item>
+    </style>
+    
+    <style name="Activity.Transparent" parent="App.Dark">
+ 	   <item name="android:windowNoTitle">true</item>
+   	 <item name="android:windowBackground">@android:color/transparent</item>
+  	  <item name="android:colorBackgroundCacheHint">@null</item>
+    	<item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowIsFloating">false</item>
+    	<item name="android:windowAnimationStyle">@android:style/Animation</item>
+	</style>
+    
+    <style name="Activity.SplashScreen" parent="Theme.SplashScreen">
+    	<item name="windowSplashScreenAnimationDuration">1200</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_round</item>
+        <!-- <item name="postSplashScreenTheme">@style/App.Light</item> -->
+    </style>
+
+    <style name="DarkDateAlertDialog" parent="Theme.MaterialComponents.Dialog.Alert">
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:background">@color/darkWindowBackgroundColor</item>
+        <item name="android:textColor">@color/lightCardTitle</item>
+    </style>
+
+    <style name="LightDateAlertDialog" parent="Theme.MaterialComponents.Light.Dialog.Alert">
+        <item name="colorPrimary">@color/lightColorPrimary</item>
+        <item name="colorPrimaryDark">@color/lightWindowBackgroundColor</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
 </resources>

@@ -149,7 +149,7 @@ public class ModsMenuFragment extends Fragment {
                     modLV.post(new Runnable() {
                     	@Override
                     	public void run() {
-                    		modLA.addData(new ModProperties("No.", "U alr know ;)", null ,null, null, true));
+                    		modLA.addData(new ModProperties("No mod/s found", "Please download some mod/s in-game.", null ,null, null, true));
                 		}
                 	});
                     return;

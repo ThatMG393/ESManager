@@ -13,6 +13,7 @@ import java.io.Writer;
 import com.itsaky.utils.logsender.LogSender;
 import com.thatmg393.esmanager.BuildConfig;
 
+
 public class Applications extends Application {
 	private Thread.UncaughtExceptionHandler uncaughtExceptionHandler;
 	@Override
@@ -22,14 +23,15 @@ public class Applications extends Application {
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 			@Override
 			public void uncaughtException(Thread thread, Throwable ex) {
-				Intent intent = new Intent(getApplicationContext(), DebugActivity.class);
-				intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-				intent.putExtra("error", getStackTrace(ex));
-				PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 11111, intent, PendingIntent.FLAG_ONE_SHOT);
-				AlarmManager am = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-				am.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 1000, pendingIntent);
-				android.os.Process.killProcess(android.os.Process.myPid());
-				System.exit(2);
+				Intent chaIntent = new Intent(getApplicationContext(), CrashLogActivity.class);
+				chaIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+				chaIntent.putExtra("crashlog", getStackTrace(ex));
+                
+				PendingIntent chaPendingInt = PendingIntent.getActivity(getApplicationContext(), 69420, chaIntent, PendingIntent.FLAG_ONE_SHOT);
+                
+				((AlarmManager)getSystemService(Context.ALARM_SERVICE)).set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 500, chaPendingInt);
+            	android.os.Process.killProcess(android.os.Process.myPid());
+                System.exit(2);
 				uncaughtExceptionHandler.uncaughtException(thread, ex);
 			}
 		});
