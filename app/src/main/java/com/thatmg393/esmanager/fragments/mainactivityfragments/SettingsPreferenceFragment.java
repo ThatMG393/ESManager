@@ -9,11 +9,10 @@ import androidx.annotation.Nullable;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreference;
 
-import com.jakewharton.processphoenix.ProcessPhoenix;
 import com.thatmg393.esmanager.MainActivity;
 import com.thatmg393.esmanager.R;
 import com.thatmg393.esmanager.Utils;
-import com.thatmg393.esmanager.services.RPCService;
+import com.thatmg393.esmanager.rpc.RPCService;
 
 public class SettingsPreferenceFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
 

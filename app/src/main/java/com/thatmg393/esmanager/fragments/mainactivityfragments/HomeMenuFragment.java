@@ -17,7 +17,8 @@ import androidx.fragment.app.Fragment;
 import com.thatmg393.esmanager.MainActivity;
 import com.thatmg393.esmanager.R;
 import com.thatmg393.esmanager.Utils;
-import com.thatmg393.esmanager.services.RPCService;
+import com.thatmg393.esmanager.rpc.RPCGlobal;
+import com.thatmg393.esmanager.rpc.RPCService;
 
 public class HomeMenuFragment extends Fragment {
 
@@ -63,7 +64,7 @@ public class HomeMenuFragment extends Fragment {
                 MainActivity.sharedPreferencesUtil.addBoolean("isESRunning", Utils.ActivityUtils.checkIfAppIsRunning(getContext(), appPackageName));
 
                 if (MainActivity.sharedPreferencesUtil.getBoolean("discordrpc") && MainActivity.sharedPreferencesUtil.getBoolean("agreed_rpc") && Utils.ServiceUtils.isServiceRunning(getContext(), RPCService.class)) {
-                    RPCService.getInstance().sendPresence();
+                    RPCGlobal.getServiceInstance().sendPresence();
                 }
             } catch (ActivityNotFoundException anfe) {
                 openAppPage();

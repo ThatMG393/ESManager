@@ -14,8 +14,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.thatmg393.esmanager.fragments.mainactivityfragments.HomeMenuFragment;
 import com.thatmg393.esmanager.fragments.mainactivityfragments.ModsMenuFragment;
 import com.thatmg393.esmanager.fragments.mainactivityfragments.SettingsPreferenceFragment;
-import com.thatmg393.esmanager.services.RPCActivity;
-import com.thatmg393.esmanager.services.RPCService;
+import com.thatmg393.esmanager.rpc.RPCActivity;
+import com.thatmg393.esmanager.rpc.RPCService;
 
 public class MainActivity extends AppCompatActivity {
 

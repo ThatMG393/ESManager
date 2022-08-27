@@ -1,22 +1,14 @@
 package com.thatmg393.esmanager.fragments.createmodfragments;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import android.view.ViewGroup;
 import android.view.View;
-import android.view.LayoutInflater;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.SwitchPreference;
 
-import com.thatmg393.esmanager.MainActivity;
 import com.thatmg393.esmanager.R;
 import com.thatmg393.esmanager.Utils;
-import com.thatmg393.esmanager.services.RPCService;
 
 public class ProjectSettingsPreferenceFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
     
