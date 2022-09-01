@@ -5,7 +5,7 @@
     android:layout_width="match_parent">
     
     <com.amrdeveloper.codeview.CodeView
-        android:background="?attr/backgroundColor"
+        android:background="?attr/backgroundColor" <!-- For force crash purposes -->
         android:dropDownHorizontalOffset="0dp"
         android:dropDownSelector="#353535"
         android:dropDownWidth="150dp"
