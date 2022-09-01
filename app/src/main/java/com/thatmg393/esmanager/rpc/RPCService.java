@@ -38,7 +38,7 @@ public class RPCService extends Service {
 
     @Override
     public void onDestroy() {
-        // Maybe do something??
+        RPCGlobal.setServiceInstance(null);
     }
 
     @Override

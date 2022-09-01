@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+    
     <com.amrdeveloper.codeview.CodeView
-        android:id="@+id/code_editor"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:background="?attr/backgroundColor"
-        android:dropDownWidth="150dp"
         android:dropDownHorizontalOffset="0dp"
         android:dropDownSelector="#353535"
-        android:gravity="top|start" />
+        android:dropDownWidth="150dp"
+        android:gravity="top|start"
+        android:id="@+id/code_editor"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"/>
+    
 
 </RelativeLayout>

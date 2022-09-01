@@ -16,6 +16,8 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
+import com.thatmg393.esmanager.Constants;
+import com.thatmg393.esmanager.activity.BaseActivity;
 import com.thatmg393.esmanager.fragments.createmodfragments.ProjectEditorFragment;
 import com.thatmg393.esmanager.fragments.createmodfragments.ProjectExplorerFragment;
 import com.thatmg393.esmanager.fragments.createmodfragments.ProjectInfoFragment;
@@ -24,7 +26,7 @@ import com.thatmg393.esmanager.fragments.createmodfragments.ProjectSettingsPrefe
 import java.io.File;
 import java.io.IOException;
 
-public class CreateModActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class CreateModActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
     
     private DrawerLayout drawerLayout;
     private NavigationView drawerNav;
@@ -85,7 +87,7 @@ public class CreateModActivity extends AppCompatActivity implements NavigationVi
 
             case R.id.nav_project_explorer:
                 if (Utils.ActivityUtils.isPermissionDenied(CreateModActivity.this, Utils.app_perms[0])) {
-                    Utils.ActivityUtils.askForPermission(CreateModActivity.this, Utils.app_perms[0], 2);
+                    Utils.ActivityUtils.askForPermission(CreateModActivity.this, Utils.app_perms[0], Constants.ResultCodes.CMA_projectexp);
                 } else {
                 	getSupportFragmentManager().beginTransaction().replace(R.id.createmod_fragment_container, new ProjectExplorerFragment()).commit();
                 }
@@ -121,7 +123,7 @@ public class CreateModActivity extends AppCompatActivity implements NavigationVi
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
-            case 1:
+            case Constants.ResultCodes.CMA_askforperm:
             	if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED) {
                     Toast.makeText(CreateModActivity.this, "Please grant storage permission to continue.", Toast.LENGTH_LONG).show();
                     askForPerm();
@@ -129,7 +131,7 @@ public class CreateModActivity extends AppCompatActivity implements NavigationVi
                 	createPFiles();
                 }
             	return;
-            case 2:
+            case Constants.ResultCodes.CMA_projectexp:
             	if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     getSupportFragmentManager().beginTransaction().replace(R.id.createmod_fragment_container, new ProjectExplorerFragment()).commit();
                 } else {
@@ -170,7 +172,7 @@ public class CreateModActivity extends AppCompatActivity implements NavigationVi
     
     private void askForPerm() {
         if (Utils.ActivityUtils.isPermissionDenied(getApplicationContext(), Utils.app_perms[0])) {
-            Utils.ActivityUtils.askForPermission(this, Utils.app_perms[0], 1);
+            Utils.ActivityUtils.askForPermission(this, Utils.app_perms[0], Constants.ResultCodes.CMA_askforperm);
         } else {
         	createPFiles();
         }

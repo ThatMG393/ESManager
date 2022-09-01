@@ -4,7 +4,6 @@ import android.app.Service;
 
 import androidx.annotation.NonNull;
 
-
 import java.lang.ref.WeakReference;
 
 public class RPCGlobal {
@@ -12,7 +11,8 @@ public class RPCGlobal {
     public static void setServiceInstance(@NonNull final Service serviceInstance) {
         rpcServInstance = new WeakReference<RPCService>((RPCService)serviceInstance);
     }
-    public static RPCService getServiceInstance() {
+    public static RPCService getServiceInstance() throws RPCNotInitializedException {
+        if (rpcServInstance == null) { throw new RPCNotInitializedException("RPC NOT INITIALIZED!"); }
         return rpcServInstance.get();
     }
 }

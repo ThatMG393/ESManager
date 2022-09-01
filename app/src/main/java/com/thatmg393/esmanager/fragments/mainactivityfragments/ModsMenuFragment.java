@@ -18,6 +18,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.thatmg393.esmanager.Constants;
 import com.thatmg393.esmanager.CreateModActivity;
 import com.thatmg393.esmanager.R;
 import com.thatmg393.esmanager.adapters.ModListAdapter;
@@ -39,7 +40,7 @@ import org.json.JSONObject;
 
 public class ModsMenuFragment extends Fragment {
 
-    public final static String mPath = Environment.getExternalStorageDirectory().toString() + "/Android/data/com.evertechsandbox/files/mods/";
+    public final static String mPath = Constants.ES_ROOT_FLDR + "/mods";
     
     private ModListAdapter modLA;
     

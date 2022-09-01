@@ -14,7 +14,7 @@
 
         <SwitchPreference
             android:defaultValue="false"
-            android:key="misc_dcrpc"
+            android:key="misc_discordrpc"
             android:summary="Turns on Discord Rich Presence"
             android:title="Discord RPC" />
     </PreferenceCategory>
@@ -22,10 +22,10 @@
     <PreferenceCategory android:title="APP" >
 
         <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="app_sendReport"
+            android:defaultValue="true"
+            android:key="app_sendcrashrep"
             android:summary="Helps to fix bugs"
-            android:title="Send crash reports" >
+            android:title="Send crash logs" >
         </CheckBoxPreference>
         
     </PreferenceCategory>

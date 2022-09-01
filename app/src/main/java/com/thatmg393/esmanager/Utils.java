@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.util.TypedValue;
@@ -18,17 +19,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.AnyRes;
 import androidx.annotation.AttrRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
+
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
@@ -46,7 +53,7 @@ public final class Utils {
 
 		private SharedPreferences sharedPreference;
 		
-		SharedPreferenceUtil(String name, Context ctx) {
+		public SharedPreferenceUtil(String name, Context ctx) {
 			try {
 				MasterKey masterKey = new MasterKey.Builder(ctx, MasterKey.DEFAULT_MASTER_KEY_ALIAS).setKeyScheme(MasterKey.KeyScheme.AES256_GCM).build();
 				sharedPreference = EncryptedSharedPreferences.create(ctx, name, masterKey, EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV, EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM);
@@ -56,7 +63,7 @@ public final class Utils {
 		}
 		
 		public void addBoolean(String key, boolean value) {
-			sharedPreference.edit().putBoolean(key, value).commit();
+			sharedPreference.edit().putBoolean(key, value).apply();
 		}
 		
 		public boolean getBoolean(String key) {
@@ -64,12 +71,16 @@ public final class Utils {
 		}
 		
 		public void addString(String key, String value) {
-			sharedPreference.edit().putString(key, value).commit();
+			sharedPreference.edit().putString(key, value).apply();
 		}
 
 		public String getString(String key) {
 			return sharedPreference.getString(key, null);
 		}
+        
+        public void fixMissing() {
+            //TODO: Implement this method
+        }
 	}
 	
 	public static class ServiceUtils {
@@ -111,7 +122,7 @@ public final class Utils {
         
         public static View setFragmentTheme(@NonNull final Context context, @LayoutRes final int layoutRes, @NonNull final ViewGroup fragContainer) {
             LayoutInflater themedInflater = null;
-            if (MainActivity.sharedPreferencesUtil.getBoolean("darkmode")) {
+            if (MainActivity.sharedPreferencesUtil.getBoolean(Constants.PreferenceKeys.DARK_MODE)) {
                 themedInflater = LayoutInflater.from(new ContextThemeWrapper(context, R.style.App_Dark));
             } else {
             	themedInflater = LayoutInflater.from(new ContextThemeWrapper(context, R.style.App_Light));
@@ -122,8 +133,14 @@ public final class Utils {
             // return LayoutInflater.from(context).inflate(layoutRes, fragContainer, false);
         }
         
+        public static void changeFragmentWithAnim(@NonNull FragmentTransaction fragTransac, @AnyRes int fragContainer, @NonNull Fragment theFragment) {
+            fragTransac
+            	.setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+            	.replace(fragContainer, theFragment).commit();
+        }
+        
         public static void setThemeAuto(@NonNull Context context) {
-            if (MainActivity.sharedPreferencesUtil.getBoolean("darkmode")) {
+            if (MainActivity.sharedPreferencesUtil.getBoolean(Constants.PreferenceKeys.DARK_MODE)) {
                 context.setTheme(R.style.App_Dark);
             } else {
             	context.setTheme(R.style.App_Light);
@@ -166,7 +183,7 @@ public final class Utils {
 		private static final String logTag = "ESManager";
 
 		public static void logInfo(String tag, CharSequence message) {
-			if (!tag.equals(null)) {
+			if (tag != null) {
                 Log.i(tag, (String)message);
             } else {
             	Log.i(logTag, (String)message);
@@ -174,7 +191,7 @@ public final class Utils {
 		}
 
 		public static void logWarn(String tag, CharSequence message) {
-			if (!tag.equals(null)) {
+			if (tag != null) {
                 Log.w(tag, (String)message);
             } else {
             	Log.w(logTag, (String)message);
@@ -182,7 +199,7 @@ public final class Utils {
 		}
 
 		public static void logErr(String tag, CharSequence message) {
-			if (!tag.equals(null)) {
+			if (tag != null) {
                 Log.e(tag, (String)message);
             } else {
             	Log.e(logTag, (String)message);
@@ -190,7 +207,7 @@ public final class Utils {
 		}
 
 		public static void logWTF(String tag, CharSequence message) {
-			if (!tag.equals(null)) {
+			if (tag != null) {
                 Log.wtf(tag, (String)message);
             } else {
             	Log.wtf(logTag, (String)message);
@@ -267,6 +284,28 @@ public final class Utils {
           	      LoggerUtils.logWarn(TAG, "Failed to create folder: " + f.getName());
          	   }
         	}
+        }
+    }
+    
+    public static class FileUtils {
+        
+        public static final int ROOT_FOLDER = 0;
+        public static final int LOGS_FOLDER = 1;
+        public static final int PROJECT_FOLDER = 2;
+        
+        public static String getExternalFilesDirPaths(@NonNull final Context context, @NonNull final int type) {
+            String sdcardState = Environment.getExternalStorageState();
+            if (sdcardState.equals(Environment.MEDIA_MOUNTED)) {
+            	switch (type) {
+                	case ROOT_FOLDER:
+                		return context.getExternalFilesDir(null).getAbsolutePath();
+                	case PROJECT_FOLDER:
+                		return context.getExternalFilesDir("Projects").getAbsolutePath();
+                	case LOGS_FOLDER:
+                		return context.getExternalFilesDir("Logs").getAbsolutePath();
+            	}
+            } else { LoggerUtils.logErr("ESManager/FileUtils", "The external storage is not currently mounted, it is currently on '" + sdcardState + "' state"); }
+            return null;
         }
     }
 }

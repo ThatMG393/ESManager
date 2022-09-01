@@ -7,25 +7,28 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.splashscreen.SplashScreen;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.thatmg393.esmanager.activity.BaseActivity;
 import com.thatmg393.esmanager.fragments.mainactivityfragments.HomeMenuFragment;
 import com.thatmg393.esmanager.fragments.mainactivityfragments.ModsMenuFragment;
 import com.thatmg393.esmanager.fragments.mainactivityfragments.SettingsPreferenceFragment;
 import com.thatmg393.esmanager.rpc.RPCActivity;
 import com.thatmg393.esmanager.rpc.RPCService;
 
-public class MainActivity extends AppCompatActivity {
+import java.io.File;
+import java.lang.ref.WeakReference;
+
+public class MainActivity extends BaseActivity {
 
     public static Utils.SharedPreferenceUtil sharedPreferencesUtil;
     public static Intent rpcActIntent;
     public static Intent rpcServIntent;
     
-    public static MainActivity mInstance;
+    private static WeakReference<MainActivity> mInstance;
     public static MainActivity getInstance() {
-        return mInstance;
+        return mInstance.get();
     }
     
     private BottomNavigationView bottomNav;
@@ -33,7 +36,8 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("CommitPrefEdits")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        mInstance = this;
+        getExternalFilesDir(null);
+        this.startLogging();
         setup();
         Utils.ActivityUtils.setThemeAuto(this);
         super.onCreate(savedInstanceState);
@@ -47,17 +51,17 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(MenuItem item) {
                 switch (item.getItemId()) {
             		case R.id.bottom_nav_homeMenu:
-                	getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeMenuFragment()).commit();
-                	break;
+                	Utils.ActivityUtils.changeFragmentWithAnim(getSupportFragmentManager().beginTransaction(), R.id.fragment_container, new HomeMenuFragment());
+                    break;
             	case R.id.bottom_nav_modsMenu:
                 	if (Utils.ActivityUtils.isPermissionDenied(getApplicationContext(), Utils.app_perms[0])) {
-                        Utils.ActivityUtils.askForPermission(MainActivity.this, Utils.app_perms[0], 2);
+                        Utils.ActivityUtils.askForPermission(MainActivity.this, Utils.app_perms[0], Constants.ResultCodes.MA_modsmenu);
                     } else {
-                    	getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ModsMenuFragment()).commit();
+                    	Utils.ActivityUtils.changeFragmentWithAnim(getSupportFragmentManager().beginTransaction(), R.id.fragment_container, new ModsMenuFragment());
                     }
                 	break;
             	case R.id.bottom_nav_settingsMenu:
-                	getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsPreferenceFragment()).commit();
+                	Utils.ActivityUtils.changeFragmentWithAnim(getSupportFragmentManager().beginTransaction(), R.id.fragment_container, new SettingsPreferenceFragment());
                 	break;
         		}
         		return true;
@@ -65,42 +69,45 @@ public class MainActivity extends AppCompatActivity {
         });
         
         
-        if (getIntent().getBooleanExtra("fromSettingsFragment", false)) {
+        if (getIntent().getBooleanExtra(Constants.PreferenceKeys.APPLY_THEME, false)) {
             bottomNav.setSelectedItemId(R.id.bottom_nav_settingsMenu);
         } else {
         	bottomNav.setSelectedItemId(R.id.bottom_nav_homeMenu);
         }
-        if (Utils.ActivityUtils.isPermissionDenied(this, Utils.app_perms[0])) Utils.ActivityUtils.askForPermission(this, Utils.app_perms[0], 1);
+        if (Utils.ActivityUtils.isPermissionDenied(this, Utils.app_perms[0])) Utils.ActivityUtils.askForPermission(this, Utils.app_perms[0], Constants.ResultCodes.MA_startup);
     }
 
     private void setup() {
+        mInstance = new WeakReference<MainActivity>(this);
+        
         rpcServIntent = new Intent(getApplicationContext(), RPCService.class);
         rpcActIntent = new Intent(getApplicationContext(), RPCActivity.class);
-        sharedPreferencesUtil = new Utils.SharedPreferenceUtil("sharedPrefs", MainActivity.this);
-
+        sharedPreferencesUtil = new Utils.SharedPreferenceUtil(Constants.PREF_FILE_NAME, this);
+        // sharedPreferencesUtil = MainApplication.mainSP; // Fix for now.
+        
         // RPC startup.
-        if (sharedPreferencesUtil.getBoolean("agreed_rpc") && sharedPreferencesUtil.getBoolean("discordrpc") && !Utils.ServiceUtils.isServiceRunning(getApplicationContext(), RPCService.class)) {
+        if (sharedPreferencesUtil.getBoolean(Constants.PreferenceKeys.AGREED_RPC) && sharedPreferencesUtil.getBoolean(Constants.PreferenceKeys.RPC_ENABLED) && !Utils.ServiceUtils.isServiceRunning(getApplicationContext(), RPCService.class)) {
             startActivity(rpcActIntent);
         }
     }
     
-    public void applyTheme(boolean fromSF) {
+    public void applyTheme() {
         Intent maIntent = new Intent(this, getClass());
-        maIntent.putExtra("fromSettingsFragment", fromSF);
+        maIntent.putExtra(Constants.PreferenceKeys.APPLY_THEME, true);
         maIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(maIntent);
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
     
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
-            case 1:
+            case Constants.ResultCodes.MA_startup:
             	if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED) {
                     Toast.makeText(MainActivity.this, "Well...", Toast.LENGTH_LONG).show();
                 }
             	return;
-            case 2:
+            case Constants.ResultCodes.MA_modsmenu:
             	if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ModsMenuFragment()).commit();
                 } else {

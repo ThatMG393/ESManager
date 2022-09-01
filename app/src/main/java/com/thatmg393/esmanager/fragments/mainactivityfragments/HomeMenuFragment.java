@@ -14,16 +14,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.thatmg393.esmanager.Constants;
 import com.thatmg393.esmanager.MainActivity;
 import com.thatmg393.esmanager.R;
 import com.thatmg393.esmanager.Utils;
 import com.thatmg393.esmanager.rpc.RPCGlobal;
 import com.thatmg393.esmanager.rpc.RPCService;
+import com.thatmg393.esmanager.rpc.RPCNotInitializedException;
 
 public class HomeMenuFragment extends Fragment {
-
-    private final String appPackageName = "com.evertechsandbox";
-
+    
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -47,39 +47,41 @@ public class HomeMenuFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        MainActivity.sharedPreferencesUtil.addBoolean("isESRunning", Utils.ActivityUtils.checkIfAppIsRunning(getContext(), appPackageName));
+        MainActivity.sharedPreferencesUtil.addBoolean(Constants.PreferenceKeys.ES_RUNNING, Utils.ActivityUtils.checkIfAppIsRunning(getContext(), Constants.ES_PKG_NAME));
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        MainActivity.sharedPreferencesUtil.addBoolean("isESRunning", Utils.ActivityUtils.checkIfAppIsRunning(getContext(), appPackageName));
+        MainActivity.sharedPreferencesUtil.addBoolean(Constants.PreferenceKeys.ES_RUNNING, Utils.ActivityUtils.checkIfAppIsRunning(getContext(), Constants.ES_PKG_NAME));
     }
 
     private void LaunchGame() {
-        Intent esIntent = getActivity().getPackageManager().getLaunchIntentForPackage("com.evertechsandbox");
+        Intent esIntent = getActivity().getPackageManager().getLaunchIntentForPackage(Constants.ES_PKG_NAME);
         if (esIntent != null) {
             try {
                 startActivity(esIntent);
-                MainActivity.sharedPreferencesUtil.addBoolean("isESRunning", Utils.ActivityUtils.checkIfAppIsRunning(getContext(), appPackageName));
+                MainActivity.sharedPreferencesUtil.addBoolean(Constants.PreferenceKeys.ES_RUNNING, Utils.ActivityUtils.checkIfAppIsRunning(getContext(), Constants.ES_PKG_NAME));
 
-                if (MainActivity.sharedPreferencesUtil.getBoolean("discordrpc") && MainActivity.sharedPreferencesUtil.getBoolean("agreed_rpc") && Utils.ServiceUtils.isServiceRunning(getContext(), RPCService.class)) {
+                if (MainActivity.sharedPreferencesUtil.getBoolean(Constants.PreferenceKeys.RPC_ENABLED) && MainActivity.sharedPreferencesUtil.getBoolean(Constants.PreferenceKeys.AGREED_RPC) && Utils.ServiceUtils.isServiceRunning(getContext(), RPCService.class)) {
                     RPCGlobal.getServiceInstance().sendPresence();
                 }
             } catch (ActivityNotFoundException anfe) {
                 openAppPage();
+            } catch (RPCNotInitializedException rpcnie) {
+            	//TODO: Initialize RPCService
             }
         } else { openAppPage(); }
     }
     
     private void openAppPage() {
         try {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + Constants.ES_PKG_NAME)));
         } catch (ActivityNotFoundException x) {
         	try {
-            	startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+            	startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + Constants.ES_PKG_NAME)));
             } catch (ActivityNotFoundException y) {
-            	Toast.makeText(getContext(), "Are you using a Nokia 3310? I cannot seem to open Google Play or your Browser.", Toast.LENGTH_LONG).show();
+            	Toast.makeText(getContext(), "Are you using a Nokia 3310? I cannot seem to open Google Play and your Browser.", Toast.LENGTH_LONG).show();
             }
         }
     }

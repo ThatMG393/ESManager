@@ -32,8 +32,8 @@ public class RPCActivity extends AppCompatActivity
     @SuppressWarnings("deprecation")
 	private void showDialog() {
 		if (MainActivity.sharedPreferencesUtil.getString("uname") == null) {
-			LayoutInflater li = LayoutInflater.from(getApplication());
-			View layoutV = li.inflate(R.layout.rcp_webview_main, null);
+			LayoutInflater li = LayoutInflater.from(getApplicationContext());
+			View layoutV = li.inflate(R.layout.rpc_login, null);
 
 			final AlertDialog adb = new AlertDialog.Builder(RPCActivity.this).create();
 
