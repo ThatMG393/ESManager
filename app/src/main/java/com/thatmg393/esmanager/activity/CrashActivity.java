@@ -19,8 +19,13 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageMetadata;
@@ -46,12 +51,15 @@ import java.util.Date;
 
 public class CrashActivity extends AppCompatActivity {
     
+    private FirebaseAuth firebaseAuth;
+    private FirebaseUser currentUser;
     private FirebaseStorage firebase;
     private StorageReference firebaseSR;
     
     private Handler delayer = new Handler();
     
     private boolean isUserViewingLogs;
+    private boolean isUserAuthenticated;
     private String fName;
     private String logFilePath;
     private String currentDate;
@@ -62,6 +70,19 @@ public class CrashActivity extends AppCompatActivity {
         currentDate = getCurrentDate();
         LogSender.startLogging(this);
 		super.onCreate(savedInstanceState);
+        
+        firebaseAuth = FirebaseAuth.getInstance();
+    	if (currentUser == null) {
+            firebaseAuth.signInAnonymously()
+        		.addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                	@Override
+                	public void onComplete(Task<AuthResult> result) {
+                    	if (result.isSuccessful()) {
+                        	currentUser = firebaseAuth.getCurrentUser();
+                    	}
+                	}
+            	});
+        }
         
         firebase = FirebaseStorage.getInstance();
         firebaseSR = firebase.getReference();
