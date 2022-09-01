@@ -3,6 +3,8 @@ apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 33
+    buildToolsVersion = '33.0.0'
+    
     defaultConfig {
         applicationId "com.thatmg393.esmanager"
         minSdkVersion 24
@@ -12,22 +14,26 @@ android {
     }
     buildTypes {
         release {
-            applicationIdSuffix ".release"
             versionNameSuffix "-release_build-" + getDate()
-            minifyEnabled false
+            minifyEnabled true
+            // shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
         beta {
-            applicationIdSuffix ".beta"
             versionNameSuffix "-beta_build-" + getDate()
             minifyEnabled false
             signingConfig signingConfigs.debug
         }
 
         alpha {
-            applicationIdSuffix ".alpha"
             versionNameSuffix "-alpha_build-" + getDate()
+            minifyEnabled false
+            signingConfig signingConfigs.debug
+        }
+        
+        debug {
+            versionNameSuffix "-debug_build-" + getDate()
             minifyEnabled false
             signingConfig signingConfigs.debug
         }
@@ -37,7 +43,6 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    buildToolsVersion = '33.0.0'
 }
 
 static def getDate() {
