@@ -15,7 +15,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
-        android:roundIcon="@mipmap/ic_launcher_round">
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:theme="@style/App.Main">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -27,7 +28,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CreateModActivity" android:theme="@style/App.Light"/>
+        <activity android:name=".CreateModActivity" android:theme="@style/App.Main"/>
         <activity
             android:name=".activity.CrashActivity"
             android:theme="@style/Activity.Transparent" />

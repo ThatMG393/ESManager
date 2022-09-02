@@ -23,12 +23,14 @@ import androidx.annotation.AnyRes;
 import androidx.annotation.AttrRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
 
+import com.thatmg393.esmanager.Constants;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -121,30 +123,27 @@ public final class Utils {
         }
         
         public static View setFragmentTheme(@NonNull final Context context, @LayoutRes final int layoutRes, @NonNull final ViewGroup fragContainer) {
-            LayoutInflater themedInflater = null;
-            if (MainActivity.sharedPreferencesUtil.getBoolean(Constants.PreferenceKeys.DARK_MODE)) {
-                themedInflater = LayoutInflater.from(new ContextThemeWrapper(context, R.style.App_Dark));
-            } else {
-            	themedInflater = LayoutInflater.from(new ContextThemeWrapper(context, R.style.App_Light));
-            }
+            LayoutInflater themedInflater = LayoutInflater.from(new ContextThemeWrapper(context, R.style.App_Main));
             View themedView = themedInflater.inflate(layoutRes, fragContainer, false);
             themedView.setBackgroundColor(Color.parseColor(ResourceUtils.getCurrentThemeColorToHex(context, android.R.attr.windowBackground)));
             return themedView;
             // return LayoutInflater.from(context).inflate(layoutRes, fragContainer, false);
         }
         
+        public static void setThemeAuto(@NonNull Context context) {
+            if (MainActivity.sharedPreferencesUtil.getBoolean(Constants.PreferenceKeys.DARK_MODE)) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            }
+            //  AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+            context.setTheme(R.style.App_Main);
+        }
+        
         public static void changeFragmentWithAnim(@NonNull FragmentTransaction fragTransac, @AnyRes int fragContainer, @NonNull Fragment theFragment) {
             fragTransac
             	.setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
             	.replace(fragContainer, theFragment).commit();
-        }
-        
-        public static void setThemeAuto(@NonNull Context context) {
-            if (MainActivity.sharedPreferencesUtil.getBoolean(Constants.PreferenceKeys.DARK_MODE)) {
-                context.setTheme(R.style.App_Dark);
-            } else {
-            	context.setTheme(R.style.App_Light);
-            }
         }
         
         public static void restartApp(@NonNull Context context) {

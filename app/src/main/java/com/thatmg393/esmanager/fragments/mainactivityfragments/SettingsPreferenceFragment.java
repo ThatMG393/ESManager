@@ -43,6 +43,8 @@ public class SettingsPreferenceFragment extends PreferenceFragmentCompat impleme
         discordRPC.setChecked(MainActivity.sharedPreferencesUtil.getBoolean(Constants.PreferenceKeys.RPC_ENABLED));
         sendCrashes.setChecked(MainActivity.sharedPreferencesUtil.getBoolean(Constants.PreferenceKeys.SEND_CRASH));
         
+        refreshPref();
+        
         adb = new AlertDialog.Builder(getContext()).create();
     }
 
@@ -123,6 +125,6 @@ public class SettingsPreferenceFragment extends PreferenceFragmentCompat impleme
     private void refreshPref() {
         MainActivity.sharedPreferencesUtil.addBoolean(Constants.PreferenceKeys.RPC_ENABLED, discordRPC.isChecked());
         MainActivity.sharedPreferencesUtil.addBoolean(Constants.PreferenceKeys.DARK_MODE, darkMode.isChecked());
-        MainActivity.sharedPreferencesUtil.addBoolean(Constants.PreferenceKeys.SEND_CRASH, darkMode.isChecked());
+        MainActivity.sharedPreferencesUtil.addBoolean(Constants.PreferenceKeys.SEND_CRASH, sendCrashes.isChecked());
     }
 }

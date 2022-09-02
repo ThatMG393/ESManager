@@ -119,23 +119,31 @@ public class ModsMenuFragment extends Fragment {
             }
         });
         setup();
-        findAllMods();
+        if (Utils.ActivityUtils.isPermissionDenied(getContext(), Utils.app_perms[0])) {
+            modLV.post(new Runnable() {
+                @Override
+                public void run() {
+                	modLA.addData(new ModProperties("Permission denied", "Please grant storage permission in your settings.", null ,null, null, true));
+        		}
+            });
+        } else {
+        	findAllMods();
+        }
     }
     
     @Override
     public void onDestroy() {
         super.onDestroy();
         if (modParserExec != null) {
-            if (!modParserExec.isTerminated()) {
+            if (!modParserExec.isTerminated() || !modParserExec.isShutdown()) {
                 modParserExec.shutdownNow();
-                forcedShutdown = true;
             }
         }
     }
     
     private void findAllMods() {
         final String modJson = "/info.json";
-        modParserExec = Executors.newFixedThreadPool(1);
+        modParserExec = Executors.newFixedThreadPool(4);
         modParserExec.execute(new Runnable() {
             @Override
             public void run() {

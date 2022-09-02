@@ -5,9 +5,10 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="alertDialogTheme">@style/LightDateAlertDialog</item>
-        <item name="android:colorBackground">@color/windowBackgroundColor</item>
+        <item name="alertDialogTheme">@style/DarkDateAlertDialog</item>
         <item name="android:windowBackground">@color/windowBackgroundColor</item>
+        <item name="android:colorBackground">@color/windowBackgroundColor</item>
+        <item name="android:datePickerDialogTheme">@style/DarkDateAlertDialog</item>
     </style>
     
     <style name="Activity.Transparent" parent="App.Main">
@@ -25,9 +26,9 @@
         <item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_round</item>
     </style>
 
-    <style name="LightDateAlertDialog" parent="Theme.MaterialComponents.Light.Dialog.Alert">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/windowBackgroundColor</item>
+    <style name="DarkDateAlertDialog" parent="Theme.MaterialComponents.Dialog.Alert">
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:background">@color/windowBackgroundColor</item>
+        <item name="android:textColor">@color/textColor</item>
     </style>
 </resources>

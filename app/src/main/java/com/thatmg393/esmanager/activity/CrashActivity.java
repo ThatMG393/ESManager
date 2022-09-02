@@ -10,6 +10,8 @@ import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -91,7 +93,7 @@ public class CrashActivity extends AppCompatActivity {
 	}
     
     private void setupCrashDialog() {
-        LayoutInflater li = LayoutInflater.from(new ContextThemeWrapper(getApplicationContext(), R.style.App_Dark));
+        LayoutInflater li = LayoutInflater.from(new ContextThemeWrapper(getApplicationContext(), R.style.App_Main));
         View layoutV = li.inflate(R.layout.crash_dialog, null);
         
         setupCrashDialogView(layoutV);
@@ -105,7 +107,6 @@ public class CrashActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int buttonType) {
                 dialog.dismiss();
-                LayoutInflater li = LayoutInflater.from(new ContextThemeWrapper(getApplicationContext(), R.style.App_Dark));
         		View layoutV2 = li.inflate(R.layout.crash_upload_screen, null);
         
                 AlertDialog upd = new AlertDialog.Builder(CrashActivity.this).create();
@@ -133,6 +134,15 @@ public class CrashActivity extends AppCompatActivity {
                 kms();
             }
         });
+        
+        Window window = bld.getWindow();
+    	if (window != null) {
+        	WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+        	layoutParams.copyFrom(bld.getWindow().getAttributes());
+        	layoutParams.width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        	layoutParams.height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        	bld.getWindow().setAttributes(layoutParams);
+    	}
         
 		bld.show();
     }

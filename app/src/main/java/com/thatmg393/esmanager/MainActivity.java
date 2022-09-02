@@ -17,7 +17,6 @@ import com.thatmg393.esmanager.fragments.mainactivityfragments.SettingsPreferenc
 import com.thatmg393.esmanager.rpc.RPCActivity;
 import com.thatmg393.esmanager.rpc.RPCService;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
 
 public class MainActivity extends BaseActivity {
@@ -36,14 +35,12 @@ public class MainActivity extends BaseActivity {
     @SuppressLint("CommitPrefEdits")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        getExternalFilesDir(null);
-        this.startLogging();
         setup();
-        Utils.ActivityUtils.setThemeAuto(this);
         super.onCreate(savedInstanceState);
-        SplashScreen.installSplashScreen(this);
         setContentView(R.layout.activity_main);
         setSupportActionBar(findViewById(R.id.main_toolbar));
+        
+        SplashScreen.installSplashScreen(this);
         
         bottomNav = findViewById(R.id.bottom_nav_view);
         bottomNav.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
@@ -78,17 +75,19 @@ public class MainActivity extends BaseActivity {
     }
 
     private void setup() {
-        mInstance = new WeakReference<MainActivity>(this);
+        this.startLogging();
         
+        mInstance = new WeakReference<MainActivity>(this);
         rpcServIntent = new Intent(getApplicationContext(), RPCService.class);
         rpcActIntent = new Intent(getApplicationContext(), RPCActivity.class);
         sharedPreferencesUtil = new Utils.SharedPreferenceUtil(Constants.PREF_FILE_NAME, this);
-        // sharedPreferencesUtil = MainApplication.mainSP; // Fix for now.
+        Utils.ActivityUtils.setThemeAuto(this);
         
         // RPC startup.
         if (sharedPreferencesUtil.getBoolean(Constants.PreferenceKeys.AGREED_RPC) && sharedPreferencesUtil.getBoolean(Constants.PreferenceKeys.RPC_ENABLED) && !Utils.ServiceUtils.isServiceRunning(getApplicationContext(), RPCService.class)) {
             startActivity(rpcActIntent);
         }
+        getExternalFilesDir(null);
     }
     
     public void applyTheme() {
@@ -109,9 +108,10 @@ public class MainActivity extends BaseActivity {
             	return;
             case Constants.ResultCodes.MA_modsmenu:
             	if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ModsMenuFragment()).commit();
+                    Utils.ActivityUtils.changeFragmentWithAnim(getSupportFragmentManager().beginTransaction(), R.id.fragment_container, new ModsMenuFragment());
                 } else {
                 	Toast.makeText(MainActivity.this, "This area requires storage permission to read your mods.", Toast.LENGTH_LONG).show();
+                    Utils.ActivityUtils.changeFragmentWithAnim(getSupportFragmentManager().beginTransaction(), R.id.fragment_container, new ModsMenuFragment());
                 }
             	return;
             default:

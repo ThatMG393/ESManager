@@ -18,14 +18,11 @@ import java.io.Writer;
 
 public class BaseActivity extends AppCompatActivity {
     
-    // esmanager-37e64.appspot.com
-    // https://esmanager-37e64-default-rtdb.firebaseio.com/
     private Thread.UncaughtExceptionHandler thrUEH;
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
         if (thrUEH == null) setUEH();
-        
 		super.onCreate(savedInstanceState);
 	}
     
@@ -34,7 +31,6 @@ public class BaseActivity extends AppCompatActivity {
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(Thread curThr, Throwable ex) {
-                // We caught ex.getClass().getName()
                 startLogging();
                 Intent caInt = new Intent(getApplicationContext(), CrashActivity.class);
                 caInt.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -43,7 +39,7 @@ public class BaseActivity extends AppCompatActivity {
                 
                 PendingIntent pdInt = PendingIntent.getActivity(getApplicationContext(), 69, caInt, PendingIntent.FLAG_CANCEL_CURRENT);
                 AlarmManager aMan = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                aMan.set(AlarmManager.RTC_WAKEUP, 300, pdInt);
+                aMan.set(AlarmManager.RTC_WAKEUP, 10, pdInt);
                 finishAffinity();
                 android.os.Process.killProcess(android.os.Process.myPid());
                 System.exit(2);

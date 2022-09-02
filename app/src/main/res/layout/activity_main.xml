@@ -29,10 +29,9 @@
             android:id="@+id/bottom_nav_view"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            app:menu="@menu/bottom_nav_menu"
             app:itemIconTint="@drawable/bottom_nav_icon_tint"
             app:itemTextColor="@drawable/bottom_nav_text_color"
-            android:background="?attr/colorPrimaryDark"
+            app:menu="@menu/bottom_nav_menu"
             android:layout_alignParentBottom="true"/>
         
         <FrameLayout
