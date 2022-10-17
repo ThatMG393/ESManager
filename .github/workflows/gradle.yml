@@ -7,19 +7,19 @@ on:
 
 jobs:
   build:
-    name: Build APK's
+    name: Build APK
     runs-on: ubuntu-latest
     steps:
       - name: Cancel previous runs
-        uses: styfle/cancel-workflow-action@0.10.0
+        uses: styfle/cancel-workflow-action@0.11.0
         with:
           access_token: ${{ github.token }}
 
       - name: Clone repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3.1.0
 
-      - name: Set up JDK 117
-        uses: actions/setup-java@v1
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3.5.1
         with:
           java-version: 17
 
@@ -27,7 +27,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build apk-debug
-        uses: eskatos/gradle-command-action@v2
+        uses: eskatos/gradle-command-action@v2.3.2
         with:
           arguments: assembleDebug
           distributions-cache-enabled: true
