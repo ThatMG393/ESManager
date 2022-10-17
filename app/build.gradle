@@ -19,18 +19,6 @@ android {
             // shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-
-        beta {
-            versionNameSuffix "-beta_build-" + getDate()
-            minifyEnabled false
-            signingConfig signingConfigs.debug
-        }
-
-        alpha {
-            versionNameSuffix "-alpha_build-" + getDate()
-            minifyEnabled false
-            signingConfig signingConfigs.debug
-        }
         
         debug {
             versionNameSuffix "-debug_build-" + getDate()

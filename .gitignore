@@ -1,9 +1,13 @@
 # Project exclude paths
 .git
 .gradle
+.vscode
+.gitpod.yml
+
 /app/build/
 /app/build/intermediates/javac/debug/classes/
 /app/src/main/res/.nomedia
+
 local.properties
 ESManager.iml
 README.md
