@@ -6,39 +6,4 @@ plugins {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
-<<<<<<< HEAD
 }
-=======
-}
-
-
-/* You can uncomment this if you downgrade Gradle
- * Make sure to comment the above execpt task clean to use this!
-buildscript {
-    repositories {
-    	// If you want to edit this go to settings.gradle
-        // jcenter()
-        google()
-		mavenCentral()
-    }
-    
-    dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.2'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-    }
-}
-
-allprojects {
-    repositories {
-    	// If you want to edit this go to settings.gradle
-		// jcenter()
-        google()
-        mavenCentral()
-
-        maven { url "https://jitpack.io" }
-    }
-}
-*/
->>>>>>> c65f49cffb63cb57182deb4152563c3facf938cd
