@@ -15,12 +15,12 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.thatmg393.esmanager.Constants;
-import com.thatmg393.esmanager.MainActivity;
 import com.thatmg393.esmanager.R;
 import com.thatmg393.esmanager.Utils;
-import com.thatmg393.esmanager.rpc.RPCGlobal;
-import com.thatmg393.esmanager.rpc.RPCService;
-import com.thatmg393.esmanager.rpc.RPCNotInitializedException;
+import com.thatmg393.esmanager.interfaces.IProcessListener;
+import com.thatmg393.esmanager.rpc.DiscordRPC;
+import com.thatmg393.esmanager.utils.ProcessListener;
+import com.thatmg393.esmanager.utils.SharedPreference;
 
 public class HomeMenuFragment extends Fragment {
     
@@ -39,7 +39,7 @@ public class HomeMenuFragment extends Fragment {
         launchGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LaunchGame();
+                launchGame();
             }
         });
     }
@@ -47,31 +47,52 @@ public class HomeMenuFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        MainActivity.sharedPreferencesUtil.addBoolean(Constants.PreferenceKeys.ES_RUNNING, Utils.ActivityUtils.checkIfAppIsRunning(getContext(), Constants.ES_PKG_NAME));
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        MainActivity.sharedPreferencesUtil.addBoolean(Constants.PreferenceKeys.ES_RUNNING, Utils.ActivityUtils.checkIfAppIsRunning(getContext(), Constants.ES_PKG_NAME));
     }
 
-    private void LaunchGame() {
+    private void launchGame() {
+		/*
         Intent esIntent = getActivity().getPackageManager().getLaunchIntentForPackage(Constants.ES_PKG_NAME);
         if (esIntent != null) {
             try {
                 startActivity(esIntent);
-                MainActivity.sharedPreferencesUtil.addBoolean(Constants.PreferenceKeys.ES_RUNNING, Utils.ActivityUtils.checkIfAppIsRunning(getContext(), Constants.ES_PKG_NAME));
-
-                if (MainActivity.sharedPreferencesUtil.getBoolean(Constants.PreferenceKeys.RPC_ENABLED) && MainActivity.sharedPreferencesUtil.getBoolean(Constants.PreferenceKeys.AGREED_RPC) && Utils.ServiceUtils.isServiceRunning(getContext(), RPCService.class)) {
-                    RPCGlobal.getServiceInstance().sendPresence();
-                }
+                Variables.sharedPreferencesUtil.addBoolean(Constants.PreferenceKeys.ES_RUNNING, Utils.ActivityUtils.checkIfAppIsRunning(getContext(), Constants.ES_PKG_NAME));
+				
+				
             } catch (ActivityNotFoundException anfe) {
                 openAppPage();
-            } catch (RPCNotInitializedException rpcnie) {
-            	//TODO: Initialize RPCService
             }
         } else { openAppPage(); }
+		*/
+		
+        ProcessListener pl = new ProcessListener(getContext(), Constants.ES_PKG_NAME);
+        pl.startListening(getActivity().getPackageManager().getLaunchIntentForPackage(Constants.ES_PKG_NAME));
+        pl.addListener(new IProcessListener() {
+            @Override
+            public void onListenerStart() {
+                System.out.println("EvertechSandbox started...");
+            }
+            
+            @Override
+            public void onProcessAlive() {
+                System.out.println("EvertechSandbox is alive and running...");
+            }
+            
+            @Override
+            public void onProcessGone() {
+                System.out.println("EvertechSandbox is gone. RIP...");
+            }
+            
+            @Override
+            public void onListenerStop() {
+                System.out.println("Stopping listening for EvertechSandbox...");
+            }
+        });
+        // DiscordRPC.getInstance().getServiceInstance().sendPresence();
     }
     
     private void openAppPage() {

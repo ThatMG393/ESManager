@@ -18,13 +18,17 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import com.google.android.material.textfield.TextInputLayout;
 import com.thatmg393.esmanager.Constants;
-import com.thatmg393.esmanager.CreateModActivity;
+import com.thatmg393.esmanager.ProjectActivity;
 import com.thatmg393.esmanager.R;
 import com.thatmg393.esmanager.adapters.ModListAdapter;
-import com.thatmg393.esmanager.data.ModProperties;
+import com.thatmg393.esmanager.models.ModProperties;
 import com.thatmg393.esmanager.Utils;
 
+import com.thatmg393.esmanager.utils.PermissionUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
@@ -43,11 +47,9 @@ public class ModsMenuFragment extends Fragment {
     public final static String mPath = Constants.ES_ROOT_FLDR + "/mods";
     
     private ModListAdapter modLA;
-    
     private ListView modLV;
     
     private ExecutorService modParserExec;
-    private boolean forcedShutdown = false;
 
     @Nullable
     @Override
@@ -58,72 +60,20 @@ public class ModsMenuFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+		
         final Button createMod = getView().findViewById(R.id.mod_createNewMod);
         createMod.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog createModPopup = new AlertDialog.Builder(getContext()).create(); 
-                createModPopup.setTitle("Create new mod");
-                
-                LayoutInflater layoutInflater = LayoutInflater.from(getContext());
-                View promptView = layoutInflater.inflate(R.layout.dialog_createnewmod, null);
-
-                final EditText project_modName_field = (EditText) promptView.findViewById(R.id.project_modName);
-                final EditText project_modDesc_field = (EditText) promptView.findViewById(R.id.project_modDesc);
-                final EditText project_modPath_field = (EditText) promptView.findViewById(R.id.project_modPath);
-                project_modPath_field.setText(Environment.getExternalStorageDirectory().toString() + "/ESManager/Projects/" + project_modName_field.getText().toString());
-                project_modName_field.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                        project_modPath_field.setText(Environment.getExternalStorageDirectory().toString() + "/ESManager/Projects/" + project_modName_field.getText().toString());
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable editable) {
-
-                    }
-                });
-                createModPopup.setButton(DialogInterface.BUTTON_POSITIVE, "Create", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int arg1) {
-                        if (new File(project_modPath_field.getText().toString()).exists()) {
-                            dialog.dismiss();
-                        }
-                        File modPath = new File(project_modPath_field.getText().toString());
-
-                        Intent cmai = new Intent(getContext(), CreateModActivity.class);
-                        cmai.putExtra("projectModName", project_modName_field.getText().toString());
-                        cmai.putExtra("projectModDesc", project_modDesc_field.getText().toString());
-                        cmai.putExtra("projectModPath", project_modPath_field.getText().toString());
-                        
-                        dialog.dismiss();
-                        modPath.mkdirs();
-                        startActivity(cmai);
-                    }
-                });
-
-                createModPopup.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int arg1) {
-                        dialog.dismiss();
-                    }
-                });
-                createModPopup.setView(promptView);
-                createModPopup.show();
+				NewModDialogFragment.display(getActivity().getSupportFragmentManager());
             }
         });
         setup();
-        if (Utils.ActivityUtils.isPermissionDenied(getContext(), Utils.app_perms[0])) {
+        if (PermissionUtils.isPermissionDenied(getContext(), Utils.app_perms[0])) {
             modLV.post(new Runnable() {
                 @Override
                 public void run() {
-                	modLA.addData(new ModProperties("Permission denied", "Please grant storage permission in your settings.", null ,null, null, true));
+                	Toast.makeText(getContext(), "Please grant storage permission on\tSettings -> App -> ESManager -> Permissions -> Storage", Toast.LENGTH_LONG).show();
         		}
             });
         } else {
@@ -183,7 +133,7 @@ public class ModsMenuFragment extends Fragment {
                                 	}
                             	});
                         	} catch (IOException | JSONException ex) {
-                            	Utils.ThreadUtils.runOnMainThread(getContext(), new Runnable() {
+                            	modLV.post(new Runnable() {
                                     @Override
                                     public void run() {
                                         Toast.makeText(getActivity(), "Internal error occurred.", Toast.LENGTH_LONG).show();
@@ -201,5 +151,13 @@ public class ModsMenuFragment extends Fragment {
         modLA = new ModListAdapter(getContext(), new ArrayList<ModProperties>());
         modLV = requireView().findViewById(R.id.mod_listView);
         modLV.setAdapter(modLA);
+    }
+    
+    private boolean validateFields(String modName, String modDesc, String modPath) {
+        if (modName.trim().isEmpty()
+         && modDesc.trim().isEmpty()
+         && modPath.trim().isEmpty()) return false;
+        
+        return true;
     }
 }

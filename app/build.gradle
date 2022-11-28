@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
 android {
+    namespace 'com.thatmg393.esmanager'
     compileSdkVersion 33
     buildToolsVersion = '33.0.0'
     
@@ -9,27 +10,32 @@ android {
         applicationId "com.thatmg393.esmanager"
         minSdkVersion 24
         targetSdkVersion 33
-        versionCode 1
-        versionName '0.9.7'
+		versionCode 1
+		versionName "0.98.7"
+        multiDexEnabled true
+		
+		archivesBaseName = "esmanager"
     }
+    
     buildTypes {
         release {
-            versionNameSuffix "-release_build-" + getDate()
+            versionNameSuffix "-releaseGP_build-" + getDate()
+            
+            buildConfigField "boolean", "isGithubRelease", "false"
+            
             minifyEnabled true
-            // shrinkResources true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-
-        beta {
-            versionNameSuffix "-beta_build-" + getDate()
-            minifyEnabled false
-            signingConfig signingConfigs.debug
-        }
-
-        alpha {
-            versionNameSuffix "-alpha_build-" + getDate()
-            minifyEnabled false
-            signingConfig signingConfigs.debug
+        
+        releaseGH {
+            versionNameSuffix "-releaseGH_build-" + getDate()
+            
+            buildConfigField "boolean", "isGithubRelease", "true"
+            
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+			
         }
         
         debug {
@@ -46,29 +52,32 @@ android {
 }
 
 static def getDate() {
-    return new Date().format('yyyyMMddHHmmss')
+    return new Date().format('yyyyMMdd')
 }
 
 dependencies {
-    
     // Defaults
-    implementation 'androidx.appcompat:appcompat:1.5.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'com.google.android.material:material:1.7.0'
     
     // Extras
-    implementation 'com.google.code.gson:gson:2.9.1'
-    implementation 'org.java-websocket:Java-WebSocket:1.5.3'
-    implementation 'org.jetbrains:annotations:23.0.0'
-    implementation 'io.github.amrdeveloper:codeview:1.3.4'
-    implementation 'androidx.core:core-splashscreen:1.0.0'
-    implementation 'androidx.preference:preference:1.2.0'
-    implementation 'androidx.security:security-crypto:1.1.0-alpha03'
-    implementation 'commons-io:commons-io:2.11.0'
-    
-    implementation platform('com.google.firebase:firebase-bom:30.3.1')
+	implementation platform('com.google.firebase:firebase-bom:31.1.0')
     implementation 'com.google.firebase:firebase-storage'
     implementation 'com.google.firebase:firebase-auth'
+	
+    implementation 'com.google.code.gson:gson:2.10'
+    implementation 'org.java-websocket:Java-WebSocket:1.5.3'
+    implementation 'org.jetbrains:annotations:23.0.0'
+	implementation 'io.github.amrdeveloper:treeview:1.1.0'
+	
+	implementation(platform("io.github.Rosemoe.sora-editor:bom:0.18.1"))
+    implementation("io.github.Rosemoe.sora-editor:editor")
+	implementation("io.github.Rosemoe.sora-editor:language-textmate")
+	
+    implementation 'androidx.core:core-splashscreen:1.0.0'
+    implementation 'androidx.preference:preference:1.2.0'
+    implementation 'androidx.security:security-crypto:1.1.0-alpha04'
+    implementation 'commons-io:commons-io:2.11.0'
     
     // Duplication Fix
     def lifecycle_version = "2.5.1"

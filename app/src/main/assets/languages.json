@@ -1,0 +1,10 @@
+{
+	"languages": [
+    	{ // From https://github.com/microsoft/vscode/tree/main/extensions/lua
+        	"grammar": "textmate/lua/syntaxes/lua.tmLanguage.json",
+            "name": "lua",
+            "scopeName": "source.lua",
+            "languageConfiguration": "textmate/lua/language-configuration.json"
+    	}
+    ]
+}

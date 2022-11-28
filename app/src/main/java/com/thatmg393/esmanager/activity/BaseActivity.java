@@ -19,22 +19,20 @@ import java.io.Writer;
 public class BaseActivity extends AppCompatActivity {
     
     private Thread.UncaughtExceptionHandler thrUEH;
-    
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onStart() {
         if (thrUEH == null) setUEH();
-		super.onCreate(savedInstanceState);
-	}
+        super.onStart();
+    }
     
     private void setUEH() {
         thrUEH = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(Thread curThr, Throwable ex) {
-                startLogging();
                 Intent caInt = new Intent(getApplicationContext(), CrashActivity.class);
                 caInt.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                caInt.putExtra("exceptionName", ex.getClass().getName());
+                caInt.putExtra("exceptionOverview", ex.getClass().getName() + " : " + ex.getMessage());
                 caInt.putExtra("exceptionStackTrace", getThrowableStackTrace(ex));
                 
                 PendingIntent pdInt = PendingIntent.getActivity(getApplicationContext(), 69, caInt, PendingIntent.FLAG_CANCEL_CURRENT);
@@ -55,7 +53,7 @@ public class BaseActivity extends AppCompatActivity {
         
 		try {
 			Throwable cause = err;
-			while(cause != null) {
+			while (cause != null) {
 				cause.printStackTrace(printWriter);
 				cause = cause.getCause();
 			}
@@ -67,7 +65,7 @@ public class BaseActivity extends AppCompatActivity {
 		return result.toString();
 	}
     
-    public void startLogging() {
+    public final void startLogging() {
         if (BuildConfig.DEBUG) LogSender.startLogging(this);
     }
 }

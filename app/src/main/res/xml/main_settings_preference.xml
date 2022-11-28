@@ -1,32 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory android:title="INTERFACE" >
+    <PreferenceCategory android:title="Interface">
 
         <SwitchPreference
             android:defaultValue="false"
             android:key="interface_darkmode"
             android:summary="Dark Mode Theme"
             android:title="Dark Mode" />
+			
+		<ListPreference
+			android:key="interface_theme"
+			android:title="App theme"
+        	android:summary="Set theme for the app to use"
+        	android:entryValues="@array/theme_array"
+			android:entries="@array/theme_array" />
+			
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="MISC" >
-
-        <SwitchPreference
+    <PreferenceCategory android:title="Miscellaneous">
+	
+		<com.thatmg393.esmanager.ui.DualActionSwitchPreference
             android:defaultValue="false"
             android:key="misc_discordrpc"
             android:summary="Turns on Discord Rich Presence"
             android:title="Discord RPC" />
+			
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="APP" >
+    <PreferenceCategory android:title="App">
 
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="app_sendcrashrep"
             android:summary="Helps to fix bugs"
-            android:title="Send crash logs" >
-        </CheckBoxPreference>
+            android:title="Send crash logs" />
+        
+    </PreferenceCategory>
+	
+	<PreferenceCategory android:title="About">
+
+        <Preference
+			android:key="about_version"
+			android:title="Version"
+			app:iconSpaceReserved="false" />
+			
+		<Preference
+			android:key="about_dev"
+			android:title="Developer"
+			android:summary="ThatMG393"
+			app:iconSpaceReserved="false" />
         
     </PreferenceCategory>
 

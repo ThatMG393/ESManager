@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
-    <external-path name="files_logs" path="Android/data/com.thatmg393.esmanager/files/Logs" />
-    <external-path name="files_projects" path="Android/data/com.thatmg393.esmanager/files/Projects"/>
+	<external-path name="files_root" path="ESManager"/>
+    <external-path name="files_logs" path="ESManager/Logs" />
+    <external-path name="files_projects" path="ESManager/Projects"/>
+	<external-path name="evertech_root" path="Android/data/com.evertechsandbox/files/mods"/>
 </paths>

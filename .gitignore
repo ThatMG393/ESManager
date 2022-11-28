@@ -2,6 +2,10 @@
 .git
 .gradle
 /app/build/
+/app/mapping.txt
+/app/unused.txt
+/app/seeds.txt
+/app/release_key.keystore
 /app/build/intermediates/javac/debug/classes/
 /app/src/main/res/.nomedia
 local.properties

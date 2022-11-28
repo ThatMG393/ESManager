@@ -1,41 +1,9 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
-    id 'com.android.application' version '7.2.2' apply false
-    id 'com.android.library' version '7.2.2' apply false
+    id 'com.android.application' version '7.3.1' apply false
     id 'com.google.gms.google-services' version '4.3.13' apply false
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
-
-
-/* You can uncomment this if you use any IDE except AndroidIDE
- * Make sure to comment the above execpt task clean to use this!
-buildscript {
-    repositories {
-    	// If you want to edit this go to settings.gradle
-        // jcenter()
-        google()
-		mavenCentral()
-    }
-    
-    dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.2'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-    }
-}
-
-allprojects {
-    repositories {
-    	// If you want to edit this go to settings.gradle
-		// jcenter()
-        google()
-        mavenCentral()
-
-        maven { url "https://jitpack.io" }
-    }
-}
-*/

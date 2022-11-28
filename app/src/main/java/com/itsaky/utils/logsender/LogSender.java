@@ -1,10 +1,13 @@
 package com.itsaky.utils.logsender;
 
+import android.util.Log;
+import com.thatmg393.esmanager.utils.Logger;
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,8 +20,9 @@ import android.content.Context;
  * in the logcat.
  */
 public class LogSender extends Thread {
-	
-	private static LogSender instance;
+	private static final Logger LOG = new Logger("AndroidIDE/LogSender");
+    
+	private static WeakReference<LogSender> instance;
     private BufferedReader output;
     private Process process;
 	private Context ctx;
@@ -28,7 +32,6 @@ public class LogSender extends Thread {
 	private static final String EXTRA_LINE = "log_line";
 	
 	private Callback CALLBACK = new Callback() {
-
 		@Override
 		public void output(CharSequence c) {
 			if(c != null && c.toString().trim().length() > 0) {
@@ -43,25 +46,31 @@ public class LogSender extends Thread {
 	
     private LogSender(Context ctx) {
 		this.ctx = ctx;
-        final String command = "sh";
+        final String shell = "sh";
 		final String dirPath = ctx.getFilesDir().getAbsolutePath();
-        ProcessBuilder processBuilder = new ProcessBuilder(new String[]{command});
+        
+        ProcessBuilder processBuilder = new ProcessBuilder(shell);
         processBuilder.directory(new File(dirPath));
         processBuilder.redirectErrorStream(true);
         try {
             this.process = processBuilder.start();
             this.output = new BufferedReader(new InputStreamReader(this.process.getInputStream()));
-			final String str = "logcat -v threadtime";
-			this.process.getOutputStream().write(str.concat("\n").getBytes());
+			
+            final String clrCmd = "logcat -c"; // Clears the previous logcat
+            this.process.getOutputStream().write(clrCmd.concat("\n").getBytes());
+            
+            final String logCmd = "logcat -v threadtime";
+			this.process.getOutputStream().write(logCmd.concat("\n").getBytes());
+            
 			this.process.getOutputStream().flush();
-        } catch (Throwable th) {
-        }
+        } catch (Throwable th) { }
     }
 	
 	public static void startLogging(Context ctx) {
-		instance = instance == null ? instance = new LogSender(ctx) : instance;
-		if (instance.isAlive()) return; // If you try to start an already started thread, It will result in an IllegalThreadStateException
-		instance.start();
+		if (instance == null) instance = new WeakReference<LogSender>(new LogSender(ctx));
+		if (instance.get().isAlive()) return; // If you try to start an already started thread, It will result in an IllegalThreadStateException
+		instance.get().start();
+        LOG.verbose("Logging started...");
 	}
 	
     @Override
@@ -71,9 +80,7 @@ public class LogSender extends Thread {
                 String readLine = this.output.readLine();
                 if (readLine == null) break;
                 CALLBACK.output(readLine.concat("\n"));
-            } catch (Throwable th) {
-                // ignored
-            }
+            } catch (Throwable th) { }
         }
         try {
             this.output.close();
@@ -81,9 +88,7 @@ public class LogSender extends Thread {
             this.process.getErrorStream().close();
             this.process.getOutputStream().close();
             this.process.destroy();
-        } catch (Throwable th) {
-            // Ignored
-        }
+        } catch (Throwable th) { }
     }
 	
 	public interface Callback {

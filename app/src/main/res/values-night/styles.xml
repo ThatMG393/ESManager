@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="App.Main" parent="Theme.MaterialComponents.DayNight.NoActionBar">
@@ -6,9 +6,13 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="alertDialogTheme">@style/DarkDateAlertDialog</item>
+        
         <item name="android:windowBackground">@color/windowBackgroundColor</item>
         <item name="android:colorBackground">@color/windowBackgroundColor</item>
         <item name="android:datePickerDialogTheme">@style/DarkDateAlertDialog</item>
+        <item name="android:textColor">@color/textColor</item>
+        <item name="android:textColorPrimary">@color/textColor</item>
+        <item name="android:textColorSecondary">@color/textColor</item>
     </style>
     
     <style name="Activity.Transparent" parent="App.Main">
@@ -22,9 +26,36 @@
 	</style>
     
     <style name="Activity.SplashScreen" parent="Theme.SplashScreen">
-    	<item name="android:windowSplashScreenAnimationDuration">1500</item>
-        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_round</item>
+    	<item name="android:windowSplashScreenAnimationDuration" tools:targetApi="31">1500</item>
+        <item name="postSplashScreenTheme">@style/App.Main</item>
     </style>
+	
+	<style name="Dialog.FullScreen" parent="Theme.MaterialComponents.Light.Dialog">
+    	<item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    	<item name="colorAccent">@color/colorAccent</item>
+    	<item name="colorPrimary">@color/colorPrimary</item>
+    	<item name="android:windowIsFloating">false</item>
+    	<item name="android:windowBackground">@color/windowBackgroundColor</item>
+    	<item name="actionMenuTextColor">@color/colorAccent</item>
+	</style>
+	
+	<style name="Activity.TabLayout" parent="Widget.Material3.TabLayout">
+    	<item name="tabIndicatorAnimationMode">elastic</item>
+    	<item name="tabIndicatorColor">@color/colorAccent</item>
+    	<item name="tabIndicatorFullWidth">false</item>
+    	<item name="tabIndicatorGravity">bottom</item>
+    	<item name="tabIndicatorHeight">3dp</item>
+    	<item name="tabMode">scrollable</item>
+    	<item name="tabSelectedTextColor">@color/colorAccent</item>
+    	<item name="tabTextAppearance">@style/Activity.TabLayout.Title</item>
+   	 <item name="tabTextColor">@color/textColor</item>
+	</style>
+	
+	<style name="Activity.TabLayout.Title" parent="TextAppearance.Design.Tab">
+    	<item name="textAllCaps">false</item>
+    	<item name="android:textAllCaps">false</item>
+	</style>
+
 
     <style name="DarkDateAlertDialog" parent="Theme.MaterialComponents.Dialog.Alert">
         <item name="colorAccent">@color/colorAccent</item>

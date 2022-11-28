@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="schemas.android.com/apk/res-auto">
+
+    <SwitchPreference
+    	android:defaultValue="false"
+        android:key="misc_discordrpc"
+        android:summary="Turns on Discord Rich Presence"
+        android:title="Discord RPC" />
+
+</PreferenceScreen>

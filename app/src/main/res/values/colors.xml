@@ -3,8 +3,8 @@
 	<color name="colorPrimary">#ff1744</color>
 	<color name="colorPrimaryDark">#c4001d</color>
     <color name="windowBackgroundColor">#ffffff</color>
-	<color name="colorAccent">#ff1744</color>
-    
     <color name="textColor">#000000</color>
+    
+    <color name="colorAccent">#6200EE</color>
 	
 </resources>

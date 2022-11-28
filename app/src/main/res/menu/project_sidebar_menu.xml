@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<item android:title="Mod">
+		<menu>
+			<item
+				android:title="Export Mod"
+				android:icon="@drawable/ic_import_export_black" />
+		</menu>
+	</item>
+	
+	<item android:title="Project">
+		<menu>
+			<item
+				android:title="Settings"
+				android:icon="@drawable/ic_settings" />
+		</menu>
+	</item>
+</menu>

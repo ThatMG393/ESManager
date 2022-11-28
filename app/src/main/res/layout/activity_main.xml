@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             app:itemIconTint="@drawable/bottom_nav_icon_tint"
             app:itemTextColor="@drawable/bottom_nav_text_color"
-            app:menu="@menu/bottom_nav_menu"
+            app:menu="@menu/main_bottom_menu"
             android:layout_alignParentBottom="true"/>
         
         <FrameLayout
@@ -39,7 +39,6 @@
             android:layout_above="@id/bottom_nav_view"
             android:layout_height="match_parent"
             android:layout_width="match_parent"/>
-        
     
     </RelativeLayout>
     

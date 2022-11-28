@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ESManager</string>
-    <string name="app_name_bold"><b>ESManager</b></string>
     
     <string name="nav_drawer_open">Open Navigation Drawer</string>
     <string name="nav_drawer_close">Close Navigation Drawer</string>
@@ -14,13 +13,19 @@
     <string name="project_createMod">Create Mod</string>
     <string name="project_mod_name">Mod Name</string>
     <string name="project_mod_description">Mod Description</string>
-    <string name="project_mod_path">/never/gonna/give/you/up/</string>
+    <string name="project_mod_path">Mod Root Folder</string>
     
-    <string name="discord_rpc_ask_title">Enable DRP?</string>
-    <string name="discord_rpc_ask_message">Do you wannna enable Discord RP?\r\nThis feature is still on beta and not that secure, root users might be extra vulnerable.\r\nUse at your own risk.</string>
-    <string name="discord_rpc_ask_accept">Yes, enable it.</string>
-    <string name="discord_rpc_ask_cancel">No, keep it close.</string>
+    <string name="discord_rpc_ask_title">Enable Discord Rich Presence?</string>
+    <string name="discord_rpc_ask_message">Do you want to enable Discord Rich Presence?\n\nThis feature is still on development and not that secure.\nNOTE: Root users might be extra vulnerable.\n\nUse this at your own risk.</string>
+    <string name="discord_rpc_ask_accept">Yes, enable it</string>
+    <string name="discord_rpc_ask_cancel">No, keep me safe</string>
     
     <string name="cancel">Cancel</string>
-
+	
+	<string-array name="theme_array">
+		<item>Auto</item>
+		<item>Dark</item>
+		<item>Light</item>
+	</string-array>
+	
 </resources>

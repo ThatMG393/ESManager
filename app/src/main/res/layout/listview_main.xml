@@ -1,54 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="72dp"
-    android:layout_width="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:padding="12dp">
     
-    <ImageView
-        android:id="@+id/modPreview"
-        android:layout_centerVertical="true"
-        android:layout_height="55dp"
-        android:layout_width="100dp"
-        android:src="@android:drawable/ic_delete"/>
-    
-    <TextView
-        android:id="@+id/modName"
+    <RelativeLayout
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="16dp"
-        android:layout_toEndOf="@id/modPreview"
-        android:layout_width="wrap_content"
-        android:text="Mod Name"
-        android:textAppearance="?android:attr/textAppearanceMedium"/>
+        android:layout_width="match_parent">
     
-    <TextView
-        android:id="@+id/modDesc"
-        android:layout_alignParentBottom="false"
-        android:layout_below="@id/modName"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="6dp"
-        android:layout_toEndOf="@id/modPreview"
-        android:layout_width="230dp"
-        android:text="Mod Desc"
-        android:textAppearance="?android:attr/textAppearanceSmall"/>
+        <ImageView
+            android:id="@+id/modPreview"
+            android:layout_centerVertical="true"
+            android:layout_height="55dp"
+            android:layout_width="100dp"
+            android:src="@android:drawable/ic_delete"
+			android:contentDescription="Mod Preview" />
     
-    <TextView
-        android:id="@+id/modAuthor"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="Mod Author"
-        android:textAppearance="?android:attr/textAppearanceMedium"/>
+        <TextView
+            android:id="@+id/modName"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="16dp"
+            android:layout_toEndOf="@id/modPreview"
+            android:layout_width="wrap_content"
+            android:text="Mod Name"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
     
-    <TextView
-        android:id="@+id/modVersion"
-        android:layout_alignParentEnd="true"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="Mod Version"
-        android:textAppearance="?android:attr/textAppearanceSmall"/>
+        <TextView
+            android:id="@+id/modDesc"
+            android:layout_alignParentBottom="false"
+            android:layout_below="@id/modName"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="6dp"
+            android:layout_toEndOf="@id/modPreview"
+            android:layout_width="230dp"
+            android:text="Mod Desc"
+            android:textAppearance="?android:attr/textAppearanceSmall"/>
+    
+        <TextView
+            android:id="@+id/modAuthor"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Mod Author"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
+    
+        <TextView
+            android:id="@+id/modVersion"
+            android:layout_alignParentEnd="true"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Mod Version"
+            android:textAppearance="?android:attr/textAppearanceSmall"/>
     
 
-</RelativeLayout>
+    </RelativeLayout>
+
+</LinearLayout>
