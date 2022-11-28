@@ -10,11 +10,11 @@ android {
         applicationId "com.thatmg393.esmanager"
         minSdkVersion 24
         targetSdkVersion 33
-		versionCode 1
-		versionName "0.98.7"
+        versionCode 1
+	versionName "0.98.7"
         multiDexEnabled true
-		
-		archivesBaseName = "esmanager"
+
+        archivesBaseName = "esmanager"
     }
     
     buildTypes {
@@ -27,7 +27,6 @@ android {
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-<<<<<<< HEAD
         
         releaseGH {
             versionNameSuffix "-releaseGH_build-" + getDate()
@@ -38,8 +37,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 			
         }
-=======
->>>>>>> c65f49cffb63cb57182deb4152563c3facf938cd
         
         debug {
             versionNameSuffix "-debug_build-" + getDate()
@@ -71,11 +68,11 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.10'
     implementation 'org.java-websocket:Java-WebSocket:1.5.3'
     implementation 'org.jetbrains:annotations:23.0.0'
-	implementation 'io.github.amrdeveloper:treeview:1.1.0'
+    implementation 'io.github.amrdeveloper:treeview:1.1.0'
 	
-	implementation(platform("io.github.Rosemoe.sora-editor:bom:0.18.1"))
+    implementation(platform("io.github.Rosemoe.sora-editor:bom:0.18.1"))
     implementation("io.github.Rosemoe.sora-editor:editor")
-	implementation("io.github.Rosemoe.sora-editor:language-textmate")
+    implementation("io.github.Rosemoe.sora-editor:language-textmate")
 	
     implementation 'androidx.core:core-splashscreen:1.0.0'
     implementation 'androidx.preference:preference:1.2.0'
@@ -85,7 +82,7 @@ dependencies {
     // Duplication Fix
     def lifecycle_version = "2.5.1"
     implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
-	implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
 
     // Bye, old friend.
     // implementation 'gr.pantrif:easy-android-splash-screen:0.0.1'
