@@ -27,6 +27,7 @@ android {
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+<<<<<<< HEAD
         
         releaseGH {
             versionNameSuffix "-releaseGH_build-" + getDate()
@@ -37,6 +38,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 			
         }
+=======
+>>>>>>> c65f49cffb63cb57182deb4152563c3facf938cd
         
         debug {
             versionNameSuffix "-debug_build-" + getDate()
