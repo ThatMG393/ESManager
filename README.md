@@ -2,3 +2,5 @@
 
 # ESManager
 A open-source game manager.
+
+New Version! [ESMRework](https://ThatMG393/ESMRework)
